@@ -25,8 +25,8 @@ public class UserService {
         // 중복 회원 검증
         validateDuplicateUser(user);
 
-        // userType을 'user'로 설정
-        user.setUserType("user");
+        // user_type을 'user'로 설정
+        user.setUser_type("user");
 
         userRepository.save(user);
         return user.getEmail();
@@ -46,9 +46,9 @@ public class UserService {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isPresent() && userOptional.get().getPassword().equals(password)) {
             User user = userOptional.get();
-            // userType이 null이거나 비어있을 경우 세션 객체에 'user'로 설정
-            if (user.getUserType() == null || user.getUserType().isEmpty()) {
-                user.setUserType("user");
+            // user_type이 null이거나 비어있을 경우 세션 객체에 'user'로 설정
+            if (user.getUser_type() == null || user.getUser_type().isEmpty()) {
+                user.setUser_type("user");
             }
             return Optional.of(user);
         }
