@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>회원 가입</h2>
+<form th:action="@{/user/add}" th:object="${user}" method="post">
+    <p>이름: <input type="text"  th:field="*{name}" /></p>
+    <p>이메일 : <input type="text" th:field="*{email}" /></p>
+    <p>비번: <input type="password" th:field="*{password}" /></p>
+    <button type="submit">가입하기</button>
+</form>
+<div th:if="${errorMessage}" th:text="${errorMessage}" style="color:red"></div>
+</body>
+</html>
