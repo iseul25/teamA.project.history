@@ -17,7 +17,7 @@
         }
 
         body {
-            background-color: #f4f4f4;
+            background-color: #fdf5e1;
         }
 
         #bgImg {
@@ -25,7 +25,7 @@
         }
 
         /* logo */
-        #logo {
+        /* #logo {
             width: 150px;
             margin: 10px auto;
         }
@@ -34,15 +34,15 @@
             width: 100%;
             height: auto;
             object-fit: contain;
-        }
+        } */
 
         /* login */
         #login {
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            background-color: #ddd;
-            padding: 0 200px;
+            background-color: #fdf5e1;
+            padding: 0 450px;
         }
 
         #login>ul {
@@ -66,12 +66,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #333333;
-            padding: 0 200px;
+            background-color: #EEE3CB;
+            padding: 0 450px;
         }
 
         header h1 {
-            color: white;
+            color: #333333;
         }
 
         header>ul {
@@ -84,14 +84,18 @@
 
         header>ul li a {
             display: block;
-            color: white;
+            color: #333333;
             text-align: center;
+            font-size: 20px;
             padding: 14px 16px;
             text-decoration: none;
+            transition: all 0.2s ease;
         }
 
         header>ul li a:hover {
-            background-color: #111111;
+            transform: scale(1.2);
+            font-weight: bold;
+            color: #111111;
         }
 
         /* 메인 이미지 */
@@ -99,7 +103,7 @@
             width: 100%;
             max-width: 1000px;
             height: 500px;
-            margin: 20px auto;
+            margin: 0 auto;
             border-radius: 10px;
             box-shadow: 0 2px 2px #333333;
             overflow: hidden;
@@ -126,7 +130,7 @@
             width: 33%;
             height: 200px;
             padding: 20px;
-            background-color: #ddd;
+            background-color: #F7ECDE;
             border-radius: 15px;
             box-shadow: 0 2px 2px #333333;
         }
@@ -143,7 +147,7 @@
             width: 33%;
             height: 200px;
             padding: 20px;
-            background-color: #ddd;
+            background-color: #F7ECDE;
             border-radius: 15px;
             box-shadow: 0 2px 2px #333333;
         }
@@ -159,9 +163,10 @@
         /* 하단 부분 */
         #tel {
             display: flex;
-            justify-content: flex-start;
+            justify-content: center;
             align-items: center;
-            background-color: #ddd;
+            background-color: #EEE7DA;
+            padding: 15px 200px;
             padding: 0 200px;
         }
 
@@ -186,9 +191,9 @@
 <body>
     <div id="container">
         <!-- 로고 -->
-        <div id="logo">
+        <!-- <div id="logo">
             <img src="img/logo4.jpg" alt="logo">
-        </div>
+        </div> -->
         <div id="login">
             <ul>
                 <li><a href="">로그인</a></li>
@@ -198,7 +203,7 @@
             <h1>중등 역사 교육</h1>
             <ul>
                 <li><a href="">학습하기</a></li>
-                <li><a href="">퀴즈</a></li>
+                <li><a href="">퀴즈풀기</a></li>
                 <li><a href="">포인트 상점</a></li>
                 <li><a href="">FAQ</a></li>
             </ul>
@@ -256,8 +261,10 @@
         </div>
         <div id="tel">
             <ul>
-                <li>tel: 010-0000-0000</li>
-                <li>addr: (12345) 대전 중구 중앙로</li>
+                <li>대표전화: 042-222-2402</li>
+                <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+                <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+                <li>© 2025 중등 역사 교육. All rights reserved.</li>
             </ul>
         </div>
     </div>
