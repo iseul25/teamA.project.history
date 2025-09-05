@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>게시판</title>
+    <meta charset="UTF-8" />
+</head>
+<body>
+<h1>게시글 목록</h1>
+
+<ul>
+    <li th:each="post : ${posts}">
+        <a th:href="@{'/posts/' + ${post.postId}}" th:text="${post.title}">게시글 제목</a>
+        (작성자 ID: <span th:text="${post.userId}"></span>)
+    </li>
+</ul>
+
+<h2>새 글 작성</h2>
+<form th:action="@{/posts}" method="post">
+    <label>사용자 ID: <input type="number" name="userId" required /></label><br/>
+    <label>제목: <input type="text" name="title" required /></label><br/>
+    <label>내용: <textarea name="content" rows="5" cols="30" required></textarea></label><br/>
+    <button type="submit">작성</button>
+</form>
+</body>
+</html>

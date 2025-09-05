@@ -4,17 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDate;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
-    private int userId;        // 기본 키 (PK), 데이터베이스에서 `user_id` 컬럼과 매핑
-    private String userType;    // 관리자 또는 일반 유저 구분
-    private String name;        // 이름
-    private String password;    // 암호화된 비밀번호
-    private String email;       // 이메일
+    private int id;
+    private String username;
+    private String email;
+    private String password;
+    private String role;
+    private int points;
 }
