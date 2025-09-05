@@ -19,10 +19,10 @@ public class UserRepository {
 
     // 회원정보 저장
     public User save(User user) {
-        String sql = "INSERT INTO user (userType, name, password, email) " +
+        String sql = "INSERT INTO user (user_type, name, password, email) " +
                 " VALUES (?,?,?,?)";
         int result = jdbc.update(sql,
-                user.getUserType(),
+                user.getUser_type(),
                 user.getName(),
                 user.getPassword(),
                 user.getEmail()
@@ -62,8 +62,8 @@ public class UserRepository {
     private RowMapper<User> userRowMapper() {
         return (rs, rowNum) -> {
             return new User(
-                    rs.getInt("userId"),
-                    rs.getString("userType"),
+                    rs.getInt("user_id"),
+                    rs.getString("user_type"),
                     rs.getString("name"),
                     rs.getString("password"),
                     rs.getString("email")
@@ -73,10 +73,10 @@ public class UserRepository {
 
     // 수정
     public void update(User user) {
-        String sql = "UPDATE user SET password = ? WHERE userId = ?";
+        String sql = "UPDATE user SET password = ? WHERE user_id = ?";
         jdbc.update(sql,
                 user.getPassword(),
-                user.getUserId()
+                user.getUser_id()
         );
     }
 
