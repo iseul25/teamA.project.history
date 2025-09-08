@@ -13,25 +13,9 @@
 
 <body>
     <div id="container">
-        <!-- 로고 -->
-        <!-- <div id="logo">
-            <img src="img/logo4.jpg" alt="logo">
-        </div> -->
-        <div id="login">
-            <ul>
-                <li><a href="">관리자 페이지</a></li>
-                <li><a href="">마이페이지</a></li>
-                <li><a href="">로그아웃</a></li>
-            </ul>
-        </div>
         <header>
+            <img src="img/logo1.png" alt="logo">
             <h1>중등 역사 교육</h1>
-            <ul>
-                <li><a href="">학습하기</a></li>
-                <li><a href="">퀴즈풀기</a></li>
-                <li><a href="">포인트 상점</a></li>
-                <li><a href="">FAQ</a></li>
-            </ul>
         </header>
         <div id="bgImg">
             <div id="mainScreen" class="carousel slide" data-ride="carousel">
@@ -62,49 +46,111 @@
                 </a>
             </div>
         </div>
-        <div id="bgImg2">
-            <div id="box">
-                <div id="box1">
-                    <ul>
-                        <li>
-                            <h3>오늘의 학습</h3>
-                        </li>
-                        <li><a href="">역사 학습 1</a></li>
-                        <li><a href="">역사 학습 2</a></li>
-                        <li><a href="">역사 학습 3</a></li>
-                    </ul>
+        <div id="box">
+            <div id="box1">
+                <div id="studyBox">
+                    <a href="" style="color: #333;">학습하기</a>
                 </div>
-                <div id="box2">
-                    <ul>
-                        <li>
-                            <h3>오늘의 퀴즈</h3>
-                        </li>
-                        <li><a href="">퀴즈 1</a></li>
-                        <li><a href="">퀴즈 2</a></li>
-                        <li><a href="">퀴즈 3</a></li>
-                    </ul>
+                <div id="quizBox">
+                    <a href="" onclick="updatePoint('quiz')" style="color: #333;">퀴즈풀기</a>
                 </div>
-                <div id="box3">
-                <ul>
-                    <li>
-                        <h3>공지사항</h3>
-                    </li>
-                    <li><a href="">공지사항1</a></li>
-                    <li><a href="">공지사항2</a></li>
-                    <li><a href="">공지사항3</a></li>
-                </ul>
+                <div id="attendBox">
+                    <a href="" style="color: #333;">출석하기</a>
+                </div>
             </div>
+            <div id="box2">
+                <div id="pointBox">
+                    <a href="" style="color: #333;">포인트 상점</a>
+                </div>
+                <div id="faqBox">
+                    <a href="" style="color: #333;">FAQ</a>
+                </div>
+                <div id="noticeBox">
+                    <a href="" style="color: #333;">공지사항</a>
+                </div>
             </div>
-            <div id="tel">
-                <ul>
-                    <li>대표전화: 042-222-2402</li>
-                    <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
-                    <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
-                    <li>© 2025 중등 역사 교육. All rights reserved.</li>
-                </ul>
+        </div>
+        <!-- <div id="loginBox">
+            <h3>Login</h3>
+            <div id="inputRow">
+                <div id="inputBox">
+                    <input type="text" id="id" placeholder="아이디를 입력해 주세요."><br>
+                    <input type="text" id="pw" placeholder="비밀번호를 입력해 주세요.">
+                </div>
+                <div id="btnBox">
+                    <button id="lgBox" onclick="login()">로그인</button>
+                </div><br>
             </div>
+            <button id="suBox" onclick="signUp()">회원가입</button>
+        </div> -->
+        <div id="welcomeBox" style="display: none;"> <!-- none 풀면 화면에 표시 -->
+            <img src="img/logo4.jpg" alt="logo4" width="75px">
+            <h4 id="welcomeMsg">학생님 안녕하세요!</h4>
+            <p id="pointMsg">보유 포인트: 10점</p>
+            <div id="mpBox">
+                <div id="myPage">
+                    <a href="" style="color: #333;">마이페이지</a>
+                </div>
+            </div>
+        </div>
+        <div id="tel">
+            <ul>
+                <li>대표전화: 042-222-2402</li>
+                <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+                <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+                <li>© 2025 중등 역사 교육. All rights reserved.</li>
+            </ul>
         </div>
     </div>
 </body>
+<script>
+    async function login() {
+        const id = document.getElementById("id").value;
+        const pw = document.getElementById("pw").value;
+
+        const response = await fetch("http://localhost:3000/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id, pw })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            // 로그인 박스 숨기고 웰컴 박스 표시
+            document.getElementById("loginBox").style.display = "none";
+            document.getElementById("welcomeBox").style.display = "block";
+
+            // 사용자 이름 표시
+            document.getElementById("welcomeMsg").innerText = result.name + "님 안녕하세요!";
+
+            // 사용자 포인트 표시
+            document.getElementById("pointMsg").innerText = "보유 포인트: " + result.point + "점";
+
+            // 아이디 저장 (포인트 갱신 때 사용)
+            localStorage.setItem("userId", id);
+        } else {
+            alert(result.message);
+        }
+
+        // 포인트 업데이트 함수
+        async function updatePoint(activity) {
+            const userId = localStorage.getItem("userId");
+
+            const response = await fetch("http://localhost:3000/updatePoint", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: userId, activity }) // 어떤 활동인지 서버에 전달
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                document.getElementById("pointMsg").innerText =
+                    "포인트: " + result.point + "점"; // 최신 포인트 반영
+            } else {
+                alert("포인트 갱신 실패: " + result.message);
+            }
+        }
+    }
+</script>
 
 </html>
