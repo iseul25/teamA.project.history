@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 회원 등록</title>
+    <script>
+        function validateForm() {
+            var form = document.forms["userForm"];
+            var name = form["name"].value;
+            var email = form["email"].value;
+            var password = form["password"].value;
+
+            if (name == "") {
+                alert("이름을 입력해주세요.");
+                return false;
+            }
+            if (email == "") {
+                alert("이메일을 입력해주세요.");
+                return false;
+            }
+            if (password == "") {
+                alert("비밀번호를 입력해주세요.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</head>
+<body>
+<h2>관리자 회원 등록</h2>
+<!-- 폼에 name 속성을 추가하고 onsubmit 이벤트를 연결합니다. -->
+<form name="userForm" th:action="@{/admin/user/register}" th:object="${user}" method="post" onsubmit="return validateForm()">
+    <p>이름: <input type="text"  th:field="*{name}" /></p>
+    <p>이메일 : <input type="text" th:field="*{email}" /></p>
+    <p>비번: <input type="password" th:field="*{password}" /></p>
+    <button type="submit">등록하기</button>
+</form>
+<div th:if="${successMessage}" th:text="${successMessage}" style="color:green"></div>
+<div th:if="${errorMessage}" th:text="${errorMessage}" style="color:red"></div>
+
+<br>
+<!-- 뒤로가기 버튼을 관리자 페이지로 이동하는 링크로 변경 -->
+<a href="/admin/page">관리자 페이지로 돌아가기</a>
+
+</body>
+</html>
