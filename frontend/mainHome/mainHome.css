@@ -7,19 +7,21 @@
         }
 
         body {
-            background-color: #faf0d8;
-        }
-
-        #bgImg {
+            /* background-color: #faf0d8; */
             background-image: url(../img/mainBg1.png);
         }
+
+        /* #bgImg {
+            background-image: url(../img/mainBg1.png);
+        } */
 
         /* header */
         header {
             display: flex;
-            background-color: #eed8ba;
+            /* background-color: #eed8ba; */
             justify-content: flex-start;
             align-items: center;
+            margin-top: 30px;
             padding: 0 400px;
             width: 100%;
             box-sizing: border-box;
@@ -47,6 +49,7 @@
             max-width: 1100px;
             height: 500px;
             margin: 0 auto;
+            margin-top: 20px;
             border-radius: 10px;
             box-shadow: 0 2px 2px #333;
             overflow: hidden;
@@ -65,6 +68,7 @@
             width: 60%;
             /* height: 100px; */
             margin: 35px 360px;
+            margin-top: 50px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -156,7 +160,7 @@
             justify-content: center;
             align-items: center;
             background-color: #EEE7DA;
-            margin-top: 80px;
+            margin-top: 20px;
             padding: 0 200px;
         }
 
