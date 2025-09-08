@@ -13,24 +13,9 @@
 
 <body>
     <div id="container">
-        <!-- 로고 -->
-        <!-- <div id="logo">
-            <img src="img/logo4.jpg" alt="logo">
-        </div> -->
-        <div id="login">
-            <ul>
-                <li><a href="">로그인</a></li>
-                <li><a href="">회원가입</a></li>
-            </ul>
-        </div>
         <header>
+            <img src="img/logo1.png" alt="logo">
             <h1>중등 역사 교육</h1>
-            <ul>
-                <li><a href="">학습하기</a></li>
-                <li><a href="">퀴즈풀기</a></li>
-                <li><a href="">포인트 상점</a></li>
-                <li><a href="">FAQ</a></li>
-            </ul>
         </header>
         <div id="bgImg">
             <div id="mainScreen" class="carousel slide" data-ride="carousel">
@@ -61,38 +46,42 @@
                 </a>
             </div>
         </div>
-
         <div id="box">
             <div id="box1">
-                <ul>
-                    <li>
-                        <h3>오늘의 학습</h3>
-                    </li>
-                    <li><a href="">역사 학습 1</a></li>
-                    <li><a href="">역사 학습 2</a></li>
-                    <li><a href="">역사 학습 3</a></li>
-                </ul>
+                <div id="studyBox">
+                    <a href="" style="color: #333;">학습하기</a>
+                </div>
+                <div id="quizBox">
+                    <a href="" style="color: #333;">퀴즈풀기</a>
+                </div>
+                <div id="attendBox">
+                    <a href="" style="color: #333;">출석하기</a>
+                </div>
             </div>
             <div id="box2">
-                <ul>
-                    <li>
-                        <h3>오늘의 퀴즈</h3>
-                    </li>
-                    <li><a href="">퀴즈 1</a></li>
-                    <li><a href="">퀴즈 2</a></li>
-                    <li><a href="">퀴즈 3</a></li>
-                </ul>
+                <div id="pointBox">
+                    <a href="" style="color: #333;">포인트 상점</a>
+                </div>
+                <div id="faqBox">
+                    <a href="" style="color: #333;">FAQ</a>
+                </div>
+                <div id="noticeBox">
+                    <a href="" style="color: #333;">공지사항</a>
+                </div>
             </div>
-            <div id="box3">
-                <ul>
-                    <li>
-                        <h3>공지사항</h3>
-                    </li>
-                    <li><a href="">공지사항1</a></li>
-                    <li><a href="">공지사항2</a></li>
-                    <li><a href="">공지사항3</a></li>
-                </ul>
+        </div>
+        <div id="loginBox">
+            <h3>Login</h3>
+            <div id="inputRow">
+                <div id="inputBox">
+                    <input type="text" id="id" placeholder="아이디를 입력해 주세요."><br>
+                    <input type="text" id="pw" placeholder="비밀번호를 입력해 주세요.">
+                </div>
+                <div id="btnBox">
+                    <button id="lgBox" onclick="login()">로그인</button>
+                </div><br>
             </div>
+            <button id="suBox" onclick="signUp()">회원가입</button>
         </div>
         <div id="tel">
             <ul>
