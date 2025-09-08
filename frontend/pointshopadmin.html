@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 상품 관리</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #faf0d8;
+        }
+
+        header {
+            background-color: #EEE3CB;
+            color: #333;
+            padding: 1em;
+            text-align: center;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            text-decoration: none;
+            background-color: #ff9100;
+            color: #333;
+            padding: 9px 13px;
+            border-radius: 4px;
+            font-size: 15px;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        form input,
+        form button {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 14px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f5f5f5;
+        }
+
+        button.edit,
+        button.delete {
+            padding: 6px 10px;
+            margin: 0 4px;
+            font-size: 13px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button.edit {
+            background-color: #2196f3;
+            color: white;
+        }
+
+        button.delete {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>상품 관리</h1>
+        <a href="mainindex.html" class="back-button">처음으로</a>
+    </header>
+
+    <main>
+        <section class="add-product">
+            <h2>상품 등록</h2>
+            <form id="productForm">
+                <input type="text" id="productName" placeholder="상품명" required>
+                <input type="number" id="productPrice" placeholder="포인트 가격" required>
+                <input type="text" id="productImage" placeholder="이미지 경로 (예: img/voucher5.png)" required>
+                <button type="submit">상품 추가</button>
+            </form>
+        </section>
+
+        <section class="product-list">
+            <h2>상품 목록</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>이미지</th>
+                        <th>상품명</th>
+                        <th>포인트</th>
+                        <th>수정 / 삭제</th>
+                    </tr>
+                </thead>
+                <tbody id="productTableBody">
+                    <!-- JavaScript로 상품 목록 출력 -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script>
+        // 샘플 초기 데이터
+        let products = [
+            { name: "문화상품권 50000원", price: 500, image: "img/voucher5.png" },
+            { name: "문화상품권 30000원", price: 300, image: "img/voucher3.png" },
+            { name: "문화상품권 10000원", price: 100, image: "img/voucher1.png" },
+            { name: "커피교환권", price: 50, image: "img/icecoffee.png" }
+        ];
+
+        const form = document.getElementById('productForm');
+        const tableBody = document.getElementById('productTableBody');
+
+        // 상품 목록 렌더링
+        function renderProducts() {
+            tableBody.innerHTML = "";
+            products.forEach((product, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+          <td><img src="${product.image}" alt="${product.name}" width="80"></td>
+          <td>${product.name}</td>
+          <td>${product.price}점</td>
+          <td>
+            <button class="edit" onclick="editProduct(${index})">수정</button>
+            <button class="delete" onclick="deleteProduct(${index})">삭제</button>
+          </td>
+        `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // 상품 추가
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const name = document.getElementById("productName").value.trim();
+            const price = parseInt(document.getElementById("productPrice").value);
+            const image = document.getElementById("productImage").value.trim();
+
+            if (name && price && image) {
+                products.push({ name, price, image });
+                renderProducts();
+                form.reset();
+            }
+        });
+
+        // 상품 삭제
+        function deleteProduct(index) {
+            if (confirm("정말 삭제하시겠습니까?")) {
+                products.splice(index, 1);
+                renderProducts();
+            }
+        }
+
+        // 상품 수정
+        function editProduct(index) {
+            const product = products[index];
+            const newName = prompt("상품명을 수정하세요:", product.name);
+            const newPrice = prompt("상품 가격을 수정하세요:", product.price);
+            const newImage = prompt("상품 사진을 수정하세요:", product.image);
+
+            if (newName && newPrice && newImage) {
+                products[index] = {
+                    name: newName,
+                    price: parseInt(newPrice),
+                    image: newImage
+                };
+                renderProducts();
+            }
+        }
+
+        // 페이지 로드 시 렌더링
+        renderProducts();
+    </script>
+</body>
+
+</html>
