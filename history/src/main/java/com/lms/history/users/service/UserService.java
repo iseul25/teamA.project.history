@@ -3,7 +3,6 @@ package com.lms.history.users.service;
 import com.lms.history.users.entity.User;
 import com.lms.history.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,8 +24,8 @@ public class UserService {
         // 중복 회원 검증
         validateDuplicateUser(user);
 
-        // user_type을 'user'로 설정
-        user.setUser_type("user");
+        // user_type을 'USER'로 설정
+        user.setUser_type("USER");
 
         userRepository.save(user);
         return user.getEmail();
@@ -46,9 +45,9 @@ public class UserService {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isPresent() && userOptional.get().getPassword().equals(password)) {
             User user = userOptional.get();
-            // user_type이 null이거나 비어있을 경우 세션 객체에 'user'로 설정
+            // user_type이 null이거나 비어있을 경우 세션 객체에 'USER'로 설정
             if (user.getUser_type() == null || user.getUser_type().isEmpty()) {
-                user.setUser_type("user");
+                user.setUser_type("USER");
             }
             return Optional.of(user);
         }
@@ -69,5 +68,25 @@ public class UserService {
 
     public void deleteByEmail(String email) {
         userRepository.deleteByEmail(email);
+    }
+
+    /**
+     * 모든 사용자의 목록을 조회합니다.
+     *
+     * @return 모든 사용자의 리스트
+     */
+    public List<User> findAllUsers() {
+        return userRepository.findAllUsers();
+    }
+
+    public int countAllUsers() {
+        return userRepository.countAllUsers();
+    }
+
+    /**
+     * 페이징 처리된 회원 목록을 반환
+     */
+    public List<User> findUsersByPage(int page, int size) {
+        return userRepository.findUsersByPage(page, size);
     }
 }

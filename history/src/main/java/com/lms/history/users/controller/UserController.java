@@ -9,10 +9,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class UserController {
+    private static final int PAGE_SIZE = 10;
+
     private final UserService userService;
 
     public UserController(UserService userService) {
@@ -31,10 +34,10 @@ public class UserController {
                           RedirectAttributes message) {
         try {
             userService.join(user);
-            return "redirect:/"; // 가입 성공 시 메인 화면으로 리다이렉트
+            return "redirect:/";
         }catch (IllegalStateException e){
             message.addFlashAttribute("errorMessage",e.getMessage());
-            return "redirect:/user/add"; // 가입 실패 시 현재 페이지로 리다이렉트
+            return "redirect:/user/add";
         }
     }
 
@@ -58,7 +61,7 @@ public class UserController {
         }else {
             redirectAttributes.addFlashAttribute("errorMessage",
                     "아이디 또는 비밀번호가 맞지 않습니다.");
-            return "redirect:/user/login"; // 경로 수정: /users/login -> /user/login
+            return "redirect:/user/login";
         }
     }
 
@@ -71,31 +74,61 @@ public class UserController {
         return "redirect:/";
     }
 
-    @GetMapping("/user/list")
-    public String userList(Model model){
-        System.out.println("UserController userList");
-        model.addAttribute("users",userService.findAll());
-        return "users/userList";
+    // 마이페이지
+    @GetMapping("/user/mypage")
+    public String mypage(HttpSession session, Model model) {
+        Object loginUser = session.getAttribute("loginUser");
+        if (loginUser != null) {
+            model.addAttribute("loginUser", (User) loginUser);
+            return "users/myPage";
+        } else {
+            return "redirect:/user/login";
+        }
     }
 
-    @GetMapping("/user/edit/{email}") // 경로 변수 수정: {id} -> {email}
-    public String userEditForm(@PathVariable String email, Model model){
-        User user = (User) userService.findByEmail(email).orElseThrow(
-                ()->new IllegalArgumentException("Invalid user email ")); // 오타 수정: Invaild -> Invalid
-        model.addAttribute("user",user);
-        System.out.println("user : "+user);
+    // 회원 정보 수정 폼 (GET)
+    @GetMapping("/user/edit/{email}")
+    public String userEditForm(@PathVariable String email, Model model, HttpSession session){
+        Object loginUserObject = session.getAttribute("loginUser");
+        if (!(loginUserObject instanceof User)) {
+            return "redirect:/user/login";
+        }
+        User userToEdit = userService.findByEmail(email).orElseThrow(
+                ()->new IllegalArgumentException("Invalid user email "));
+
+        if (!"A".equals(((User) loginUserObject).getUser_type()) && !((User) loginUserObject).getEmail().equals(userToEdit.getEmail())) {
+            return "redirect:/user/mypage";
+        }
+
+        model.addAttribute("user", userToEdit);
         return "users/editUser";
     }
 
+    // 회원 정보 수정을 처리하는 메서드 (POST)
     @PostMapping("/user/edit")
-    public String userEdit(@ModelAttribute User user){
+    public String userEdit(@ModelAttribute User user, HttpSession session){
+        Object loginUserObject = session.getAttribute("loginUser");
+        if (!(loginUserObject instanceof User)) {
+            return "redirect:/user/login";
+        }
         userService.update(user);
-        return "redirect:/user/list";
+
+        if ("A".equals(((User) loginUserObject).getUser_type())) {
+            return "redirect:/admin/users";
+        }
+        return "redirect:/user/mypage";
     }
 
+    // 회원 삭제 처리
     @PostMapping("/user/delete")
-    public String deleteUser(@RequestParam String email) {
+    public String deleteUser(@RequestParam String email, HttpSession session, RedirectAttributes redirectAttributes) {
+        Object loginUserObject = session.getAttribute("loginUser");
+        if (!(loginUserObject instanceof User) || !"A".equals(((User) loginUserObject).getUser_type())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "삭제 권한이 없습니다.");
+            return "redirect:/user/login";
+        }
+
         userService.deleteByEmail(email);
-        return "redirect:/user/list";
+        return "redirect:/admin/users";
     }
 }

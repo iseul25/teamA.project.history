@@ -19,8 +19,7 @@ public class UserRepository {
 
     // 회원정보 저장
     public User save(User user) {
-        String sql = "INSERT INTO user (user_type, name, password, email) " +
-                " VALUES (?,?,?,?)";
+        String sql = "INSERT INTO users (user_type, name, password, email) VALUES (?,?,?,?)";
         int result = jdbc.update(sql,
                 user.getUser_type(),
                 user.getName(),
@@ -34,8 +33,9 @@ public class UserRepository {
         }
     }
 
+    // 이메일로 회원 조회
     public Optional<User> findByEmail(String email) {
-        String sql = "SELECT * FROM user WHERE email = ?";
+        String sql = "SELECT * FROM users WHERE email = ?";
         try {
             User user = jdbc.queryForObject(sql, userRowMapper(), email);
             return Optional.ofNullable(user);
@@ -44,8 +44,9 @@ public class UserRepository {
         }
     }
 
+    // 이름으로 회원 조회 (사용하지 않는 경우 삭제 가능)
     public Optional<User> findByName(String name) {
-        String sql = "SELECT * FROM user WHERE name = ?";
+        String sql = "SELECT * FROM users WHERE name = ?";
         try {
             User user = jdbc.queryForObject(sql, userRowMapper(), name);
             return Optional.ofNullable(user);
@@ -54,35 +55,71 @@ public class UserRepository {
         }
     }
 
+    // ID로 회원 조회
+    public Optional<User> findById(Long id) {
+        String sql = "SELECT * FROM users WHERE user_id = ?";
+        try {
+            User user = jdbc.queryForObject(sql, userRowMapper(), id);
+            return Optional.ofNullable(user);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    // 모든 회원 목록 조회
     public List<User> findAll() {
-        String sql = "SELECT * FROM user";
+        String sql = "SELECT * FROM users";
         return jdbc.query(sql, userRowMapper());
     }
 
+    // 관리자 페이지에 필요한 회원 목록 조회
+    public List<User> findAllUsers() {
+        String sql = "SELECT user_id, email, user_type, name FROM users";
+        return jdbc.query(sql, userRowMapper());
+    }
+
+    // 총 회원 수 반환
+    public int countAllUsers() {
+        String sql = "SELECT COUNT(*) FROM users";
+        return jdbc.queryForObject(sql, Integer.class);
+    }
+
+    // 페이징 처리된 회원 목록 반환
+    public List<User> findUsersByPage(int page, int size) {
+        String sql = "SELECT * FROM users LIMIT ? OFFSET ?";
+        int offset = (page - 1) * size;
+        return jdbc.query(sql, userRowMapper(), size, offset);
+    }
+
+    // 데이터베이스 컬럼을 User 객체에 매핑
     private RowMapper<User> userRowMapper() {
         return (rs, rowNum) -> {
-            return new User(
-                    rs.getInt("user_id"),
-                    rs.getString("user_type"),
-                    rs.getString("name"),
-                    rs.getString("password"),
-                    rs.getString("email")
-            );
+            User user = new User();
+            //user.setUserId(rs.getInt("user_id"));
+            user.setEmail(rs.getString("email"));
+            // user_type 필드를 그대로 사용
+            user.setUser_type(rs.getString("user_type"));
+            user.setName(rs.getString("name"));
+            user.setPassword(rs.getString("password"));
+            // 필요한 경우 주석 해제하여 사용
+            // user.setSignDay(rs.getDate("signDay").toLocalDate());
+            // user.setPoints(rs.getInt("points"));
+            return user;
         };
     }
 
     // 수정
     public void update(User user) {
-        String sql = "UPDATE user SET password = ? WHERE user_id = ?";
+        String sql = "UPDATE users SET password = ? WHERE email = ?";
         jdbc.update(sql,
                 user.getPassword(),
-                user.getUser_id()
+                user.getEmail()
         );
     }
 
     // 삭제
     public void deleteByEmail(String email) {
-        String sql = "DELETE FROM user WHERE email = ?";
+        String sql = "DELETE FROM users WHERE email = ?";
         jdbc.update(sql, email);
     }
 }
