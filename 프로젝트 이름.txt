@@ -1,0 +1,95 @@
+사용자 관련 테이블
+1. users (사용자 정보)
+user_id (PK=프라이머리 키)
+user_type (관리자/일반유저 구분)
+name (이름)
+password (비번)
+email (이메일)
+date(가입일)
+
+2. user_profiles (개인정보 및 정보수정)
+profile_id (PK)
+user_id (FK=외래 키/Users)
+name
+password
+email
+
+
+활동기록 관련 테이블
+1. user_activities (관리자/일반유저 활동 기록)
+activity_id (PK)
+user_id (FK/Users)
+activity_type(관리자/일반유저 활동 내역)
+activity_date (활동일자)
+
+
+출석관리 테이블
+1. user_attendance (출석 기록)
+attendance_id (PK)
+user_id (FK/Users)
+attendance_date (출석일자)
+attendance? (출석/결석 상태 등록)
+
+2. user_attendance_stats (출석 통계)
+user_id (PK, FK/Users)
+total_days (총 출석일)
+attended_days (출석한 일수)
+absented_days (결석한 일수)
+
+
+게시글 관련 테이블
+1. posts (게시글)
+post_id (PK)
+user_id (FK/Users)
+title (게시글 제목)
+content (게시글 내용)
+created(게시글 등록 일자)
+updated(게시글 수정 일자)
+
+2. post_comments (댓글)
+comment_id (PK)
+post_id (FK/Posts)
+user_id (FK/Users)
+content (댓글 내용)
+created (댓글 작성 일자)
+
+
+퀴즈 관련 테이블
+1. quizzes (퀴즈)
+quiz_id (PK)
+imgurl (퀴즈에 쓰일 이미지 링크)
+question (퀴즈의 질문 내용)
+options (객관식 선택지(사용자에게 보여질 선택지 목록))
+quiz_point (점수 배정)
+correct_answer (정답을 저장)
+
+2. quiz_attempts (퀴즈 응시 기록)
+attempt_id (PK)
+user_id (FK/Users)
+quiz_id (FK/Quizzes)
+selected (사용자가 선택한 답)
+correct (정답여부)
+score (점수)
+attempt_time (응시일자)
+
+
+포인트 관련 테이블
+1. points (포인트 적립/차감 내역)
+point_id (PK)
+user_id (FK/Users)
+points (총량)
+reason (포인트 적립/차감 사유)
+date(적립/차감 일시)
+
+2. point_shop (포인트 상점)
+item_id (PK)
+item_name(상품 이름)
+description(상품 설명)
+cost(가격)
+
+3. point_transactions (포인트 사용 내역)
+transaction_id (PK)
+user_id (FK/Users)
+item_id (FK/PointShop, 구매한 상품)
+points_deducted (사용된 포인트의 양)
+transaction_date(구입일자)
