@@ -1,3 +1,4 @@
+
 -- --------------------------------------------------------
 -- 호스트:                          127.0.0.1
 -- 서버 버전:                        8.4.5 - MySQL Community Server - GPL
@@ -19,7 +20,7 @@
 CREATE DATABASE IF NOT EXISTS `history` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `history`;
 
--- 테이블 history.point 구조 내보내기
+-- 테이블 history.point(포인트) 구조 내보내기
 CREATE TABLE IF NOT EXISTS `point` (
   `point_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL,
@@ -31,9 +32,10 @@ CREATE TABLE IF NOT EXISTS `point` (
 
 -- 테이블 데이터 history.point:~0 rows (대략적) 내보내기
 
--- 테이블 history.point_shop 구조 내보내기
+-- 테이블 history.point_shop(포인트 상점) 구조 내보내기
 CREATE TABLE IF NOT EXISTS `point_shop` (
   `item_id` int NOT NULL AUTO_INCREMENT,
+  `imgurl` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `item_name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `cost` int DEFAULT NULL,
   PRIMARY KEY (`item_id`) USING BTREE
@@ -41,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `point_shop` (
 
 -- 테이블 데이터 history.point_shop:~0 rows (대략적) 내보내기
 
--- 테이블 history.point_transactions 구조 내보내기
+-- 테이블 history.point_transactions(포인트 사용 내역) 구조 내보내기
 CREATE TABLE IF NOT EXISTS `point_transactions` (
   `transaction_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL,
@@ -56,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `point_transactions` (
 
 -- 테이블 데이터 history.point_transactions:~0 rows (대략적) 내보내기
 
--- 테이블 history.post 구조 내보내기
+-- 테이블 history.post(게시글) 구조 내보내기
 CREATE TABLE IF NOT EXISTS `post` (
   `post_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL,
@@ -69,9 +71,9 @@ CREATE TABLE IF NOT EXISTS `post` (
   CONSTRAINT `FK_post_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='게시글(학습내용 포함)';
 
--- 테이블 데이터 history.post:~2 rows (대략적) 내보내기
+-- 테이블 데이터 history.post:~0 rows (대략적) 내보내기
 
--- 테이블 history.post_comment 구조 내보내기
+-- 테이블 history.post_comment(댓글글) 구조 내보내기
 CREATE TABLE IF NOT EXISTS `post_comment` (
   `comment_id` int NOT NULL AUTO_INCREMENT,
   `post_id` int NOT NULL DEFAULT '0',
@@ -86,7 +88,7 @@ CREATE TABLE IF NOT EXISTS `post_comment` (
 
 -- 테이블 데이터 history.post_comment:~0 rows (대략적) 내보내기
 
--- 테이블 history.quiz 구조 내보내기
+-- 테이블 history.quiz(퀴즈) 구조 내보내기
 CREATE TABLE IF NOT EXISTS `quiz` (
   `quiz_id` int NOT NULL AUTO_INCREMENT,
   `imgurl` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
@@ -98,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `quiz` (
 
 -- 테이블 데이터 history.quiz:~0 rows (대략적) 내보내기
 
--- 테이블 history.quiz_attempt 구조 내보내기
+-- 테이블 history.quiz_attempt(퀴즈 응시 기록록) 구조 내보내기
 CREATE TABLE IF NOT EXISTS `quiz_attempt` (
   `attempt_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL,
@@ -106,7 +108,7 @@ CREATE TABLE IF NOT EXISTS `quiz_attempt` (
   `selected` int DEFAULT NULL,
   `correct` varchar(50) DEFAULT NULL,
   `score` int DEFAULT NULL,
-  `attempt_time` datetime DEFAULT (now()),
+  `attempt_time` date DEFAULT (now()),
   PRIMARY KEY (`attempt_id`),
   KEY `FK_quizdata_user` (`user_id`),
   KEY `FK_quizdata_quiz` (`quiz_id`),
@@ -116,7 +118,7 @@ CREATE TABLE IF NOT EXISTS `quiz_attempt` (
 
 -- 테이블 데이터 history.quiz_attempt:~0 rows (대략적) 내보내기
 
--- 테이블 history.user 구조 내보내기
+-- 테이블 history.user(사용자 정보) 구조 내보내기
 CREATE TABLE IF NOT EXISTS `user` (
   `user_id` int NOT NULL AUTO_INCREMENT,
   `user_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
@@ -126,9 +128,9 @@ CREATE TABLE IF NOT EXISTS `user` (
   PRIMARY KEY (`user_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='관리자/일반유저';
 
--- 테이블 데이터 history.user:~2 rows (대략적) 내보내기
+-- 테이블 데이터 history.user:~0 rows (대략적) 내보내기
 
--- 테이블 history.user_activities 구조 내보내기
+-- 테이블 history.user_activities(관리자/일반유저 활동 기록) 구조 내보내기
 CREATE TABLE IF NOT EXISTS `user_activities` (
   `activity_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL DEFAULT '0',
@@ -141,7 +143,7 @@ CREATE TABLE IF NOT EXISTS `user_activities` (
 
 -- 테이블 데이터 history.user_activities:~0 rows (대략적) 내보내기
 
--- 테이블 history.user_attendance 구조 내보내기
+-- 테이블 history.user_attendance(출석 기록) 구조 내보내기
 CREATE TABLE IF NOT EXISTS `user_attendance` (
   `attendance_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL,
