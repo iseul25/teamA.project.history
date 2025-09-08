@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `point` (
 -- 테이블 history.point_shop(포인트 상점) 구조 내보내기
 CREATE TABLE IF NOT EXISTS `point_shop` (
   `item_id` int NOT NULL AUTO_INCREMENT,
-  `imgurl` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `img_url` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `item_name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `cost` int DEFAULT NULL,
   PRIMARY KEY (`item_id`) USING BTREE
@@ -161,3 +161,4 @@ CREATE TABLE IF NOT EXISTS `user_attendance` (
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
+
