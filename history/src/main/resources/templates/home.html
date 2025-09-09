@@ -7,8 +7,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <title>중등 역사 교육</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>역사 한 걸음</title>
     <style>
         * {
             margin: 0;
@@ -17,7 +16,7 @@
         }
 
         body {
-            background-image: url(../img/mainBg1.png);
+            background-image: url(img/mainBg1.png);
         }
 
         /* header */
@@ -25,14 +24,15 @@
             display: flex;
             justify-content: flex-start;
             align-items: center;
-            margin-top: 30px;
+            margin-top: 10px;
             padding: 0 400px;
             width: 100%;
             box-sizing: border-box;
         }
 
         header img {
-            width: 50px;
+            width: 25%;
+            border-radius: 20px;
         }
 
         header h1 {
@@ -53,7 +53,7 @@
             max-width: 1100px;
             height: 500px;
             margin: 0 auto;
-            margin-top: 20px;
+            margin-top: 10px;
             border-radius: 10px;
             box-shadow: 0 2px 2px #333;
             overflow: hidden;
@@ -121,13 +121,15 @@
         /* 로그인 box */
         #loginBox {
             width: 270px;
-            height: 195px; /* 높이를 고정하여 크기가 줄어들지 않도록 함 */
+            height: 195px;
+            /* 높이를 고정하여 크기가 줄어들지 않도록 함 */
             background-color: #fcf3e7;
             border: solid 1px #ddd;
             border-radius: 15px;
             box-shadow: 0px 2px 2px #333;
             box-sizing: border-box;
-            padding: 20px; /* 원래 padding을 유지하여 내부 여백 확보 */
+            padding: 20px;
+            /* 원래 padding을 유지하여 내부 여백 확보 */
         }
 
         /* loginBox 내부 콘텐츠를 중앙에 정렬하기 위한 Flexbox 컨테이너 */
@@ -136,7 +138,8 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100%; /* 부모 요소의 전체 높이를 차지 */
+            height: 100%;
+            /* 부모 요소의 전체 높이를 차지 */
             text-align: center;
         }
 
@@ -164,7 +167,8 @@
         }
 
         #inputBox input {
-            width: 172px; /* 너비를 조정하여 합계 240px에 맞춤 */
+            width: 172px;
+            /* 너비를 조정하여 합계 240px에 맞춤 */
             height: 22px;
             padding: 3px 8px;
             border: solid 1px #888;
@@ -185,7 +189,8 @@
         }
 
         #suRow {
-            padding-left: 0; /* 좌측 패딩 제거 */
+            padding-left: 0;
+            /* 좌측 패딩 제거 */
         }
 
         #suBox {
@@ -202,7 +207,8 @@
 
         /* 로그인 에러 메시지가 없을 때도 높이를 유지하기 위한 스타일 */
         .error-message-box {
-            height: 30px; /* 메시지 높이와 동일한 높이 지정 */
+            height: 30px;
+            /* 메시지 높이와 동일한 높이 지정 */
             margin-top: 10px;
             color: #dc3545;
         }
@@ -250,7 +256,7 @@
             justify-content: center;
             align-items: center;
             background-color: #EEE7DA;
-            margin-top: 20px;
+            margin-top: 80px;
             padding: 0 200px;
         }
 
@@ -307,8 +313,7 @@
 
 <div id="container">
     <header>
-        <img src="img/logo1.png" alt="logo">
-        <h1>중등 역사 교육</h1>
+        <img src="img/mainLg2.png" alt="메인 로고">
     </header>
     <div id="bgImg">
         <div id="mainScreen" class="carousel slide" data-ride="carousel">
@@ -376,8 +381,10 @@
                         <h3>Login</h3>
                         <div id="inputRow">
                             <div id="inputBox">
-                                <input type="text" name="email" id="id" placeholder="아이디를 입력해 주세요." onkeypress="handleKeyPress(event)">
-                                <input type="password" name="password" id="pw" placeholder="비밀번호를 입력해 주세요." onkeypress="handleKeyPress(event)">
+                                <input type="text" name="email" id="id" placeholder="아이디를 입력해 주세요."
+                                       onkeypress="handleKeyPress(event)">
+                                <input type="password" name="password" id="pw" placeholder="비밀번호를 입력해 주세요."
+                                       onkeypress="handleKeyPress(event)">
                             </div>
                             <button type="button" id="lgBox" onclick="submitHiddenForm()">로그인</button>
                         </div>
@@ -388,14 +395,15 @@
                         </div>
                         <!-- 로그인 오류 메시지 및 빈 공간 추가 -->
                         <div class="error-message-box">
-                            <p th:if="${loginError == 'notFound'}" style="margin: 0;">존재하지 않는 아이디입니다.<br> 가입하시겠습니까?</p>
+                            <p th:if="${loginError == 'notFound'}" style="margin: 0;">존재하지 않는 아이디입니다.<br> 가입하시겠습니까?
+                            </p>
                             <p th:if="${loginError == 'invalidPassword'}" style="margin: 0;">비밀번호가 틀렸습니다.</p>
                         </div>
                     </li>
                     <!-- 로그인 상태 -->
                     <li th:unless="${session.loginUser == null}" style="list-style: none;">
-                        <span th:text="${session.loginUser.name} + '님, 환영합니다!'"
-                              style="color: #333; font-weight: bold;"></span>
+                            <span th:text="${session.loginUser.name} + '님, 환영합니다!'"
+                                  style="color: #333; font-weight: bold;"></span>
                         <br>
                         <!-- 사용자 유형에 따라 하나의 링크만 표시 -->
                         <a th:if="${session.loginUser.userType == 'A'}" th:href="@{/admin/page}"
@@ -420,4 +428,3 @@
 </div>
 </body>
 </html>
-
