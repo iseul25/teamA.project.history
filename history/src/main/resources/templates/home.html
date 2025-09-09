@@ -14,7 +14,6 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            /* border: solid 1px #ddd; */
         }
 
         body {
@@ -33,7 +32,6 @@
         }
 
         header img {
-            /* border: solid 1px #333; */
             width: 50px;
         }
 
@@ -65,20 +63,34 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* 이미지 비율 유지하면서 꽉 채움 */
+        }
+
+        /* 메인 컨텐츠 영역 */
+        #main-content {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 30px;
+            margin: 50px auto;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        /* 버튼 컨테이너 (왼쪽) */
+        #buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 35px;
         }
 
         /* box 부분 */
         #box1,
         #box2 {
-            /* border: solid 1px #ccc; */
-            width: 60%;
-            margin: 35px 360px;
-            margin-top: 50px;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 35px;
+            width: 100%;
         }
 
         #studyBox,
@@ -99,56 +111,81 @@
             vertical-align: auto;
         }
 
-        #box,
-        #loginBox {
-            /* border: solid 1px #333333; */
-            display: inline-block;
-            vertical-align: middle;
-        }
-
         #box {
-            width: 1000px;
-            justify-content: center;
-            align-items: flex-start;
-            vertical-align: auto;
-            margin: 0 60px;
+            width: 700px;
+            display: flex;
+            flex-direction: column;
+            gap: 35px;
         }
 
         /* 로그인 box */
         #loginBox {
             width: 270px;
-            height: 160px;
+            height: 195px; /* 높이를 고정하여 크기가 줄어들지 않도록 함 */
             background-color: #fcf3e7;
             border: solid 1px #ddd;
             border-radius: 15px;
             box-shadow: 0px 2px 2px #333;
-            text-align: center;
+            box-sizing: border-box;
+            padding: 20px; /* 원래 padding을 유지하여 내부 여백 확보 */
+        }
+
+        /* loginBox 내부 콘텐츠를 중앙에 정렬하기 위한 Flexbox 컨테이너 */
+        #loginStatus {
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            height: 100%; /* 부모 요소의 전체 높이를 차지 */
+            text-align: center;
+        }
+
+        #loginBox ul {
+            padding: 0;
+            margin: 0;
+        }
+
+        #loginBox li {
+            list-style: none;
         }
 
         #inputRow {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
             padding-bottom: 5px;
         }
 
+        #inputBox {
+            display: flex;
+            flex-direction: column;
+            gap: 0px;
+        }
+
+        #inputBox input {
+            width: 172px; /* 너비를 조정하여 합계 240px에 맞춤 */
+            height: 22px;
+            padding: 3px 8px;
+            border: solid 1px #888;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
         #lgBox {
-            /* border: solid 1px #333333; */
             width: 60px;
-            height: 50px;
+            height: 46px;
             font-weight: bold;
-            border: solid 1px #444;
-            border-radius: 10%;
+            border: solid 1px #64a6d7;
+            border-radius: 5px;
             background-color: #cce6f8;
             box-shadow: 0px 1.5px 1.5px #333;
-
+            cursor: pointer;
+            font-size: 12px;
         }
 
         #suRow {
-            padding-left: 11.5px;
+            padding-left: 0; /* 좌측 패딩 제거 */
         }
 
         #suBox {
@@ -163,6 +200,14 @@
             padding-top: 4.5px;
         }
 
+        /* 로그인 에러 메시지가 없을 때도 높이를 유지하기 위한 스타일 */
+        .error-message-box {
+            height: 30px; /* 메시지 높이와 동일한 높이 지정 */
+            margin-top: 10px;
+            color: #dc3545;
+        }
+
+
         .login-link-btn {
             display: block;
             margin-top: 10px;
@@ -175,7 +220,7 @@
         }
 
         .login-link-btn.admin {
-            background-color: #e57373; /* Admin color */
+            background-color: #e57373;
         }
 
         .login-link-btn.admin:hover {
@@ -183,7 +228,7 @@
         }
 
         .login-link-btn.user {
-            background-color: #64b5f6; /* User color */
+            background-color: #64b5f6;
         }
 
         .login-link-btn.user:hover {
@@ -191,7 +236,7 @@
         }
 
         .login-link-btn.logout {
-            background-color: #90a4ae; /* Logout color */
+            background-color: #90a4ae;
         }
 
         .login-link-btn.logout:hover {
@@ -225,9 +270,41 @@
             text-decoration: none;
         }
     </style>
+    <script>
+        function submitHiddenForm() {
+            // 입력값 검증
+            const email = document.getElementById('id').value;
+            const password = document.getElementById('pw').value;
+
+            if (!email || !password) {
+                alert('아이디와 비밀번호를 모두 입력해주세요.');
+                return;
+            }
+
+            // 보이는 input 값을 숨겨진 form으로 복사
+            document.getElementById('hiddenEmail').value = email;
+            document.getElementById('hiddenPassword').value = password;
+
+            // 숨겨진 form 제출
+            document.getElementById('hiddenLoginForm').submit();
+        }
+
+        // Enter 키 이벤트 처리
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                submitHiddenForm();
+            }
+        }
+    </script>
 </head>
 
 <body>
+<!-- 숨겨진 로그인 form -->
+<form id="hiddenLoginForm" th:action="@{/user/login}" method="post" style="display: none;">
+    <input type="text" name="email" id="hiddenEmail">
+    <input type="password" name="password" id="hiddenPassword">
+</form>
+
 <div id="container">
     <header>
         <img src="img/logo1.png" alt="logo">
@@ -262,71 +339,76 @@
             </a>
         </div>
     </div>
-    <div id="box">
-        <div id="box1">
-            <div id="studyBox">
-                <a href="" style="color: #333;">학습하기</a>
+
+    <!-- main-content 컨테이너 추가 -->
+    <div id="main-content">
+        <!-- 두 줄의 버튼을 담는 컨테이너 -->
+        <div id="buttons-container">
+            <div id="box1">
+                <div id="studyBox">
+                    <a href="" style="color: #333;">학습하기</a>
+                </div>
+                <div id="quizBox">
+                    <a href="" style="color: #333;">퀴즈풀기</a>
+                </div>
+                <div id="attendBox">
+                    <a href="" style="color: #333;">출석하기</a>
+                </div>
             </div>
-            <div id="quizBox">
-                <a href="" style="color: #333;">퀴즈풀기</a>
-            </div>
-            <div id="attendBox">
-                <a href="" style="color: #333;">출석하기</a>
+            <div id="box2">
+                <div id="pointBox">
+                    <a href="" style="color: #333;">포인트 상점</a>
+                </div>
+                <div id="faqBox">
+                    <a href="" style="color: #333;">FAQ</a>
+                </div>
+                <div id="noticeBox">
+                    <a href="" style="color: #333;">공지사항</a>
+                </div>
             </div>
         </div>
-        <div id="box2">
-            <div id="pointBox">
-                <a href="" style="color: #333;">포인트 상점</a>
-            </div>
-            <div id="faqBox">
-                <a href="" style="color: #333;">FAQ</a>
-            </div>
-            <div id="noticeBox">
-                <a href="" style="color: #333;">공지사항</a>
-            </div>
-        </div>
-    </div>
-    <!-- 로그인 box 부분 수정 -->
-    <div id="loginBox">
-        <div id="loginStatus">
-            <ul>
-                <!-- 비로그인 상태 -->
-                <li th:if="${session.loginUser == null}" style="list-style: none;">
-                    <h3>Login</h3>
-                    <div id="inputRow">
-                        <div id="inputBox">
-                            <form th:action="@{/user/login}" method="post">
-                                <input type="text" name="email" id="id" placeholder="아이디를 입력해 주세요."><br>
-                                <input type="password" name="password" id="pw" placeholder="비밀번호를 입력해 주세요.">
-                                <button type="submit" id="lgBox">로그인</button>
-                            </form>
+        <!-- 로그인 box 부분 - 버튼 컨테이너 옆에 배치 -->
+        <div id="loginBox">
+            <div id="loginStatus">
+                <ul>
+                    <!-- 비로그인 상태 -->
+                    <li th:if="${session.loginUser == null}" style="list-style: none;">
+                        <h3>Login</h3>
+                        <div id="inputRow">
+                            <div id="inputBox">
+                                <input type="text" name="email" id="id" placeholder="아이디를 입력해 주세요." onkeypress="handleKeyPress(event)">
+                                <input type="password" name="password" id="pw" placeholder="비밀번호를 입력해 주세요." onkeypress="handleKeyPress(event)">
+                            </div>
+                            <button type="button" id="lgBox" onclick="submitHiddenForm()">로그인</button>
                         </div>
-                    </div>
-                    <div id="suRow">
-                        <div id="suBox">
-                            <a th:href="@{/user/add}" style="color: #333;">회원가입</a>
+                        <div id="suRow">
+                            <div id="suBox">
+                                <a th:href="@{/user/add}" style="color: #333;">회원가입</a>
+                            </div>
                         </div>
-                    </div>
-                    <!-- 로그인 오류 메시지 및 회원가입 버튼 추가 -->
-                    <div th:if="${loginError == 'notFound'}" style="margin-top: 10px; color: #dc3545;">
-                        <p style="margin-bottom: 5px;">없는 아이디입니다. 새로 가입하시겠습니까?</p>
-                    </div>
-                </li>
-                <!-- 로그인 상태 -->
-                <li th:unless="${session.loginUser == null}" style="list-style: none;">
+                        <!-- 로그인 오류 메시지 및 빈 공간 추가 -->
+                        <div class="error-message-box">
+                            <p th:if="${loginError == 'notFound'}" style="margin: 0;">없는 아이디입니다. 가입하시겠습니까?</p>
+                            <p th:if="${loginError == 'invalidPassword'}" style="margin: 0;">비밀번호가 틀렸습니다.</p>
+                        </div>
+                    </li>
+                    <!-- 로그인 상태 -->
+                    <li th:unless="${session.loginUser == null}" style="list-style: none;">
                         <span th:text="${session.loginUser.name} + '님, 환영합니다!'"
                               style="color: #333; font-weight: bold;"></span>
-                    <br>
-                    <!-- 사용자 유형에 따라 하나의 링크만 표시 -->
-                    <a th:if="${session.loginUser.userType == 'A'}" th:href="@{/admin/page}"
-                       class="login-link-btn admin">관리자 페이지</a>
-                    <a th:if="${session.loginUser.userType == 'USER'}" th:href="@{/user/mypage}"
-                       class="login-link-btn user">마이페이지</a>
-                    <a th:href="@{/user/logout}" class="login-link-btn logout">로그아웃</a>
-                </li>
-            </ul>
+                        <br>
+                        <!-- 사용자 유형에 따라 하나의 링크만 표시 -->
+                        <a th:if="${session.loginUser.userType == 'A'}" th:href="@{/admin/page}"
+                           class="login-link-btn admin">관리자 페이지</a>
+                        <a th:if="${session.loginUser.userType == 'USER'}" th:href="@{/user/mypage}"
+                           class="login-link-btn user">마이페이지</a>
+                        <a th:href="@{/user/logout}" class="login-link-btn logout">로그아웃</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
+
     <div id="tel">
         <ul>
             <li>대표전화: 042-222-2402</li>
