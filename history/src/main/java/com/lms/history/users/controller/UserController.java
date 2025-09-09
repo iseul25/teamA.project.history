@@ -9,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -35,16 +34,10 @@ public class UserController {
         try {
             userService.join(user);
             return "redirect:/";
-        }catch (IllegalStateException e){
-            message.addFlashAttribute("errorMessage",e.getMessage());
+        } catch (IllegalStateException e) {
+            message.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/user/add";
         }
-    }
-
-    // login
-    @GetMapping("/user/login")
-    public String loginForm(){
-        return "users/login";
     }
 
     @PostMapping("/user/login")
@@ -52,23 +45,32 @@ public class UserController {
                         @RequestParam("password") String password,
                         HttpServletRequest request,
                         RedirectAttributes redirectAttributes) {
+
+        Optional<User> userOptional = userService.findByEmail(email);
+
+        if (!userOptional.isPresent()) {
+            // 아이디가 없는 경우, home으로 리다이렉트하며 notFound 에러 전달
+            redirectAttributes.addFlashAttribute("loginError", "notFound");
+            return "redirect:/";
+        }
+
         Optional<User> loginResult = userService.login(email, password);
 
         if (loginResult.isPresent()) {
             HttpSession session = request.getSession();
             session.setAttribute("loginUser", loginResult.get());
             return "redirect:/";
-        }else {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "아이디 또는 비밀번호가 맞지 않습니다.");
-            return "redirect:/user/login";
+        } else {
+            // 아이디는 있지만 비밀번호가 틀린 경우, home으로 리다이렉트하며 invalidPassword 에러 전달
+            redirectAttributes.addFlashAttribute("loginError", "invalidPassword");
+            return "redirect:/";
         }
     }
 
     @GetMapping("/user/logout")
     public String logout(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        if(session != null){
+        if (session != null) {
             session.invalidate();
         }
         return "redirect:/";
@@ -88,15 +90,15 @@ public class UserController {
 
     // 회원 정보 수정 폼 (GET)
     @GetMapping("/user/edit/{email}")
-    public String userEditForm(@PathVariable String email, Model model, HttpSession session){
+    public String userEditForm(@PathVariable String email, Model model, HttpSession session) {
         Object loginUserObject = session.getAttribute("loginUser");
         if (!(loginUserObject instanceof User)) {
             return "redirect:/user/login";
         }
         User userToEdit = userService.findByEmail(email).orElseThrow(
-                ()->new IllegalArgumentException("Invalid user email "));
+                () -> new IllegalArgumentException("Invalid user email "));
 
-        if (!"A".equals(((User) loginUserObject).getUser_type()) && !((User) loginUserObject).getEmail().equals(userToEdit.getEmail())) {
+        if (!"A".equals(((User) loginUserObject).getUserType()) && !((User) loginUserObject).getEmail().equals(userToEdit.getEmail())) {
             return "redirect:/user/mypage";
         }
 
@@ -106,14 +108,14 @@ public class UserController {
 
     // 회원 정보 수정을 처리하는 메서드 (POST)
     @PostMapping("/user/edit")
-    public String userEdit(@ModelAttribute User user, HttpSession session){
+    public String userEdit(@ModelAttribute User user, HttpSession session) {
         Object loginUserObject = session.getAttribute("loginUser");
         if (!(loginUserObject instanceof User)) {
             return "redirect:/user/login";
         }
         userService.update(user);
 
-        if ("A".equals(((User) loginUserObject).getUser_type())) {
+        if ("A".equals(((User) loginUserObject).getUserType())) {
             return "redirect:/admin/users";
         }
         return "redirect:/user/mypage";
@@ -123,7 +125,7 @@ public class UserController {
     @PostMapping("/user/delete")
     public String deleteUser(@RequestParam String email, HttpSession session, RedirectAttributes redirectAttributes) {
         Object loginUserObject = session.getAttribute("loginUser");
-        if (!(loginUserObject instanceof User) || !"A".equals(((User) loginUserObject).getUser_type())) {
+        if (!(loginUserObject instanceof User) || !"A".equals(((User) loginUserObject).getUserType())) {
             redirectAttributes.addFlashAttribute("errorMessage", "삭제 권한이 없습니다.");
             return "redirect:/user/login";
         }
