@@ -3,15 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #e9e4d7;
+            background-image: url(../img/mainBg1.png);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #signUpBox {
+            width: 60%;
+            height: 30%;
+            max-width: 400px;
+            text-align: center;
+            padding: 20px;
+            background: #ecebeb;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px #666;
+        }
+
+        #suBox {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        #suBox input, #suBtn {
+            padding: 5px;
+            font-size: 14px;
+            border: solid 1px #555;
+            border-radius: 7px;
+            box-shadow: 0 2px 2px #666;
+        }
+
+        #suBtn {
+            width: 100%;
+            background-color: #bdddfc;
+        }
+
+        #suBtnBox {
+            padding-top: 30px;
+        }
+
+        #footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
-<h2>회원 가입</h2>
-<form th:action="@{/user/add}" th:object="${user}" method="post">
-    <p>이름: <input type="text"  th:field="*{name}" /></p>
-    <p>이메일 : <input type="text" th:field="*{email}" /></p>
-    <p>비번: <input type="password" th:field="*{password}" /></p>
-    <button type="submit">가입하기</button>
-</form>
-<div th:if="${errorMessage}" th:text="${errorMessage}" style="color:red"></div>
+<div id="container">
+    <div id="signUpBox">
+        <h1>회원 가입</h1>
+        <!-- 폼 액션과 객체 바인딩 추가 -->
+        <form th:action="@{/user/add}" th:object="${user}" method="post">
+            <div id="suBox">
+                <!-- 필드 바인딩 추가 -->
+                <input type="text" id="name" th:field="*{name}" placeholder="이름을 입력해 주세요." required>
+                <input type="text" id="email" th:field="*{email}" placeholder="이메일을 입력해 주세요." required>
+                <input type="password" id="pw" th:field="*{password}" placeholder="비밀번호를 입력해 주세요." required>
+            </div>
+            <div id="suBtnBox">
+                <!-- 버튼을 <form> 태그 안으로 이동하고, type="submit"으로 변경 -->
+                <button id="suBtn" type="submit">가입하기</button>
+            </div>
+        </form>
+
+        <!-- 에러 메시지 출력 영역 -->
+        <div th:if="${errorMessage}" th:text="${errorMessage}" style="color:red" class="error-message"></div>
+    </div>
+    <div id="footer">
+        <p>© 2025 중등 역사 교육. All rights reserved.</p>
+    </div>
+</div>
 </body>
 </html>
