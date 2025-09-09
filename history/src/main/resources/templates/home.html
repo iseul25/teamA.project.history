@@ -7,8 +7,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <title>조선시대 LMS 메인 페이지</title>
+    <title>중등 역사 교육</title>
+    <link rel="stylesheet" href="css/style.css">
     <style>
+
         * {
             margin: 0;
             padding: 0;
@@ -17,97 +19,45 @@
         }
 
         body {
-            background-color: #f4f4f4;
-        }
-
-        #bgImg {
-            background-image: url(img/mainBg1.png);
-        }
-
-        /* logo */
-        #logo {
-            width: 150px;
-            margin: 10px auto;
-        }
-
-        #logo img {
-            width: 100%;
-            height: auto;
-            object-fit: contain;
-        }
-
-        /* login */
-        #login {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            background-color: #ddd;
-            padding: 0 200px;
-        }
-
-        #login>ul {
-            display: flex;
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-
-        #login>ul li a {
-            display: block;
-            color: #333333;
-            text-align: center;
-            padding: 5px 8px;
-            text-decoration: none;
-        }
-
-        #login>ul li:first-child {
-            margin-right: 15px;
-            color: #333;
-            font-weight: bold;
+            background-image: url(../img/mainBg1.png);
         }
 
         /* header */
         header {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
-            background-color: #333333;
-            padding: 0 200px;
+            margin-top: 30px;
+            padding: 0 400px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        header img {
+            /* border: solid 1px #333; */
+            width: 50px;
         }
 
         header h1 {
-            color: white;
+            color: #333;
         }
 
-        header>ul {
-            display: flex;
-            /* justify-content: flex-end; */
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-
-        header>ul li a {
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-        }
-
-        header>ul li a:hover {
-            background-color: #111111;
+        header > img, h1 {
+            justify-content: center;
+            align-items: center;
+            vertical-align: middle;
+            margin: 5px;
         }
 
         /* 메인 이미지 */
         #mainScreen {
             width: 100%;
-            max-width: 1000px;
+            max-width: 1100px;
             height: 500px;
-            margin: 20px auto;
+            margin: 0 auto;
+            margin-top: 20px;
             border-radius: 10px;
+            box-shadow: 0 2px 2px #333;
             overflow: hidden;
         }
 
@@ -118,62 +68,105 @@
             /* 이미지 비율 유지하면서 꽉 채움 */
         }
 
-        /* 중간 부분 */
-        #box {
+        /* box 부분 */
+        #box1, #box2 {
+            /* border: solid 1px #ccc; */
+            width: 60%;
+            margin: 35px 360px;
+            margin-top: 50px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 20px;
-            margin: 30px auto;
-            padding: 20px;
-            width: 80%;
-            /* background-color: #333333; */
+            gap: 35px;
         }
 
-        #box1 {
-            width: 33%;
-            height: 200px;
+        #studyBox, #quizBox, #attendBox, #pointBox, #faqBox, #noticeBox {
+            width: 200px;
+            height: 80px;
             padding: 20px;
-            background-color: #ddd;
+            background-color: #fce1be;
+            border: solid 1px #ddd;
             border-radius: 15px;
-            box-shadow: 0 2px 2px #333333;
-        }
-
-        #box1>ul {
-            list-style-type: none;
-        }
-
-        #box1>ul>li>h3 {
+            box-shadow: 0px 2px 2px #333;
+            font-size: 25px;
             text-align: center;
+            vertical-align: auto;
         }
 
-        #box2 {
-            width: 33%;
-            height: 200px;
-            padding: 20px;
-            background-color: #ddd;
+        #box, #loginBox {
+            /* border: solid 1px #333333; */
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        #box {
+            width: 1000px;
+            justify-content: center;
+            align-items: flex-start;
+            vertical-align: auto;
+            margin: 0 60px;
+        }
+
+        /* 로그인 box */
+        #loginBox {
+            width: 270px;
+            height: 160px;
+            background-color: #fcf3e7;
+            border: solid 1px #ddd;
             border-radius: 15px;
-            box-shadow: 0 2px 2px #333333;
-        }
-
-        #box2>ul {
-            list-style-type: none;
-        }
-
-        #box2>ul>li>h3 {
+            box-shadow: 0px 2px 2px #333;
             text-align: center;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #inputRow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            padding-bottom: 5px;
+        }
+
+        #lgBox {
+            /* border: solid 1px #333333; */
+            width: 60px;
+            height: 50px;
+            font-weight: bold;
+            border: solid 1px #444;
+            border-radius: 10%;
+            background-color: #cce6f8;
+            box-shadow: 0px 1.5px 1.5px #333;
+
+        }
+
+        #suRow {
+            padding-left: 11.5px;
+        }
+
+        #suBox {
+            width: 240px;
+            height: 30px;
+            font-weight: bold;
+            border: solid 1px #444;
+            background-color: #fff2da;
+            box-shadow: 0px 1.5px 1.5px #333;
+            justify-content: center;
+            align-items: center;
+            padding-top: 4.5px;
         }
 
         /* 하단 부분 */
         #tel {
             display: flex;
-            justify-content: flex-start;
+            justify-content: center;
             align-items: center;
-            background-color: #ddd;
+            background-color: #EEE7DA;
+            margin-top: 20px;
             padding: 0 200px;
         }
 
-        #tel>ul {
+        #tel > ul {
             display: flex;
             list-style-type: none;
             margin: 0;
@@ -181,9 +174,9 @@
             overflow: hidden;
         }
 
-        #tel>ul li {
+        #tel > ul li {
             display: block;
-            color: #333333;
+            color: #333;
             text-align: center;
             padding: 5px 8px;
             text-decoration: none;
@@ -193,35 +186,9 @@
 
 <body>
 <div id="container">
-    <!-- 로고 -->
-    <div id="logo">
-        <img src="img/logo4.jpg" alt="logo">
-    </div>
-    <div id="login">
-        <ul>
-            <!-- 비로그인 상태 -->
-            <li th:if="${session.loginUser == null}" style="display: flex; align-items: center; gap: 10px;">
-                <a th:href="@{/user/login}">로그인</a>
-                <a th:href="@{/user/add}">회원가입</a>
-            </li>
-            <!-- 로그인 상태 -->
-            <li th:unless="${session.loginUser == null}" style="display: flex; align-items: center;">
-                <span th:text="${session.loginUser.name} + '님, 환영합니다!'" style="margin-right: 15px; color: #333; font-weight: bold;"></span>
-                <!-- 사용자 유형에 따라 하나의 링크만 표시 -->
-                <a th:if="${session.loginUser.userType == 'A'}" th:href="@{/user/list}">관리자 페이지</a>
-                <a th:unless="${session.loginUser.userType == 'A'}" th:href="@{/user/mypage}">마이페이지</a>
-                <a th:href="@{/user/logout}">로그아웃</a>
-            </li>
-        </ul>
-    </div>
     <header>
+        <img src="img/logo1.png" alt="logo">
         <h1>중등 역사 교육</h1>
-        <ul>
-            <li><a href="">학습하기</a></li>
-            <li><a href="">퀴즈</a></li>
-            <li><a href="">포인트 상점</a></li>
-            <li><a href="">FAQ</a></li>
-        </ul>
     </header>
     <div id="bgImg">
         <div id="mainScreen" class="carousel slide" data-ride="carousel">
@@ -254,32 +221,74 @@
     </div>
     <div id="box">
         <div id="box1">
-            <ul>
-                <li>
-                    <h3>오늘의 학습</h3>
-                </li>
-                <li><a href="">역사 학습 1</a></li>
-                <li><a href="">역사 학습 2</a></li>
-                <li><a href="">역사 학습 3</a></li>
-            </ul>
+            <div id="studyBox">
+                <a href="" style="color: #333;">학습하기</a>
+            </div>
+            <div id="quizBox">
+                <a href="" style="color: #333;">퀴즈풀기</a>
+            </div>
+            <div id="attendBox">
+                <a href="" style="color: #333;">출석하기</a>
+            </div>
         </div>
         <div id="box2">
+            <div id="pointBox">
+                <a href="" style="color: #333;">포인트 상점</a>
+            </div>
+            <div id="faqBox">
+                <a href="" style="color: #333;">FAQ</a>
+            </div>
+            <div id="noticeBox">
+                <a href="" style="color: #333;">공지사항</a>
+            </div>
+        </div>
+    </div>
+    <!-- 로그인 box 부분 수정 -->
+    <div id="loginBox">
+        <div id="loginStatus">
             <ul>
-                <li>
-                    <h3>오늘의 퀴즈</h3>
+                <!-- 비로그인 상태 -->
+                <li th:if="${session.loginUser == null}" style="list-style: none;">
+                    <h3>Login</h3>
+                    <div id="inputRow">
+                        <div id="inputBox">
+                            <form th:action="@{/user/login}" method="post">
+                                <input type="text" name="email" id="id" placeholder="아이디를 입력해 주세요."><br>
+                                <input type="password" name="password" id="pw" placeholder="비밀번호를 입력해 주세요.">
+                                <button type="submit" id="lgBox">로그인</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div id="suRow">
+                        <div id="suBox">
+                            <a th:href="@{/user/add}" style="color: #333;">회원가입</a>
+                        </div>
+                    </div>
                 </li>
-                <li><a href="">퀴즈 1</a></li>
-                <li><a href="">퀴즈 2</a></li>
-                <li><a href="">퀴즈 3</a></li>
+                <!-- 로그인 상태 -->
+                <li th:unless="${session.loginUser == null}" style="list-style: none;">
+                        <span th:text="${session.loginUser.name} + '님, 환영합니다!'"
+                              style="color: #333; font-weight: bold;"></span>
+                    <br>
+                    <!-- 사용자 유형에 따라 하나의 링크만 표시 -->
+                    <a th:if="${session.loginUser.userType == 'A'}" th:href="@{/admin/page}" style="display: block; margin-top: 10px;">관리자 페이지</a>
+                    <a th:if="${session.loginUser.userType == 'USER'}" th:href="@{/user/mypage}" style="display: block; margin-top: 10px;">마이페이지</a>
+                    <a th:href="@{/user/logout}" style="display: block; margin-top: 10px;">로그아웃</a>
+                </li>
             </ul>
         </div>
     </div>
     <div id="tel">
         <ul>
-            <li>tel: 010-0000-0000</li>
-            <li>addr: (12345) 대전 중구 중앙로</li>
+            <li>대표전화: 042-222-2402</li>
+            <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+            <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+            <li>© 2025 중등 역사 교육. All rights reserved.</li>
         </ul>
     </div>
 </div>
 </body>
 </html>
+
+
+<!-- 로그인 했을 시 관리자 페이지 가는 버튼 꾸미고, 일반 사용자가 로그인 했을 시에 나오는 마이페이지 버튼도 꾸며주세요 -->
