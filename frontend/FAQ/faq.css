@@ -1,8 +1,60 @@
 body { 
+    margin: 0;
+    padding: 0;
     background-image: url(../img/mainBg1.png);
     /* html과 css를 합치면 img 앞에 '../'는 지워주세요. */
 }
 
+/* header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fcf4e1;
+    padding: 0 140px;
+    box-shadow: 0 2px 20px #e9e4d7;
+}
+
+header img {
+    width: 16%;
+    padding-top: 5px;
+}
+
+header>ul {
+    display: flex;
+    /* justify-content: flex-end; */
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+header>ul li a {
+    display: block;
+    color: #222;
+    text-align: center;
+    justify-content: center;
+    padding: 14px 16px;
+    font-size: 18px;
+    text-decoration: none;
+    transition: transform 0.2s ease, font-size 0.2s ease;
+    /* 애니메이션 효과 */
+}
+
+header>ul li a:hover {
+    transform: scale(1.2); /* 글자 전체 커짐 */
+    color: #000;
+    font-weight: bold;
+}
+
+header> ul li a.active {
+    font-weight: bold;
+    font-size: 1.3em;    /* 글자 크기 키우기 */
+    text-decoration: underline;  /* 밑줄 표시 */
+    color: #000;
+}
+
+/* FAQ */
 #container {
     flex: 1;
     height: 100vh;
@@ -12,20 +64,6 @@ body {
     align-items: center;
     margin: 0;
     padding-top: 150px;
-}
-
-header {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    margin-top: 20px;
-    padding: 0 400px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-header img {
-    width: 20%;
 }
 
 .faq-container {
@@ -80,9 +118,27 @@ header img {
     transform: rotate(180deg);
 }
 
+/* 하단 부분 */
 #footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #EEE7DA;
+    padding: 0 200px;
+}
+
+#footer>ul {
+    display: flex;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#footer>ul li {
+    display: block;
+    color: #333;
     text-align: center;
-    padding: 10px;
-    font-size: 12px;
-    color: #555;
+    padding: 5px 8px;
+    text-decoration: none;
 }
