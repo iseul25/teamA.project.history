@@ -7,7 +7,6 @@
         }
 
         body {
-            /* background-color: #faf0d8; */
             background-image: url(../img/mainBg1.png);
         }
 
@@ -61,7 +60,6 @@
         #box1, #box2 {
             /* border: solid 1px #ccc; */
             width: 60%;
-            /* height: 100px; */
             margin: 35px 360px;
             margin-top: 50px;
             display: flex;
@@ -178,7 +176,6 @@
 
         #mpBox {
             display: flex;
-            /* padding-left: 28px; */
             justify-content: center;
             align-items: center;
             gap: 5px;
