@@ -10,7 +10,6 @@
     <title>중등 역사 교육</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-
         * {
             margin: 0;
             padding: 0;
@@ -42,7 +41,8 @@
             color: #333;
         }
 
-        header > img, h1 {
+        header>img,
+        h1 {
             justify-content: center;
             align-items: center;
             vertical-align: middle;
@@ -69,7 +69,8 @@
         }
 
         /* box 부분 */
-        #box1, #box2 {
+        #box1,
+        #box2 {
             /* border: solid 1px #ccc; */
             width: 60%;
             margin: 35px 360px;
@@ -80,7 +81,12 @@
             gap: 35px;
         }
 
-        #studyBox, #quizBox, #attendBox, #pointBox, #faqBox, #noticeBox {
+        #studyBox,
+        #quizBox,
+        #attendBox,
+        #pointBox,
+        #faqBox,
+        #noticeBox {
             width: 200px;
             height: 80px;
             padding: 20px;
@@ -93,7 +99,8 @@
             vertical-align: auto;
         }
 
-        #box, #loginBox {
+        #box,
+        #loginBox {
             /* border: solid 1px #333333; */
             display: inline-block;
             vertical-align: middle;
@@ -156,6 +163,42 @@
             padding-top: 4.5px;
         }
 
+        .login-link-btn {
+            display: block;
+            margin-top: 10px;
+            padding: 6px 12px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-link-btn.admin {
+            background-color: #e57373; /* Admin color */
+        }
+
+        .login-link-btn.admin:hover {
+            background-color: #d32f2f;
+        }
+
+        .login-link-btn.user {
+            background-color: #64b5f6; /* User color */
+        }
+
+        .login-link-btn.user:hover {
+            background-color: #1976d2;
+        }
+
+        .login-link-btn.logout {
+            background-color: #90a4ae; /* Logout color */
+        }
+
+        .login-link-btn.logout:hover {
+            background-color: #546e7a;
+        }
+
+
         /* 하단 부분 */
         #tel {
             display: flex;
@@ -166,7 +209,7 @@
             padding: 0 200px;
         }
 
-        #tel > ul {
+        #tel>ul {
             display: flex;
             list-style-type: none;
             margin: 0;
@@ -174,7 +217,7 @@
             overflow: hidden;
         }
 
-        #tel > ul li {
+        #tel>ul li {
             display: block;
             color: #333;
             text-align: center;
@@ -264,6 +307,10 @@
                             <a th:href="@{/user/add}" style="color: #333;">회원가입</a>
                         </div>
                     </div>
+                    <!-- 로그인 오류 메시지 및 회원가입 버튼 추가 -->
+                    <div th:if="${loginError == 'notFound'}" style="margin-top: 10px; color: #dc3545;">
+                        <p style="margin-bottom: 5px;">없는 아이디입니다. 새로 가입하시겠습니까?</p>
+                    </div>
                 </li>
                 <!-- 로그인 상태 -->
                 <li th:unless="${session.loginUser == null}" style="list-style: none;">
@@ -271,9 +318,11 @@
                               style="color: #333; font-weight: bold;"></span>
                     <br>
                     <!-- 사용자 유형에 따라 하나의 링크만 표시 -->
-                    <a th:if="${session.loginUser.userType == 'A'}" th:href="@{/admin/page}" style="display: block; margin-top: 10px;">관리자 페이지</a>
-                    <a th:if="${session.loginUser.userType == 'USER'}" th:href="@{/user/mypage}" style="display: block; margin-top: 10px;">마이페이지</a>
-                    <a th:href="@{/user/logout}" style="display: block; margin-top: 10px;">로그아웃</a>
+                    <a th:if="${session.loginUser.userType == 'A'}" th:href="@{/admin/page}"
+                       class="login-link-btn admin">관리자 페이지</a>
+                    <a th:if="${session.loginUser.userType == 'USER'}" th:href="@{/user/mypage}"
+                       class="login-link-btn user">마이페이지</a>
+                    <a th:href="@{/user/logout}" class="login-link-btn logout">로그아웃</a>
                 </li>
             </ul>
         </div>
@@ -289,6 +338,3 @@
 </div>
 </body>
 </html>
-
-
-<!-- 로그인 했을 시 관리자 페이지 가는 버튼 꾸미고, 일반 사용자가 로그인 했을 시에 나오는 마이페이지 버튼도 꾸며주세요 -->
