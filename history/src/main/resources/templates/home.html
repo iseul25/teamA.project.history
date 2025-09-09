@@ -388,7 +388,7 @@
                         </div>
                         <!-- 로그인 오류 메시지 및 빈 공간 추가 -->
                         <div class="error-message-box">
-                            <p th:if="${loginError == 'notFound'}" style="margin: 0;">없는 아이디입니다. 가입하시겠습니까?</p>
+                            <p th:if="${loginError == 'notFound'}" style="margin: 0;">존재하지 않는 아이디입니다.<br> 가입하시겠습니까?</p>
                             <p th:if="${loginError == 'invalidPassword'}" style="margin: 0;">비밀번호가 틀렸습니다.</p>
                         </div>
                     </li>
