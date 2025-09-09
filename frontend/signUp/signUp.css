@@ -7,12 +7,53 @@
 body {
     background-color: #e9e4d7;
     background-image: url(../img/mainBg1.png);
-    /* html과 css를 합쳤을 경우 img 앞에 '../'는 지워주세요. */
     height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
+/* header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fcf4e1;
+    padding: 0 150px;
+    box-shadow: 0 2px 20px #e9e4d7;
+}
+
+header img {
+    width: 16%;
+    padding-top: 5px;
+}
+
+header>ul {
+    display: flex;
+    /* justify-content: flex-end; */
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+header>ul li a {
+    display: block;
+    color: #222;
+    text-align: center;
+    padding: 14px 16px;
+    font-size: 18px;
+    text-decoration: none;
+    transition: transform 0.2s ease, font-size 0.2s ease;
+    /* 애니메이션 효과 */
+}
+
+header>ul li a:hover {
+    transform: scale(1.2); /* 글자 전체 커짐 */
+    color: #000;
+    font-weight: bold;
+}
+
+/* 회원가입 */
 #container {
     flex: 1;
     display: flex;
@@ -57,9 +98,27 @@ body {
     padding-top: 30px;
 }
 
+/* 하단 부분 */
 #footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #EEE7DA;
+    padding: 0 200px;
+}
+
+#footer>ul {
+    display: flex;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#footer>ul li {
+    display: block;
+    color: #333;
     text-align: center;
-    padding: 10px;
-    font-size: 12px;
-    color: #555;
+    padding: 5px 8px;
+    text-decoration: none;
 }
