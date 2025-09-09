@@ -1,0 +1,88 @@
+body { 
+    background-image: url(../img/mainBg1.png);
+    /* html과 css를 합치면 img 앞에 '../'는 지워주세요. */
+}
+
+#container {
+    flex: 1;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 0;
+    padding-top: 150px;
+}
+
+header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 20px;
+    padding: 0 400px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+header img {
+    width: 20%;
+}
+
+.faq-container {
+    width: 600px;
+    background: #fcfcfc;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px #666;
+    padding: 20px;
+}
+
+.faq-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.faq-item {
+    border-bottom: 1px solid #ddd;
+}
+
+.faq-question {
+    cursor: pointer;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    padding: 0 15px;
+    font-size: 14px;
+    color: #555;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 200px;
+    /* 답변이 펼쳐질 높이 */
+    padding: 15px;
+}
+
+.arrow {
+    transition: transform 0.3s ease;
+}
+
+.faq-item.active .arrow {
+    transform: rotate(180deg);
+}
+
+#footer {
+    text-align: center;
+    padding: 10px;
+    font-size: 12px;
+    color: #555;
+}
