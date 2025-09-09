@@ -12,6 +12,22 @@ body {
     flex-direction: column;
 }
 
+header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 20px;
+    padding: 0 400px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+header img {
+    /* border: solid 1px #333; */
+    width: 25%;
+    border-radius: 20px;
+}
+
 #container {
     flex: 1;
     display: flex;
@@ -38,7 +54,8 @@ body {
     margin-top: 15px;
 }
 
-#suBox input, #suBtn {
+#suBox input,
+#suBtn {
     padding: 5px;
     font-size: 14px;
     border: solid 1px #555;
