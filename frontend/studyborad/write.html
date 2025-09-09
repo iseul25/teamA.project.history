@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>게시글 작성</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <a href="mainindex.html" class="back-button">메인화면</a>
+    <main>
+        <a href="index.html" class="list-button">📋 게시글 목록</a>
+        <h1>게시글 작성</h1>
+        <form id="write-form">
+            <input type="text" id="title" placeholder="제목" required />
+            <input type="text" id="author" placeholder="작성자" required />
+            <textarea id="content" placeholder="내용" rows="10" required></textarea>
+            <input type="text" id="videoUrl" placeholder="YouTube 영상 URL" />
+            <button type="submit">등록</button>
+        </form>
+    </main>
+
+    <script src="board.js"></script>
+    <script>
+        document.getElementById('write-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            savePost();
+            alert('글이 등록되었습니다!');
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+
+</html>
