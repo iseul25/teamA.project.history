@@ -32,7 +32,7 @@ public class AdminController {
         Object loginUserObject = session.getAttribute("loginUser");
         if (loginUserObject instanceof User) {
             User loginUser = (User) loginUserObject;
-            if ("A".equals(loginUser.getUser_type())) { // A는 관리자 권한을 의미
+            if ("A".equals(loginUser.getUserType())) { // A는 관리자 권한을 의미
                 model.addAttribute("loginUser", loginUser);
                 return "admin/adminPage";
             }
@@ -44,7 +44,7 @@ public class AdminController {
     @GetMapping("/users")
     public String userList(@RequestParam(defaultValue = "1") int page, Model model, HttpSession session) {
         Object loginUserObject = session.getAttribute("loginUser");
-        if (!(loginUserObject instanceof User) || !"A".equals(((User) loginUserObject).getUser_type())) {
+        if (!(loginUserObject instanceof User) || !"A".equals(((User) loginUserObject).getUserType())) {
             return "redirect:/user/login";
         }
 
@@ -71,8 +71,8 @@ public class AdminController {
     @PostMapping("/user/register")
     public String registerUser(@ModelAttribute("user") User user, Model model) {
         try {
-            // ⭐ 이 부분을 추가하여 user_type을 'U'로 강제 설정합니다.
-            user.setUser_type("USER");
+            // ⭐ 이 부분을 추가하여 userType을 'U'로 강제 설정합니다.
+            user.setUserType("USER");
 
             adminService.registerUser(user);
             model.addAttribute("successMessage", "유저 등록이 완료되었습니다.");
@@ -87,16 +87,16 @@ public class AdminController {
     @GetMapping("/users/delete")
     public String deleteUser(@RequestParam String email, HttpSession session) {
         Object loginUserObject = session.getAttribute("loginUser");
-        if (!(loginUserObject instanceof User) || !"A".equals(((User) loginUserObject).getUser_type())) {
+        if (!(loginUserObject instanceof User) || !"A".equals(((User) loginUserObject).getUserType())) {
             return "redirect:/user/login";
         }
 
-        // 삭제할 회원의 user_type을 확인
+        // 삭제할 회원의 userType을 확인
         Optional<User> userToDelete = userService.findByEmail(email);
         if (userToDelete.isPresent()) {
             User user = userToDelete.get();
-            // user_type이 'A'인 경우 삭제 불가능
-            if ("A".equals(user.getUser_type())) {
+            // userType이 'A'인 경우 삭제 불가능
+            if ("A".equals(user.getUserType())) {
                 System.out.println("관리자 계정은 삭제할 수 없습니다: " + email);
             } else {
                 userService.deleteByEmail(email);

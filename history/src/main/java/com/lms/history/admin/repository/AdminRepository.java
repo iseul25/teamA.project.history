@@ -19,14 +19,14 @@ public class AdminRepository {
     }
 
     public User save(User user) {
-        String sql = "INSERT INTO users (email, user_type, name, password) VALUES (?, ?, ?, ?)";
-        jdbc.update(sql, user.getEmail(), user.getUser_type(), user.getName(), user.getPassword());
+        String sql = "INSERT INTO user (email, userType, name, password) VALUES (?, ?, ?, ?)";
+        jdbc.update(sql, user.getEmail(), user.getUserType(), user.getName(), user.getPassword());
         return user;
     }
 
     // 이메일로 회원 조회
     public Optional<User> findByEmail(String email) {
-        String sql = "SELECT * FROM users WHERE email = ?";
+        String sql = "SELECT * FROM user WHERE email = ?";
         try {
             User user = jdbc.queryForObject(sql, userRowMapper(), email);
             return Optional.ofNullable(user);
@@ -40,7 +40,7 @@ public class AdminRepository {
      * @return 모든 사용자의 리스트
      */
     public List<User> findAllUsers() {
-        String sql = "SELECT email, user_type, name FROM user";
+        String sql = "SELECT email, userType, name FROM user";
         return jdbc.query(sql, userRowMapper());
     }
 
@@ -52,7 +52,7 @@ public class AdminRepository {
         return (rs, rowNum) -> {
             User user = new User();
             user.setEmail(rs.getString("email"));
-            user.setUser_type(rs.getString("user_type"));
+            user.setUserType(rs.getString("userType"));
             user.setName(rs.getString("name"));
             //user.setPoints(rs.getInt("points"));
             return user;
@@ -60,13 +60,13 @@ public class AdminRepository {
     }
     // 총 회원 수 반환
     public int countAllUsers() {
-        String sql = "SELECT COUNT(*) FROM users";
+        String sql = "SELECT COUNT(*) FROM user";
         return jdbc.queryForObject(sql, Integer.class);
     }
 
     // 페이징 처리된 회원 목록 반환
     public List<User> findUsersByPage(int page, int size) {
-        String sql = "SELECT * FROM users LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM user LIMIT ? OFFSET ?";
         int offset = page * size;
         return jdbc.query(sql, userRowMapper(), size, offset);
     }

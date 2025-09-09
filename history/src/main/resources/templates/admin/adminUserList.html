@@ -154,10 +154,10 @@
         <tr th:each="user : ${users}">
             <td><a th:href="@{|/admin/users/details/${user.email}|}" th:text="${user.email}"></a></td>
             <td th:text="${user.name}"></td>
-            <td th:text="${user.user_type}"></td>
+            <td th:text="${user.userType}"></td>
             <td>
-                <!-- 관리자(user_type이 'A')가 아닐 때만 삭제 버튼을 표시 -->
-                <a th:if="${user.user_type != 'A'}"
+                <!-- 관리자(userType이 'A')가 아닐 때만 삭제 버튼을 표시 -->
+                <a th:if="${user.userType != 'A'}"
                    th:href="@{|/admin/users/delete?email=${user.email}|}"
                    class="delete-button"
                    onclick="return confirm('정말로 이 회원을 삭제하시겠습니까?');">삭제</a>

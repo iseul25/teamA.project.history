@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지</title>
+    <style>
+        /* 기본적인 스타일링 */
+        body { font-family: sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; color: #333; }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1, h2 { text-align: center; color: #5d4037; }
+        .user-info { text-align: center; margin-bottom: 20px; }
+        .section-box {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+        }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+<div class="container" th:if="${loginUser != null}">
+    <h1 th:text="|${loginUser.name}님, 환영합니다!|"></h1>
+
+    <!-- 회원 정보 섹션 -->
+    <div class="section-box">
+        <h2>회원 정보</h2>
+        <div class="user-info">
+            <p><strong>이메일:</strong> <span th:text="${loginUser.email}"></span></p>
+            <!-- userType 필드를 사용하도록 수정 -->
+            <p><strong>회원 권한:</strong> <span th:text="${loginUser.userType}"></span></p>
+        </div>
+    </div>
+
+    <!-- 출석 기록 섹션 (임시) -->
+    <div class="section-box">
+        <h2>출석 기록</h2>
+        <p>출석 기록을 표시하는 영역입니다. (추후 달력 형태로 구현 예정)</p>
+    </div>
+
+    <!-- 포인트 현황 섹션 (임시) -->
+    <div class="section-box">
+        <h2>포인트 현황</h2>
+        <p>보유 포인트: <strong><span th:text="${loginUser.points}"></span>점</strong></p>
+        <table>
+            <thead>
+            <tr>
+                <th>날짜</th>
+                <th>내용</th>
+                <th>포인트 변화량</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>2025-09-07</td>
+                <td>퀴즈 정답</td>
+                <td>+10</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 활동 기록 섹션 (임시) -->
+    <div class="section-box">
+        <h2>나의 활동 기록</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>활동 유형</th>
+                <th>활동 내용</th>
+                <th>날짜</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>게시글 작성</td>
+                <td>예송논쟁이란</td>
+                <td>2025-09-05</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="container" th:if="${loginUser == null}">
+    <h1>로그인이 필요합니다.</h1>
+    <p>로그인 후 이용해주세요.</p>
+</div>
+
+<div style="text-align: center; margin-top: 20px;">
+    <a href="/">메인으로</a>
+</div>
+
+</body>
+</html>

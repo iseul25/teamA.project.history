@@ -19,9 +19,9 @@ public class UserRepository {
 
     // 회원정보 저장
     public User save(User user) {
-        String sql = "INSERT INTO users (user_type, name, password, email) VALUES (?,?,?,?)";
+        String sql = "INSERT INTO user (userType, name, password, email) VALUES (?,?,?,?)";
         int result = jdbc.update(sql,
-                user.getUser_type(),
+                user.getUserType(),
                 user.getName(),
                 user.getPassword(),
                 user.getEmail()
@@ -35,7 +35,7 @@ public class UserRepository {
 
     // 이메일로 회원 조회
     public Optional<User> findByEmail(String email) {
-        String sql = "SELECT * FROM users WHERE email = ?";
+        String sql = "SELECT * FROM user WHERE email = ?";
         try {
             User user = jdbc.queryForObject(sql, userRowMapper(), email);
             return Optional.ofNullable(user);
@@ -46,7 +46,7 @@ public class UserRepository {
 
     // 이름으로 회원 조회 (사용하지 않는 경우 삭제 가능)
     public Optional<User> findByName(String name) {
-        String sql = "SELECT * FROM users WHERE name = ?";
+        String sql = "SELECT * FROM user WHERE name = ?";
         try {
             User user = jdbc.queryForObject(sql, userRowMapper(), name);
             return Optional.ofNullable(user);
@@ -57,7 +57,7 @@ public class UserRepository {
 
     // ID로 회원 조회
     public Optional<User> findById(Long id) {
-        String sql = "SELECT * FROM users WHERE user_id = ?";
+        String sql = "SELECT * FROM user WHERE userId = ?";
         try {
             User user = jdbc.queryForObject(sql, userRowMapper(), id);
             return Optional.ofNullable(user);
@@ -68,25 +68,25 @@ public class UserRepository {
 
     // 모든 회원 목록 조회
     public List<User> findAll() {
-        String sql = "SELECT * FROM users";
+        String sql = "SELECT * FROM user";
         return jdbc.query(sql, userRowMapper());
     }
 
     // 관리자 페이지에 필요한 회원 목록 조회
     public List<User> findAllUsers() {
-        String sql = "SELECT user_id, email, user_type, name FROM users";
+        String sql = "SELECT user_id, email, userType, name FROM user";
         return jdbc.query(sql, userRowMapper());
     }
 
     // 총 회원 수 반환
     public int countAllUsers() {
-        String sql = "SELECT COUNT(*) FROM users";
+        String sql = "SELECT COUNT(*) FROM user";
         return jdbc.queryForObject(sql, Integer.class);
     }
 
     // 페이징 처리된 회원 목록 반환
     public List<User> findUsersByPage(int page, int size) {
-        String sql = "SELECT * FROM users LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM user LIMIT ? OFFSET ?";
         int offset = (page - 1) * size;
         return jdbc.query(sql, userRowMapper(), size, offset);
     }
@@ -97,8 +97,8 @@ public class UserRepository {
             User user = new User();
             //user.setUserId(rs.getInt("user_id"));
             user.setEmail(rs.getString("email"));
-            // user_type 필드를 그대로 사용
-            user.setUser_type(rs.getString("user_type"));
+            // userType 필드를 그대로 사용
+            user.setUserType(rs.getString("userType"));
             user.setName(rs.getString("name"));
             user.setPassword(rs.getString("password"));
             // 필요한 경우 주석 해제하여 사용
@@ -110,7 +110,7 @@ public class UserRepository {
 
     // 수정
     public void update(User user) {
-        String sql = "UPDATE users SET password = ? WHERE email = ?";
+        String sql = "UPDATE user SET password = ? WHERE email = ?";
         jdbc.update(sql,
                 user.getPassword(),
                 user.getEmail()
@@ -119,7 +119,7 @@ public class UserRepository {
 
     // 삭제
     public void deleteByEmail(String email) {
-        String sql = "DELETE FROM users WHERE email = ?";
+        String sql = "DELETE FROM user WHERE email = ?";
         jdbc.update(sql, email);
     }
 }
