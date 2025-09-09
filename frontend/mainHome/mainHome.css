@@ -145,7 +145,7 @@
         }
 
         /* 하단 부분 */
-        #tel {
+        #footer {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -154,7 +154,7 @@
             padding: 0 200px;
         }
 
-        #tel>ul {
+        #footer>ul {
             display: flex;
             list-style-type: none;
             margin: 0;
@@ -162,7 +162,7 @@
             overflow: hidden;
         }
 
-        #tel>ul li {
+        #footer>ul li {
             display: block;
             color: #333;
             text-align: center;
