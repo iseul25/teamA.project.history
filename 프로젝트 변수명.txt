@@ -38,7 +38,7 @@ comment (댓글 내용)
 1. quiz (퀴즈)
 quizId (PK)
 postId(FK/post)
-imgurl (퀴즈에 쓰일 이미지 링크)
+imgUrl (퀴즈에 쓰일 이미지 링크)
 question (퀴즈의 질문 내용)
 questionOption (객관식 선택지(사용자에게 보여질 선택지 목록))
 
