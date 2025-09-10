@@ -26,13 +26,21 @@
         <div id="signUpBox">
             <h1>회 원 가 입</h1>
             <div id="userDataBox">
+                <p>ID</p>
                 <div id="input-wrapper">
-                    <input type="text" id="email" placeholder="이메일을 입력해 주세요.">
+                    <input type="text" id="email" placeholder="abc123@gmail.com">
                     <button id="checkBtn" onclick="checkEmail()">중복확인</button>
                 </div>
-                <div id="emailMsg"></div>
-                <input type="text" id="pw" placeholder="비밀번호를 입력해 주세요.">
-                <input type="text" id="name" placeholder="이름을 입력해 주세요.">
+                <div id="emailMsg" class="msg"></div>
+                <p>PASSWORD</p>
+                <div id="pw-wrapper">
+                    <input type="password" id="pw" placeholder="*******">
+                    <button type="button" id="togglePw"></button>
+                </div>
+                <div id="pwMsg" class="msg"></div>
+                <P>NAME</P>
+                <input type="text" id="name" placeholder="홍길동">
+                <div id="nameMsg" class="msg"></div>
             </div>
             <div id="suBtnBox">
                 <button id="suBtn" onclick="signUp()">가입하기</button>
@@ -49,6 +57,48 @@
     </div>
 </body>
 <script>
+    function signUp() {
+        // input 값 가져오기
+        const email = document.getElementById("email").value.trim();
+        const pw = document.getElementById("pw").value.trim();
+        const name = document.getElementById("name").value.trim();
+
+        // 메시지 박스 가져오기
+        const emailMsg = document.getElementById("emailMsg");
+        const pwMsg = document.getElementById("pwMsg");
+        const nameMsg = document.getElementById("nameMsg");
+
+        // 초기화 (메세지 지우기)
+        emailMsg.textContent = "";
+        pwMsg.textContent = "";
+        nameMsg.textContent = "";
+
+        let isValid = true;
+
+        // 이메일 체크
+        if (email === "") {
+            emailMsg.textContent = "이메일을 입력하세요.";
+            isValid = false;
+        }
+
+        // 비밀번호 체크
+        if (pw === "") {
+            pwMsg.textContent = "비밀번호를 입력하세요.";
+            isValid = false;
+        }
+
+        // 이름 체크
+        if (name === "") {
+            nameMsg.textContent = "이름을 입력하세요.";
+            isValid = false;
+        }
+
+        // 모두 입력한 경우 → 회원가입 성공
+        if (isValid) {
+            alert("회원가입이 완료되었습니다!");
+        }
+    }
+
     async function checkEmail() {
         const emailInput = document.getElementById("email");
         const emailMsg = document.getElementById("emailMsg");
