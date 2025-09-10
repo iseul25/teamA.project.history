@@ -13,22 +13,26 @@
         <a href="http://127.0.0.1:5501/endResult.addver/home.html">
             <img src="img/mainLg2.png" alt="메인 로고">
         </a>
-            <ul>
-                <li><a href="">학습하기</a></li>
-                <li><a href="">퀴즈풀기</a></li>
-                <li><a href="">출석하기</a></li>
-                <li><a href="">포인트 상점</a></li>
-                <li><a href="http://127.0.0.1:5501/faq/faq.html">FAQ</a></li>
-                <li><a href="">공지사항</a></li>
-            </ul>
-        </header>
+        <ul>
+            <li><a href="">학습하기</a></li>
+            <li><a href="">퀴즈풀기</a></li>
+            <li><a href="http://127.0.0.1:5501/attend/attend.html">출석하기</a></li>
+            <li><a href="">포인트 상점</a></li>
+            <li><a href="http://127.0.0.1:5501/faq/faq.html">FAQ</a></li>
+            <li><a href="">공지사항</a></li>
+        </ul>
+    </header>
     <div id="container">
         <div id="signUpBox">
             <h1>회 원 가 입</h1>
-            <div id="suBox">
-                <input type="text" id="name" placeholder="닉네임을 입력해 주세요.">
-                <input type="text" id="email" placeholder="이메일을 입력해 주세요.">
+            <div id="userDataBox">
+                <div id="input-wrapper">
+                    <input type="text" id="email" placeholder="이메일을 입력해 주세요.">
+                    <button id="checkBtn" onclick="checkEmail()">중복확인</button>
+                </div>
+                <div id="emailMsg"></div>
                 <input type="text" id="pw" placeholder="비밀번호를 입력해 주세요.">
+                <input type="text" id="name" placeholder="이름을 입력해 주세요.">
             </div>
             <div id="suBtnBox">
                 <button id="suBtn" onclick="signUp()">가입하기</button>
@@ -44,5 +48,40 @@
         </ul>
     </div>
 </body>
+<script>
+    async function checkEmail() {
+        const emailInput = document.getElementById("email");
+        const emailMsg = document.getElementById("emailMsg");
+        const email = emailInput.value.trim();
+
+        if (!email) {
+            emailMsg.textContent = "이메일을 입력해주세요.";
+            emailMsg.className = "error";
+            emailInput.classList.add("error-text");
+            return;
+        }
+
+        try {
+            // ✅ 백엔드 API 요청 (예: /api/check-email)
+            const res = await fetch(`/api/check-email?email=${encodeURIComponent(email)}`);
+            const data = await res.json(); // { available: true/false }
+
+            if (data.available) {
+                emailMsg.textContent = "사용 가능한 이메일입니다.";
+                emailMsg.className = "success";
+                emailInput.classList.remove("error-text"); // 글자색 원래대로
+            } else {
+                emailMsg.textContent = "이미 사용 중인 이메일입니다.";
+                emailMsg.className = "error";
+                emailInput.classList.add("error-text"); // 글자 빨강
+            }
+        } catch (err) {
+            console.error(err);
+            emailMsg.textContent = "서버 오류가 발생했습니다.";
+            emailMsg.className = "error";
+            emailInput.classList.add("error-text");
+        }
+    }
+</script>
 
 </html>
