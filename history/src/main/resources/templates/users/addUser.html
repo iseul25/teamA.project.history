@@ -18,9 +18,9 @@
 
     <!-- 폼 액션과 객체 바인딩 추가 -->
         <form th:action="@{/user/add}" th:object="${user}" method="post">
-            <div id="suBox">
+            <div id="userDataBox">
                 <!-- 이메일 입력 및 중복 확인 버튼 -->
-                <div id="email-container">
+                <div id="input-wrapper">
                     <input type="text" id="email" th:field="*{email}" placeholder="이메일을 입력해 주세요." required>
                     <button type="button" id="checkEmailBtn">중복 확인</button>
                 </div>
@@ -40,7 +40,7 @@
         <p>© 2025 중등 역사 교육. All rights reserved.</p>
     </div>
 </div>
-
+</body>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const checkEmailBtn = document.getElementById('checkEmailBtn');
@@ -95,5 +95,4 @@
         });
     });
 </script>
-</body>
 </html>
