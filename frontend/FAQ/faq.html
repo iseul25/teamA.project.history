@@ -22,6 +22,9 @@
             <li><a href="http://127.0.0.1:5501/faq/faq.html" class="active">FAQ</a></li>
             <li><a href="">공지사항</a></li>
         </ul>
+        <div id="user" style="display: none;"> <!-- 로그인 했을 시에만 보이게 -->
+            <a href="" id="userName-link"> 님</a>
+        </div>
     </header>
     <div id="container">
         <div class="faq-container">
@@ -96,6 +99,28 @@
             item.classList.toggle('active');
         });
     });
+
+    async function checkLogin() {
+        try {
+            const response = await fetch("/api/check-login", {
+                credentials: "include"
+            });
+            const data = await response.json();
+
+            const userDiv = document.getElementById("user");
+            const usernameLink = document.getElementById("username-link");
+
+            if (data.isLoggedIn) {
+                usernameLink.textContent = data.username;
+                usernameLink.href = "/mypage.html"; 
+                userDiv.style.display = "block";
+            } else {
+                userDiv.style.display = "none";  // 그냥 안 보이게만 처리
+            }
+        } catch (err) {
+            console.error("로그인 체크 에러:", err);
+        }
+    }
 </script>
 
 </html>
