@@ -11,7 +11,7 @@ header {
     justify-content: space-between;
     align-items: center;
     background-color: #fcf4e1;
-    padding: 0 140px;
+    padding: 0 100px;
     box-shadow: 0 2px 20px #e9e4d7;
 }
 
@@ -52,6 +52,14 @@ header> ul li a.active {
     font-size: 1.3em;    /* 글자 크기 키우기 */
     text-decoration: underline;  /* 밑줄 표시 */
     color: #000;
+}
+
+#user {
+    font-size: 16px;
+}
+
+#user > a {
+    color: #222;
 }
 
 /* FAQ */
