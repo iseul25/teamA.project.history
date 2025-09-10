@@ -5,7 +5,6 @@
 }
 
 body {
-    background-color: #e9e4d7;
     background-image: url(../img/mainBg1.png);
     height: 100vh;
     display: flex;
@@ -18,7 +17,7 @@ header {
     justify-content: space-between;
     align-items: center;
     background-color: #fcf4e1;
-    padding: 0 150px;
+    padding: 0 100px;
     box-shadow: 0 2px 20px #e9e4d7;
 }
 
@@ -48,7 +47,8 @@ header>ul li a {
 }
 
 header>ul li a:hover {
-    transform: scale(1.2); /* 글자 전체 커짐 */
+    transform: scale(1.2);
+    /* 글자 전체 커짐 */
     color: #000;
     font-weight: bold;
 }
@@ -63,39 +63,106 @@ header>ul li a:hover {
 }
 
 #signUpBox {
-    width: 60%;
-    height: 30%;
+    width: 100%;
+    height: 45%;
     max-width: 400px;
     text-align: center;
     padding: 20px;
     background: #fcfcfc;
     border-radius: 12px;
     box-shadow: 0 4px 10px #666;
+    align-items: center;
 }
 
-#suBox {
+#suBtnBox {
+    width: 30%;
+    margin: 0 auto;
+    padding-top: 50px;
+}
+
+#userDataBox {
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin-top: 15px;
+    width: 100%;
+    align-items: center;
+    box-sizing: border-box;
 }
 
-#suBox input,
+#userDataBox input,
 #suBtn {
-    padding: 5px;
-    font-size: 14px;
+    padding: 9px;
+    font-size: 17px;
     border: solid 1px #555;
     border-radius: 7px;
     box-shadow: 0 2px 2px #666;
 }
 
+#userDataBox input,
+#input-wrapper {
+    width: 100%;  /* 입력칸 고정 너비 */
+}
+
 #suBtn {
+    padding: 5px;
     width: 100%;
     background-color: #bdddfc;
 }
 
-#suBtnBox {
-    padding-top: 30px;
+/* 이메일 중복 확인 */
+#input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* 이메일 input (비밀번호/이름과 크기 동일) */
+#input-wrapper input {
+    width: 100%;
+    padding: 9px 80px 9px 9px; /* 오른쪽 버튼 공간 확보 */
+    font-size: 17px;
+    border: solid 1px #555;
+    border-radius: 7px;
+    box-shadow: 0 2px 2px #666;
+    box-sizing: border-box;
+}
+
+/* 중복확인 버튼 (input 안쪽 오른쪽 배치) */
+#input-wrapper button {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 3px 7px;
+    font-size: 14px;
+    background-color: #eee;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    cursor: pointer;
+    white-space: nowrap; /* 줄바꿈 방지 */
+    box-shadow: 0 1px 2px #666;
+}
+
+#input-wrapper button:hover {
+    background-color: #ddd;
+}
+
+#emailMsg {
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.success {
+    color: green;
+}
+
+.error {
+    color: red;
+}
+
+/* 인풋 글자 빨갛게 */
+.error-text {
+    color: red;
 }
 
 /* 하단 부분 */
