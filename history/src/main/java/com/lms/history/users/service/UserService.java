@@ -25,7 +25,7 @@ public class UserService {
         validateDuplicateUser(user);
 
         // userType을 'USER'로 설정
-        user.setUserType("USER");
+        user.setUserType("일반유저");
 
         userRepository.save(user);
         return user.getEmail();

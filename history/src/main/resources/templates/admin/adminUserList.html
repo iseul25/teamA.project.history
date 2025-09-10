@@ -76,20 +76,30 @@
             transition: transform 0.2s ease;
         }
 
-        .delete-button {
+        .delete-button, .edit-button {
             display: inline-block;
             padding: 8px 16px;
-            background-color: #ff6347; /* Tomato */
             color: white;
             border: none;
             border-radius: 20px;
             text-decoration: none;
             font-weight: bold;
             transition: background-color 0.2s ease;
+            margin-right: 8px; /* 버튼 사이 간격 */
         }
 
+        .delete-button {
+            background-color: #ff6347; /* Tomato */
+        }
         .delete-button:hover {
             background-color: #e5533d;
+        }
+
+        .edit-button {
+            background-color: #4CAF50; /* Green */
+        }
+        .edit-button:hover {
+            background-color: #45a049;
         }
 
         .pagination {
@@ -152,12 +162,18 @@
         </thead>
         <tbody>
         <tr th:each="user : ${users}">
-            <td><a th:href="@{|/admin/users/details/${user.email}|}" th:text="${user.email}"></a></td>
+            <!-- 이메일은 이제 링크가 아닌 텍스트로만 표시 -->
+            <td th:text="${user.email}"></td>
             <td th:text="${user.name}"></td>
             <td th:text="${user.userType}"></td>
             <td>
+                <!-- userType이 'A'가 아닐 때만 수정 버튼을 표시 -->
+                <a th:if="${user.userType != '관리자'}"
+                   th:href="@{|/admin/users/edit/${user.email}|}"
+                   class="edit-button">수정</a>
+
                 <!-- 관리자(userType이 'A')가 아닐 때만 삭제 버튼을 표시 -->
-                <a th:if="${user.userType != 'A'}"
+                <a th:if="${user.userType != '관리자'}"
                    th:href="@{|/admin/users/delete?email=${user.email}|}"
                    class="delete-button"
                    onclick="return confirm('정말로 이 회원을 삭제하시겠습니까?');">삭제</a>

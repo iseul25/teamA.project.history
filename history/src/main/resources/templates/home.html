@@ -47,7 +47,7 @@
 
 <div id="container">
     <header>
-        <img src="img/mainLg2.png" alt="메인 로고">
+        <img src="/img/mainLg2.png" alt="메인 로고">
     </header>
     <div id="bgImg">
         <div id="mainScreen" class="carousel slide" data-ride="carousel">
@@ -58,13 +58,13 @@
             </ol>
             <div class="carousel-inner">
                 <div class="item active">
-                    <img src="img/bg6.jpg" alt="bg6" style="width: 100%;">
+                    <img src="/img/bg6.jpg" alt="bg6" style="width: 100%;">
                 </div>
                 <div class="item">
-                    <img src="img/bg5.jpg" alt="bg5" style="width: 100%;">
+                    <img src="/img/bg5.jpg" alt="bg5" style="width: 100%;">
                 </div>
                 <div class="item">
-                    <img src="img/bg1.jpg" alt="bg1" style="width: 100%;">
+                    <img src="/img/bg1.jpg" alt="bg1" style="width: 100%;">
                 </div>
             </div>
             <!-- 슬라이드 버튼 -->
@@ -99,7 +99,7 @@
                     <a href="" style="color: #333;">포인트 상점</a>
                 </div>
                 <div id="faqBox">
-                    <a href="" style="color: #333;">FAQ</a>
+                    <a href="/faq" style="color: #333;">FAQ</a>
                 </div>
                 <div id="noticeBox">
                     <a href="" style="color: #333;">공지사항</a>
@@ -140,9 +140,9 @@
                                   style="color: #333; font-weight: bold;"></span>
                         <br>
                         <!-- 사용자 유형에 따라 하나의 링크만 표시 -->
-                        <a th:if="${session.loginUser.userType == 'A'}" th:href="@{/admin/page}"
+                        <a th:if="${session.loginUser.userType == '관리자'}" th:href="@{/admin/page}"
                            class="login-link-btn admin">관리자 페이지</a>
-                        <a th:if="${session.loginUser.userType == 'USER'}" th:href="@{/user/mypage}"
+                        <a th:if="${session.loginUser.userType == '일반유저'}" th:href="@{/user/mypage}"
                            class="login-link-btn user">마이페이지</a>
                         <a th:href="@{/user/logout}" class="login-link-btn logout">로그아웃</a>
                     </li>

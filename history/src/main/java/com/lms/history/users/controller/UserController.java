@@ -40,6 +40,14 @@ public class UserController {
         }
     }
 
+    // 이메일 중복 확인 API
+    @GetMapping("/user/check-email")
+    @ResponseBody
+    public boolean checkEmail(@RequestParam("email") String email) {
+        Optional<User> user = userService.findByEmail(email);
+        return user.isPresent();
+    }
+
     @PostMapping("/user/login")
     public String login(@RequestParam("email") String email,
                         @RequestParam("password") String password,
@@ -77,8 +85,8 @@ public class UserController {
     }
 
     // 마이페이지
-    @GetMapping("/user/mypage")
-    public String mypage(HttpSession session, Model model) {
+    @GetMapping("/user/myPage")
+    public String myPage(HttpSession session, Model model) {
         Object loginUser = session.getAttribute("loginUser");
         if (loginUser != null) {
             model.addAttribute("loginUser", (User) loginUser);

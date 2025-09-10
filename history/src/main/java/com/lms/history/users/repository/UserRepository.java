@@ -95,15 +95,11 @@ public class UserRepository {
     private RowMapper<User> userRowMapper() {
         return (rs, rowNum) -> {
             User user = new User();
-            //user.setUserId(rs.getInt("user_id"));
             user.setEmail(rs.getString("email"));
             // userType 필드를 그대로 사용
             user.setUserType(rs.getString("userType"));
             user.setName(rs.getString("name"));
             user.setPassword(rs.getString("password"));
-            // 필요한 경우 주석 해제하여 사용
-            // user.setSignDay(rs.getDate("signDay").toLocalDate());
-            // user.setPoints(rs.getInt("points"));
             return user;
         };
     }

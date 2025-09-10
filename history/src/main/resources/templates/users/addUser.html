@@ -17,18 +17,22 @@
         <h1>회 원 가 입</h1>
 
     <!-- 폼 액션과 객체 바인딩 추가 -->
-    <form th:action="@{/user/add}" th:object="${user}" method="post">
-        <div id="suBox">
-            <!-- 필드 바인딩 추가 -->
-            <input type="text" id="name" th:field="*{name}" placeholder="이름을 입력해 주세요." required>
-            <input type="text" id="email" th:field="*{email}" placeholder="이메일을 입력해 주세요." required>
-            <input type="password" id="pw" th:field="*{password}" placeholder="비밀번호를 입력해 주세요." required>
-        </div>
-        <div id="suBtnBox">
-            <!-- 버튼을 <form> 태그 안으로 이동하고, type="submit"으로 변경 -->
-            <button id="suBtn" type="submit">가입하기</button>
-        </div>
-    </form>
+        <form th:action="@{/user/add}" th:object="${user}" method="post">
+            <div id="suBox">
+                <!-- 이메일 입력 및 중복 확인 버튼 -->
+                <div id="email-container">
+                    <input type="text" id="email" th:field="*{email}" placeholder="이메일을 입력해 주세요." required>
+                    <button type="button" id="checkEmailBtn">중복 확인</button>
+                </div>
+                <span id="email-message"></span>
+                <input type="password" id="pw" th:field="*{password}" placeholder="비밀번호를 입력해 주세요." required>
+                <input type="text" id="name" th:field="*{name}" placeholder="이름을 입력해 주세요." required>
+            </div>
+            <div id="suBtnBox">
+                <!-- 중복 확인 완료 전까지 가입하기 버튼 비활성화 -->
+                <button id="suBtn" type="submit" disabled>가입하기</button>
+            </div>
+        </form>
 </div>
     <!-- 에러 메시지 출력 영역 -->
     <div th:if="${errorMessage}" th:text="${errorMessage}" style="color:red" class="error-message"></div>
@@ -36,6 +40,60 @@
         <p>© 2025 중등 역사 교육. All rights reserved.</p>
     </div>
 </div>
-</body>
 
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const checkEmailBtn = document.getElementById('checkEmailBtn');
+        const emailInput = document.getElementById('email');
+        const emailMessage = document.getElementById('email-message');
+        const signUpBtn = document.getElementById('suBtn');
+
+        // 이메일 입력 필드의 값이 변경될 때마다 가입하기 버튼 비활성화
+        emailInput.addEventListener('input', () => {
+            signUpBtn.disabled = true;
+            emailMessage.textContent = '';
+            emailMessage.classList.remove('success', 'error');
+        });
+
+        checkEmailBtn.addEventListener('click', async () => {
+            const email = emailInput.value;
+
+            if (!email) {
+                emailMessage.textContent = '이메일을 입력해 주세요.';
+                emailMessage.classList.add('error');
+                return;
+            }
+
+            // 백엔드 API 엔드포인트 URL
+            const checkUrl = `/user/check-email?email=${encodeURIComponent(email)}`;
+
+            try {
+                // Fetch API를 사용하여 GET 요청 전송
+                const response = await fetch(checkUrl);
+
+                // 백엔드에서 true 또는 false 반환을 가정
+                const isDuplicated = await response.json();
+
+                if (isDuplicated) {
+                    emailMessage.textContent = '이미 사용 중인 이메일입니다.';
+                    emailMessage.classList.remove('success');
+                    emailMessage.classList.add('error');
+                    signUpBtn.disabled = true;
+                } else {
+                    emailMessage.textContent = '사용 가능한 이메일입니다.';
+                    emailMessage.classList.remove('error');
+                    emailMessage.classList.add('success');
+                    signUpBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                emailMessage.textContent = '이메일 확인 중 오류가 발생했습니다.';
+                emailMessage.classList.remove('success');
+                emailMessage.classList.add('error');
+                signUpBtn.disabled = true;
+            }
+        });
+    });
+</script>
+</body>
 </html>

@@ -25,4 +25,10 @@ public class HomeController {
 
         return "home";
     }
+
+    @GetMapping("/faq")
+    public String showFaqPage() {
+        // "faq"라는 문자열을 반환하여 Spring이 templates/faq.html 파일을 찾도록 지시합니다.
+        return "faq";
+    }
 }
