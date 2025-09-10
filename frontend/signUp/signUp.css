@@ -64,9 +64,7 @@ header>ul li a:hover {
 
 #signUpBox {
     width: 100%;
-    height: 45%;
     max-width: 400px;
-    text-align: center;
     padding: 20px;
     background: #fcfcfc;
     border-radius: 12px;
@@ -86,8 +84,13 @@ header>ul li a:hover {
     gap: 10px;
     margin-top: 15px;
     width: 100%;
-    align-items: center;
+    align-items: stretch;
     box-sizing: border-box;
+}
+
+#userDataBox > p {
+    align-self: flex-start;
+    margin-left: 3px;
 }
 
 #userDataBox input,
@@ -147,9 +150,16 @@ header>ul li a:hover {
     background-color: #ddd;
 }
 
+/* 오류 메세지 */
 #emailMsg {
     font-size: 14px;
     margin-top: 4px;
+}
+
+.msg {
+    font-size: 14px;
+    margin-top: 4px;
+    color: red;
 }
 
 .success {
@@ -160,9 +170,31 @@ header>ul li a:hover {
     color: red;
 }
 
-/* 인풋 글자 빨갛게 */
+/* 인풋 이메일 글자 빨갛게 */
 .error-text {
     color: red;
+}
+
+/* 비밀번호 */
+#pw-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+#pw-wrapper input {
+    width: 100%;
+    padding-right: 20px; /* 오른쪽 공간 확보 (버튼 들어갈 자리) */
+}
+
+#pw-wrapper button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
 }
 
 /* 하단 부분 */
