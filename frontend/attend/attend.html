@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>출석하기</title>
+    <link rel="stylesheet" href="css/attend.css">
+    <!-- html, css 합치면 link 주석 처리하기 -->
+</head>
+
+<body>
+    <header>
+        <a href="http://127.0.0.1:5501/endResult.addver/home.html">
+            <img src="img/mainLg2.png" alt="메인 로고">
+        </a>
+        <ul>
+            <li><a href="">학습하기</a></li>
+            <li><a href="">퀴즈풀기</a></li>
+            <li><a href="http://127.0.0.1:5501/attend/attend.html" class="active">출석하기</a></li>
+            <li><a href="">포인트 상점</a></li>
+            <li><a href="http://127.0.0.1:5501/faq/faq.html">FAQ</a></li>
+            <li><a href="http://127.0.0.1:5501/notice/notice.html">공지사항</a></li>
+        </ul>
+        <div id="user" style="display: none;"> <!-- 로그인 했을 시에만 보이게 -->
+            <a href="" id="userName-link"> 님</a>
+        </div>
+    </header>
+    <div id="container">
+        <!-- 상단 정보 영역 -->
+        <div id="attend-info">
+            <p>출석 버튼을 클릭하면 출석이 완료됩니다.</p>
+            <p>출석 시 10포인트가 지급됩니다.</p>
+        </div>
+
+        <!-- 달력 영역 -->
+        <div id="calendar">
+            <div id="calendar-header">
+                <button id="prev-month">◀</button>
+                <span id="month-year"></span>
+                <button id="next-month">▶</button>
+            </div>
+            <table id="calendar-body">
+                <thead>
+                    <tr>
+                        <th>일</th>
+                        <th>월</th>
+                        <th>화</th>
+                        <th>수</th>
+                        <th>목</th>
+                        <th>금</th>
+                        <th>토</th>
+                    </tr>
+                </thead>
+                <tbody id="calendar-days"></tbody>
+            </table>
+        </div>
+        <div id="attBtn">
+            <button id="attend-btn">출석체크</button>
+        </div>
+    </div>
+    <div id="footer">
+        <ul>
+            <li>대표전화: 042-222-2402</li>
+            <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+            <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+            <li>© 2025 역사 한 걸음. All rights reserved.</li>
+        </ul>
+    </div>
+</body>
+<script>
+    // 로그인 여부 저장
+    let isLoggedIn = false;
+
+    async function checkLogin() {
+        try {
+            const response = await fetch("/api/check-login", {
+                credentials: "include"
+            });
+            const data = await response.json();
+
+            const userDiv = document.getElementById("user");
+            const usernameLink = document.getElementById("username-link");
+
+            if (data.isLoggedIn) {
+                isLoggedIn = true;
+                usernameLink.textContent = data.username;
+                usernameLink.href = "/mypage.html";
+                userDiv.style.display = "block";
+            } else {
+                isLoggedIn = false;
+                userDiv.style.display = "none";
+            }
+        } catch (err) {
+            console.error("로그인 체크 에러:", err);
+        }
+    }
+
+    // 출석 관련
+    let attendedDays = [];
+    let currentDate = new Date();
+
+    const userNameSpan = document.getElementById("userName");
+    const calendarDays = document.getElementById("calendar-days");
+    const monthYear = document.getElementById("month-year");
+    // const attendStatusSpan = document.getElementById("attend-status");
+
+    // API 호출해서 유저 정보 가져오기
+    async function loadAttendInfo() {
+        try {
+            const res = await fetch("/api/attend-info", { credentials: "include" });
+            const data = await res.json();
+
+            userNameSpan.textContent = data.username;
+            attendedDays = data.attendedDays || [];
+
+            renderCalendar(currentDate);
+
+            // 오늘 날짜
+            const today = new Date();
+            const todayKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+
+            if (attendedDays.includes(todayKey)) {
+                // attendStatusSpan.textContent = "오늘은 이미 출석하셨습니다.";
+
+                // 출석했을 시 버튼 변경
+                attendBtn.textContent = "출석 완료";
+                attendBtn.disabled = true;
+                attendBtn.style.backgroundColor = "#ccc";
+                attendBtn.style.cursor = "not-allowed";
+
+            } else {
+                // attendStatusSpan.textContent = "오늘은 아직 출석하지 않으셨습니다.";
+            }
+
+        } catch (err) {
+            console.error("출석 정보 불러오기 실패:", err);
+        }
+    }
+
+    // 달력 관련
+    function renderCalendar(date) {
+        const year = date.getFullYear();
+        const month = date.getMonth();
+
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+
+        monthYear.textContent = `${year}-${String(month + 1).padStart(2, '0')}`;
+        calendarDays.innerHTML = "";
+
+        let row = document.createElement("tr");
+
+        // 오늘 날짜 구하기
+        const today = new Date();
+        const isThisMonth = today.getFullYear() === year && today.getMonth() === month;
+
+
+        // 빈 칸 추가
+        for (let i = 0; i < firstDay.getDay(); i++) {
+            row.appendChild(document.createElement("td"));
+        }
+
+        // 날짜 채우기
+        for (let d = 1; d <= lastDay.getDate(); d++) {
+            let cell = document.createElement("td");
+
+            // 날짜 숫자
+            let dayNumber = document.createElement("div");
+            dayNumber.classList.add("day-number");
+            dayNumber.textContent = d;
+
+            const dayKey = `${year}-${month + 1}-${d}`;
+
+            // 오늘 날짜면 .today 클래스 추가
+            if (isThisMonth && today.getDate() === d) {
+                dayNumber.classList.add("today");
+            }
+
+            cell.appendChild(dayNumber);
+
+            // 출석 표시
+            if (attendedDays.includes(dayKey)) {
+                let mark = document.createElement("div");
+                mark.classList.add("attended");
+                cell.appendChild(mark);
+            }
+
+            row.appendChild(cell);
+
+            // 주 단위 줄바꿈
+            if ((firstDay.getDay() + d) % 7 === 0) {
+                calendarDays.appendChild(row);
+                row = document.createElement("tr");
+            }
+        }
+
+        // 마지막 줄
+        if (row.children.length > 0) {
+            calendarDays.appendChild(row);
+        }
+    }
+
+    // 이전/다음 달 버튼
+    document.getElementById("prev-month").addEventListener("click", () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar(currentDate);
+    });
+
+    document.getElementById("next-month").addEventListener("click", () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar(currentDate);
+    });
+
+    // 출석 체크 버튼
+    const attendBtn = document.getElementById("attend-btn");
+
+    attendBtn.addEventListener("click", async () => {
+        const today = new Date();
+        const todayKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+
+        if (!isLoggedIn) {
+            alert("출석체크를 하려면 로그인이 필요합니다.");
+            window.location.href = "http://127.0.0.1:5501/endResult.addver/home.html";
+            return;
+        }
+
+        try {
+            const res = await fetch("/api/attend-check", {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ date: todayKey })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                attendedDays.push(todayKey);
+                renderCalendar(currentDate);
+                alert("출석 완료!");
+
+                // 버튼 상태 변경
+                attendBtn.textContent = "출석 완료";
+                attendBtn.disabled = true;
+                attendBtn.style.backgroundColor = "#ccc";
+                attendBtn.style.cursor = "not-allowed";
+
+            } else {
+                alert(data.message || "이미 출석했거나 오류가 발생했습니다.");
+            }
+        } catch (err) {
+            console.error("출석 체크 실패:", err);
+        }
+
+        // 서버 없이 테스트용
+        // const today = new Date();
+        // const todayKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+
+        // if (!attendedDays.includes(todayKey)) {
+        //     attendedDays.push(todayKey);
+        //     renderCalendar(currentDate);
+        //     alert("출석 완료! (테스트용)");
+
+        //     // 버튼 상태 변경
+        //     attendBtn.textContent = "출석 완료";
+        //     attendBtn.disabled = true;
+        //     attendBtn.style.backgroundColor = "#ccc";
+        //     attendBtn.style.cursor = "not-allowed";
+
+        // } else {
+        //     alert("이미 출석했습니다! (테스트용)");
+        // }
+    });
+
+    // 페이지 진입 시 실행
+    renderCalendar(currentDate);
+    loadAttendInfo();
+</script>
+
+</html>
