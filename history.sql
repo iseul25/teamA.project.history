@@ -19,7 +19,6 @@
 CREATE DATABASE IF NOT EXISTS `history` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `history`;
 
-
 -- 테이블 history.points 구조 내보내기
 CREATE TABLE IF NOT EXISTS `points` (
   `pointId` int NOT NULL AUTO_INCREMENT,
@@ -60,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `point_transactions` (
   CONSTRAINT `FK_point_transactions_quiz_score` FOREIGN KEY (`scoreId`) REFERENCES `quiz_score` (`scoreId`),
   CONSTRAINT `FK_point_transactions_user` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`),
   CONSTRAINT `FK_point_transactions_user_attendance` FOREIGN KEY (`attendanceId`) REFERENCES `user_attendance` (`attendanceId`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='포인트 거래내역 기술';
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='포인트 거래내역 기술';
 
 
 -- 테이블 history.post 구조 내보내기
@@ -71,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `post` (
   `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `imgUrl` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `movieUrl` varchar(50) DEFAULT NULL,
-  `content` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `date` date DEFAULT (now()),
   PRIMARY KEY (`postId`) USING BTREE,
   KEY `FK_post_user` (`userId`),
@@ -98,8 +97,8 @@ CREATE TABLE IF NOT EXISTS `quiz` (
   `quizId` int NOT NULL AUTO_INCREMENT,
   `postId` int NOT NULL,
   `imgUrl` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `question` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `questionOption` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `question` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `questionOption` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   PRIMARY KEY (`quizId`) USING BTREE,
   KEY `FK_quiz_post` (`postId`),
   CONSTRAINT `FK_quiz_post` FOREIGN KEY (`postId`) REFERENCES `post` (`postId`)
@@ -156,7 +155,7 @@ CREATE TABLE IF NOT EXISTS `user_attendance` (
   PRIMARY KEY (`attendanceId`) USING BTREE,
   KEY `FK_attendance_user` (`userId`) USING BTREE,
   CONSTRAINT `FK_user_attendance_user` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`)
-) ENGINE=InnoDB AUTO_INCREMENT=922 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='출석기록';
+) ENGINE=InnoDB AUTO_INCREMENT=925 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='출석기록';
 
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
@@ -164,4 +163,3 @@ CREATE TABLE IF NOT EXISTS `user_attendance` (
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
-
