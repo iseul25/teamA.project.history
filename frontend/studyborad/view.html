@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 보기</title>
+    <link rel="stylesheet" href="boardstyle.css">
+</head>
+
+<body>
+    <header>
+        <a href="home.html">
+            <img src="img/mainLg2.png" alt="메인 로고">
+        </a>
+        <ul>
+            <li><a href="#">학습하기</a></li>
+            <li><a href="#">퀴즈풀기</a></li>
+            <li><a href="#">출석하기</a></li>
+            <li><a href="#">포인트 상점</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="#">공지사항</a></li>
+        </ul>
+    </header>
+    <main>
+        <a href="index.html" class="list-button">📋 게시글 목록</a>
+        <h2 id="post-title"></h2>
+        <hr />
+        <p id="post-content"></p>
+
+        <div id="post-actions" class="post-actions">
+            <button id="edit-btn">수정</button>
+            <button id="delete-btn">삭제</button>
+        </div>
+
+        <h3>댓글</h3>
+        <ul id="comment-list"></ul>
+        <p id="editing-status" style="color: red; font-weight: bold; display: none;">✏️ 댓글 수정 중...</p>
+        <form id="comment-form">
+            <textarea id="comment-content" placeholder="댓글 내용을 입력하세요" required></textarea>
+            <button type="submit">댓글 등록</button>
+        </form>
+    </main>
+    <div id="footer">
+        <ul>
+            <li>대표전화: 042-222-2402</li>
+            <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+            <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+            <li>© 2025 역사 한 걸음. All rights reserved.</li>
+        </ul>
+    </div>
+
+    <script src="board.js"></script>
+</body>
+
+</html>

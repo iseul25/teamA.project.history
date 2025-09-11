@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>학습 게시판</title>
+    <link rel="stylesheet" href="boardstyle.css" />
+</head>
+
+<body>
+    <header>
+        <a href="home.html">
+            <img src="img/mainLg2.png" alt="메인 로고" />
+        </a>
+        <ul>
+            <li><a href="index.html" class="active">학습하기</a></li>
+            <li><a href="#">퀴즈풀기</a></li>
+            <li><a href="#">출석하기</a></li>
+            <li><a href="pointshop/point">포인트 상점</a></li>
+            <li><a href="faq.html">FAQ</a></li>
+            <li><a href="#">공지사항</a></li>
+        </ul>
+    </header>
+
+    <aside class="sidebar-fixed">
+        <h3>시대 배경</h3>
+        <ul class="accordion-menu">
+            <li>
+                <button class="accordion-toggle">선사시대 ▾</button>
+                <ul class="submenu">
+                    <li><a href="#">학습하기</a></li>
+                    <li><a href="#">퀴즈풀기</a></li>
+                </ul>
+            </li>
+            <li>
+                <button class="accordion-toggle">고조선과 여러 나라 ▾</button>
+                <ul class="submenu">
+                    <li><a href="#">학습하기</a></li>
+                    <li><a href="#">퀴즈풀기</a></li>
+                </ul>
+            </li>
+            <li>
+                <button class="accordion-toggle">삼국과 가야 ▾</button>
+                <ul class="submenu">
+                    <li><a href="#">학습하기</a></li>
+                    <li><a href="#">퀴즈풀기</a></li>
+                </ul>
+            </li>
+            <li>
+                <button class="accordion-toggle">남북국시대 ▾</button>
+                <ul class="submenu">
+                    <li><a href="#">학습하기</a></li>
+                    <li><a href="#">퀴즈풀기</a></li>
+                </ul>
+            </li>
+            <li>
+                <button class="accordion-toggle">고려시대 ▾</button>
+                <ul class="submenu">
+                    <li><a href="#">학습하기</a></li>
+                    <li><a href="#">퀴즈풀기</a></li>
+                </ul>
+            </li>
+            <li>
+                <button class="accordion-toggle">조선시대 ▾</button>
+                <ul class="submenu">
+                    <li><a href="index.html">학습하기</a></li>
+                    <li><a href="#">퀴즈풀기</a></li>
+                </ul>
+            </li>
+            <li>
+                <button class="accordion-toggle">근대 ▾</button>
+                <ul class="submenu">
+                    <li><a href="#">학습하기</a></li>
+                    <li><a href="#">퀴즈풀기</a></li>
+                </ul>
+            </li>
+            <li>
+                <button class="accordion-toggle">현대 ▾</button>
+                <ul class="submenu">
+                    <li><a href="#">학습하기</a></li>
+                    <li><a href="#">퀴즈풀기</a></li>
+                </ul>
+            </li>
+        </ul>
+    </aside>
+
+
+    <div class="board-layout">
+        <main class="board-main">
+            <h1>학습 게시판</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>제목</th>
+                        <th>작성일</th>
+                    </tr>
+                </thead>
+                <tbody id="post-list"></tbody>
+            </table>
+
+            <div class="pagination" style="text-align:center; margin-top: 20px;">
+                <button id="prev-page">이전</button>
+                <span id="page-info">1 / 1</span>
+                <button id="next-page">다음</button>
+            </div>
+
+            <div class="write-button-wrapper">
+                <a href="write.html" class="floating-write-button">게시글 작성</a>
+            </div>
+        </main>
+    </div>
+
+    <div id="footer">
+        <ul>
+            <li>대표전화: 042-222-2402</li>
+            <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+            <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+            <li>© 2025 역사 한 걸음. All rights reserved.</li>
+        </ul>
+    </div>
+
+    <script src="board.js"></script>
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 현재 페이지 경로 얻기
+        const currentPath = window.location.pathname.split('/').pop();
+        const menuLinks = document.querySelectorAll('header > ul li a');
+
+        menuLinks.forEach(link => {
+            const linkPath = link.getAttribute('href');
+            if (linkPath === currentPath) {
+                link.classList.add('active');
+            }
+        });
+
+        // 기존 게시글 렌더링 호출 유지
+        renderPosts(1);
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggles = document.querySelectorAll('.accordion-toggle');
+
+        toggles.forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const submenu = toggle.nextElementSibling;
+
+                if (submenu.classList.contains('open')) {
+                    submenu.classList.remove('open');
+                    toggle.innerHTML = toggle.textContent.replace('▴', '▾');
+                } else {
+                    submenu.classList.add('open');
+                    toggle.innerHTML = toggle.textContent.replace('▾', '▴');
+                }
+            });
+        });
+    });
+</script>
+
+</html>
