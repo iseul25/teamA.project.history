@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>시대 선택</title>
+    <link rel="stylesheet" href="topicstyle.css" />
+</head>
+
+<body>
+    <div class="wrapper">
+        <header>
+            <div class="container">
+                <a href="home.html">
+                    <img src="img/mainLg2.png" alt="메인 로고" />
+                </a>
+                <ul>
+                    <li><a href="topic.html">학습하기</a></li>
+                    <li><a href="#">퀴즈풀기</a></li>
+                    <li><a href="#">출석하기</a></li>
+                    <li><a href="pointshop/pointshop.html">포인트 상점</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="#">공지사항</a></li>
+                </ul>
+            </div>
+        </header>
+
+        <main>
+            <div class="container">
+                <h1>시대 배경을 선택해주세요</h1>
+                <div class="grid-container">
+                    <button onclick="location.href=''">선사시대</button>
+                    <button onclick="location.href=''">삼국시대</button>
+                    <button onclick="location.href=''">고려시대</button>
+                    <button onclick="location.href='studyborad/index.html'">조선시대</button>
+                    <button onclick="location.href=''">일제강점기</button>
+                    <button onclick="location.href=''">한국전쟁</button>
+                    <button onclick="location.href=''">근현대사</button>
+                    <button onclick="location.href=''">민주화시대</button>
+                </div>
+            </div>
+        </main>
+
+        <footer id="footer">
+            <div class="container">
+                <ul>
+                    <li>대표전화: 042-222-2402</li>
+                    <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+                    <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+                    <li>© 2025 역사 한 걸음. All rights reserved.</li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function goToPeriod(period) {
+            window.location.href = `board.html?subject=${period}`;
+        }
+    </script>
+</body>
+
+</html>
