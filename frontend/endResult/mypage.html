@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지</title>
+    <!-- <link rel="stylesheet" href="css/mypage.css"> -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-image: url(img/mainBg1.png);
+            /* html, css 합치면 ../ 지우기 */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fcf4e1;
+            padding: 0 100px;
+            box-shadow: 0 2px 20px #e9e4d7;
+        }
+
+        header img {
+            width: 16%;
+            padding-top: 5px;
+        }
+
+        header>ul {
+            display: flex;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        header>ul li a {
+            display: block;
+            color: #222;
+            text-align: center;
+            justify-content: center;
+            padding: 14px 16px;
+            font-size: 18px;
+            text-decoration: none;
+            transition: transform 0.2s ease, font-size 0.2s ease;
+            /* 애니메이션 효과 */
+        }
+
+        header>ul li a:hover {
+            transform: scale(1.2);
+            /* 글자 전체 커짐 */
+            color: #000;
+            font-weight: bold;
+        }
+
+        header>ul li a.active {
+            font-weight: bold;
+            font-size: 1.3em;
+            /* 글자 크기 키우기 */
+            text-decoration: underline;
+            /* 밑줄 표시 */
+            color: #000;
+        }
+
+        #user {
+            font-size: 16px;
+        }
+
+        #user>a {
+            color: #222;
+            text-decoration: none;
+        }
+
+        #user a:hover {
+            text-decoration: underline;
+        }
+
+        /* main */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 컨테이너 */
+        #container {
+            /* flex: 1; */
+            max-width: 700px;
+            min-height: 600px;
+            margin: 30px auto;
+            padding: 40px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+
+        }
+
+        #mypageInfo {
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 25px;
+            font-weight: 500;
+        }
+
+        /* 마이페이지 */
+        #mypage {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid #c4c3c3;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        #pageBox {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        #pageBox td {
+            border: 1px solid #dfdfdf;
+            height: 80px;
+            padding: 5px;
+            padding-left: 8px;
+            font-size: 16px;
+            vertical-align: middle;
+            position: relative;
+        }
+
+        .label {
+            width: 30%;
+            text-align: center;
+            background-color: #f1f1f1;
+        }
+
+        /* 출석, 포인트 버튼 */
+        #attendBtn,
+        #pointBtn {
+            display: inline-block;
+            padding: 5px 12px;
+            margin-right: 8px;
+            color: #222;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 5px;
+            vertical-align: middle;
+            text-decoration: none;
+            background-color: #F5D2D2;
+            border: 1px solid #ffbaba;
+        }
+
+        #attendBtn:hover,
+        #pointBtn:hover {
+            background-color: #ffbaba;
+        }
+
+        #attendanceDate,
+        #totalPoint {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 수정, 탈퇴 버튼 */
+        #btnBox {
+            display: flex;
+            justify-content: flex-end;
+            gap: 6px;
+            margin-top: 15px;
+        }
+
+        #editBtn,
+        #withdrawBtn {
+            display: inline-block;
+            padding: 5px 13px;
+            color: #222;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        #editBtn {
+            background-color: #bdd8fc;
+            border: 1px solid #82b7fc;
+        }
+
+        #withdrawBtn {
+            background-color: #ddd;
+            border: 1px solid #aaa;
+        }
+
+        #editBtn:hover {
+            background-color: #82b7fc;
+        }
+
+        #withdrawBtn:hover {
+            background-color: #aaa;
+        }
+
+        /* 저장, 취소 버튼 */
+        #saveBtn,
+        #cancelBtn {
+            display: inline-block;
+            padding: 5px 13px;
+            color: #222;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        #saveBtn {
+            background-color: rgb(167, 243, 160);
+            border: 1px solid rgb(112, 233, 102);
+        }
+
+        #cancelBtn {
+            background-color: #ddd;
+            border: 1px solid #aaa;
+        }
+
+        #saveBtn:hover {
+            background-color: rgb(112, 233, 102);
+        }
+
+        #cancelBtn:hover {
+            background-color: #aaa;
+        }
+
+        /* footer */
+        #footer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #EEE7DA;
+            padding: 0 200px;
+        }
+
+        #footer>ul {
+            display: flex;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #footer>ul li {
+            display: block;
+            color: #333;
+            text-align: center;
+            padding: 5px 8px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="http://127.0.0.1:5501/endResult.addver/home.html">
+            <img src="img/mainLg2.png" alt="메인 로고">
+        </a>
+        <ul>
+            <li><a href="">학습하기</a></li>
+            <li><a href="">퀴즈풀기</a></li>
+            <li><a href="http://127.0.0.1:5501/attend/attend.html">출석하기</a></li>
+            <li><a href="">포인트 상점</a></li>
+            <li><a href="http://127.0.0.1:5501/faq/faq.html">FAQ</a></li>
+            <li><a href="http://127.0.0.1:5501/notice/notice.html">공지사항</a></li>
+        </ul>
+        <div id="user" style="display: none;"> <!-- 로그인 했을 시에만 보이게 -->
+            <a href="http://127.0.0.1:5501/mypage/mypage.html" id="userName-link" class="active"> 님</a>
+        </div>
+    </header>
+    <main>
+        <div id="container">
+            <div id="mypageInfo">
+                <p>마이페이지</p>
+            </div>
+            <div id="mypage">
+                <table id="pageBox">
+                    <tbody>
+                        <tr>
+                            <td class="label">이름</td>
+                            <td class="value">
+                                <span id="userName">사용자</span>
+                                <input type="text" id="userNameInput" style="display: none;">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">이메일</td>
+                            <td class="value">
+                                <span id="userEmail">aaa123@gmail.com</span>
+                                <input type="text" id="userEmailInput" style="display: none;">
+                                <button id="checkEmailBtn" style="display: none;">중복확인</button>
+                                <div id="emailMessage"
+                                    style="display: none; color:red; font-size: 0.9em; margin-top: 5px;"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">출석</td>
+                            <td class="value" id="attendanceDate">출석/미출석
+                                <a href="http://127.0.0.1:5501/attend/attend.html" id="attendBtn">출석하기</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">포인트</td>
+                            <td class="value" id="totalPoint">100점
+                                <a href="" id="pointBtn">포인트 상점</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="btnBox">
+                <button id="editBtn">수정</button>
+                <button id="saveBtn" style="display:none;">저장</button>
+                <button id="cancelBtn" style="display:none;">취소</button>
+                <button id="withdrawBtn">탈퇴</button>
+            </div>
+        </div>
+    </main>
+    <div id="footer">
+        <ul>
+            <li>대표전화: 042-222-2402</li>
+            <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+            <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+            <li>© 2025 역사 한 걸음. All rights reserved.</li>
+        </ul>
+    </div>
+</body>
+<script>
+    // 로그인 여부 저장
+    let isLoggedIn = false;
+
+    async function checkLogin() {
+        try {
+            const response = await fetch("/api/check-login", {
+                credentials: "include"
+            });
+            const data = await response.json();
+
+            const userDiv = document.getElementById("user");
+            const usernameLink = document.getElementById("username-link");
+
+            if (data.isLoggedIn) {
+                isLoggedIn = true;
+                usernameLink.textContent = data.username;
+                usernameLink.href = "/mypage.html";
+                userDiv.style.display = "block";
+            } else {
+                isLoggedIn = false;
+                userDiv.style.display = "none";
+            }
+        } catch (err) {
+            console.error("로그인 체크 에러:", err);
+        }
+    }
+
+    // 로그인 정보 가져오기
+    // 예시: 로그인 후 발급받은 토큰을 헤더에 담아 요청
+    fetch('/api/user/mypage', {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('userName').textContent = data.name;
+            document.getElementById('userEmail').textContent = data.email;
+            document.getElementById('userAttendance').textContent = data.attendance + '일';
+            document.getElementById('userPoint').textContent = data.point + '점';
+        })
+        .catch(error => console.error('Error:', error));
+
+    // 수정 기능
+    const editBtn = document.getElementById("editBtn");
+    const withdrawBtn = document.getElementById("withdrawBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+
+    const userName = document.getElementById("userName");
+    const userNameInput = document.getElementById("userNameInput");
+
+    const userEmail = document.getElementById("userEmail");
+    const userEmailInput = document.getElementById("userEmailInput");
+    const checkEmailBtn = document.getElementById("checkEmailBtn");
+
+    // 수정 모드 전환
+    editBtn.addEventListener("click", () => {
+        // 기존 값 input에 세팅
+        userNameInput.value = userName.textContent;
+        userEmailInput.value = userEmail.textContent;
+
+        // span 숨기고 input 보이기
+        userName.style.display = "none";
+        userEmail.style.display = "none";
+
+        userNameInput.style.display = "inline-block";
+        userEmailInput.style.display = "inline-block";
+        checkEmailBtn.style.display = "inline-block";
+        document.getElementById("emailMessage").style.display = "block";
+
+        // 버튼 전환
+        editBtn.style.display = "none";
+        withdrawBtn.style.display = "none";
+        saveBtn.style.display = "inline-block";
+        cancelBtn.style.display = "inline-block";
+    });
+
+    // 저장
+    saveBtn.addEventListener("click", () => {
+        const newName = userNameInput.value.trim();
+        const newEmail = userEmailInput.value.trim();
+
+        // TODO: 서버에 수정 요청 (예: PUT /api/user/mypage)
+        fetch('/api/user/mypage', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+            body: JSON.stringify({ name: newName, email: newEmail })
+        })
+            .then(res => res.json())
+            .then(data => {
+                // 화면 갱신
+                userName.textContent = data.name;
+                userEmail.textContent = data.email;
+
+                // 다시 보기 모드로 전환
+                userName.style.display = "inline";
+                userEmail.style.display = "inline";
+                userNameInput.style.display = "none";
+                userEmailInput.style.display = "none";
+                checkEmailBtn.style.display = "none";
+                document.getElementById("emailMessage").style.display = "none";
+
+                saveBtn.style.display = "none";
+                cancelBtn.style.display = "none";
+                editBtn.style.display = "inline-block";
+                withdrawBtn.style.display = "inline-block";
+            })
+            .catch(err => console.error("수정 실패:", err));
+    });
+
+    // 취소
+    cancelBtn.addEventListener("click", () => {
+        userName.style.display = "inline";
+        userEmail.style.display = "inline";
+
+        userNameInput.style.display = "none";
+        userEmailInput.style.display = "none";
+        checkEmailBtn.style.display = "none";
+        document.getElementById("emailMessage").style.display = "none";
+
+        saveBtn.style.display = "none";
+        cancelBtn.style.display = "none";
+        editBtn.style.display = "inline-block";
+        withdrawBtn.style.display = "inline-block";
+    });
+
+    // 이메일 중복 확인
+    checkEmailBtn.addEventListener("click", () => {
+        const email = userEmailInput.value.trim();
+        const emailMessage = document.getElementById("emailMessage");
+
+        fetch(`/api/user/check-email?email=${encodeURIComponent(email)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.exists) {
+                    emailMessage.textContent = "이미 사용 중인 이메일입니다.";
+                    emailMessage.style.color = "red";
+                } else {
+                    emailMessage.textContent = "사용 가능한 이메일입니다.";
+                    emailMessage.style.color = "green";
+                }
+            })
+            .catch(err => {
+                console.error("중복 확인 실패:", err);
+                emailMessage.textContent = "중복 확인 중 오류가 발생했습니다.";
+                emailMessage.style.color = "red";
+            });
+    });
+
+    // 탈퇴 기능
+    withdrawBtn.addEventListener("click", () => {
+        // 현재 포인트 가져오기 (ex: "100점"에서 숫자만 추출)
+        const pointText = document.getElementById("totalPoint").textContent;
+        const point = pointText.match(/\d+/) ? pointText.match(/\d+/)[0] : 0;
+
+        // 확인 메시지
+        const confirmMsg = `현재 보유하고 계신 포인트 ${point}점이 전부 소멸됩니다.\n정말 탈퇴하시겠습니까?`;
+        if (confirm(confirmMsg)) {
+            // TODO: 서버에 탈퇴 요청 (ex: DELETE /api/user)
+            fetch('/api/user/withdraw', {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+                .then(res => {
+                    if (res.ok) {
+                        // 탈퇴 성공 시 메인 화면으로 이동
+                        alert("탈퇴가 완료되었습니다.");
+                        localStorage.removeItem('token'); // 토큰 삭제
+                        window.location.href = "http://127.0.0.1:5501/endResult.addver/home.html";
+                    } else {
+                        alert("탈퇴 처리 중 오류가 발생했습니다.");
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("서버 연결 중 오류가 발생했습니다.");
+                });
+        }
+    });
+</script>
+
+</html>
