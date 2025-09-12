@@ -46,6 +46,8 @@
                                 <span id="userEmail">aaa123@gmail.com</span>
                                 <input type="text" id="userEmailInput" style="display: none;">
                                 <button id="checkEmailBtn" style="display: none;">중복확인</button>
+                                <div id="emailMessage"
+                                    style="display: none; color:red; font-size: 0.9em; margin-top: 5px;"></div>
                             </td>
                         </tr>
                         <tr>
@@ -151,6 +153,7 @@
         userNameInput.style.display = "inline-block";
         userEmailInput.style.display = "inline-block";
         checkEmailBtn.style.display = "inline-block";
+        document.getElementById("emailMessage").style.display = "block";
 
         // 버튼 전환
         editBtn.style.display = "none";
@@ -185,6 +188,7 @@
                 userNameInput.style.display = "none";
                 userEmailInput.style.display = "none";
                 checkEmailBtn.style.display = "none";
+                document.getElementById("emailMessage").style.display = "none";
 
                 saveBtn.style.display = "none";
                 cancelBtn.style.display = "none";
@@ -202,6 +206,7 @@
         userNameInput.style.display = "none";
         userEmailInput.style.display = "none";
         checkEmailBtn.style.display = "none";
+        document.getElementById("emailMessage").style.display = "none";
 
         saveBtn.style.display = "none";
         cancelBtn.style.display = "none";
@@ -212,17 +217,57 @@
     // 이메일 중복 확인
     checkEmailBtn.addEventListener("click", () => {
         const email = userEmailInput.value.trim();
+        const emailMessage = document.getElementById("emailMessage");
 
         fetch(`/api/user/check-email?email=${encodeURIComponent(email)}`)
             .then(res => res.json())
             .then(data => {
                 if (data.exists) {
-                    alert("이미 사용 중인 이메일입니다.");
+                    emailMessage.textContent = "이미 사용 중인 이메일입니다.";
+                    emailMessage.style.color = "red";
                 } else {
-                    alert("사용 가능한 이메일입니다.");
+                    emailMessage.textContent = "사용 가능한 이메일입니다.";
+                    emailMessage.style.color = "green";
                 }
             })
-            .catch(err => console.error("중복 확인 실패:", err));
+            .catch(err => {
+                console.error("중복 확인 실패:", err);
+                emailMessage.textContent = "중복 확인 중 오류가 발생했습니다.";
+                emailMessage.style.color = "red";
+            });
+    });
+
+    // 탈퇴 기능
+    withdrawBtn.addEventListener("click", () => {
+        // 현재 포인트 가져오기 (ex: "100점"에서 숫자만 추출)
+        const pointText = document.getElementById("totalPoint").textContent;
+        const point = pointText.match(/\d+/) ? pointText.match(/\d+/)[0] : 0;
+
+        // 확인 메시지
+        const confirmMsg = `현재 보유하고 계신 포인트 ${point}점이 전부 소멸됩니다.\n정말 탈퇴하시겠습니까?`;
+        if (confirm(confirmMsg)) {
+            // TODO: 서버에 탈퇴 요청 (ex: DELETE /api/user)
+            fetch('/api/user/withdraw', {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+                .then(res => {
+                    if (res.ok) {
+                        // 탈퇴 성공 시 메인 화면으로 이동
+                        alert("탈퇴가 완료되었습니다.");
+                        localStorage.removeItem('token'); // 토큰 삭제
+                        window.location.href = "http://127.0.0.1:5501/endResult.addver/home.html";
+                    } else {
+                        alert("탈퇴 처리 중 오류가 발생했습니다.");
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("서버 연결 중 오류가 발생했습니다.");
+                });
+        }
     });
 </script>
 
