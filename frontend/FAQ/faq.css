@@ -60,6 +60,11 @@ header> ul li a.active {
 
 #user > a {
     color: #222;
+    text-decoration: none;
+}
+
+#user a:hover {
+    text-decoration: underline;
 }
 
 /* FAQ */
