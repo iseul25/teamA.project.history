@@ -26,9 +26,10 @@ CREATE TABLE IF NOT EXISTS `points` (
   `totalPoint` int DEFAULT NULL,
   PRIMARY KEY (`pointId`) USING BTREE,
   KEY `FK_point_user` (`userId`) USING BTREE,
-  CONSTRAINT `FK_point_user` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `FK_point_user` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='유저의 포인트 대한 정보';
 
+-- 테이블 데이터 history.points:~0 rows (대략적) 내보내기
 
 -- 테이블 history.point_shop 구조 내보내기
 CREATE TABLE IF NOT EXISTS `point_shop` (
@@ -39,6 +40,7 @@ CREATE TABLE IF NOT EXISTS `point_shop` (
   PRIMARY KEY (`itemId`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='적립된 포인트를 사용할 수 있는 항목들 기술';
 
+-- 테이블 데이터 history.point_shop:~0 rows (대략적) 내보내기
 
 -- 테이블 history.point_transactions 구조 내보내기
 CREATE TABLE IF NOT EXISTS `point_transactions` (
@@ -57,10 +59,11 @@ CREATE TABLE IF NOT EXISTS `point_transactions` (
   KEY `FK_point_transactions_user_attendance` (`attendanceId`),
   CONSTRAINT `FK_point_transactions_point_shop` FOREIGN KEY (`itemId`) REFERENCES `point_shop` (`itemId`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_point_transactions_quiz_score` FOREIGN KEY (`scoreId`) REFERENCES `quiz_score` (`scoreId`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_point_transactions_user` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_point_transactions_user` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_point_transactions_user_attendance` FOREIGN KEY (`attendanceId`) REFERENCES `user_attendance` (`attendanceId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='포인트 거래내역 기술';
 
+-- 테이블 데이터 history.point_transactions:~0 rows (대략적) 내보내기
 
 -- 테이블 history.post 구조 내보내기
 CREATE TABLE IF NOT EXISTS `post` (
@@ -70,12 +73,13 @@ CREATE TABLE IF NOT EXISTS `post` (
   `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `videoUrl` varchar(50) DEFAULT NULL,
-  `date` date DEFAULT (now()),
+  `date` datetime DEFAULT (now()),
   PRIMARY KEY (`postId`) USING BTREE,
   KEY `FK_post_user` (`userId`),
-  CONSTRAINT `FK_post_user` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `FK_post_user` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='게시글(학습내용 포함)';
 
+-- 테이블 데이터 history.post:~0 rows (대략적) 내보내기
 
 -- 테이블 history.post_comment 구조 내보내기
 CREATE TABLE IF NOT EXISTS `post_comment` (
@@ -87,14 +91,15 @@ CREATE TABLE IF NOT EXISTS `post_comment` (
   KEY `FK_post_comment_post` (`postId`),
   KEY `FK_post_comment_user` (`userId`),
   CONSTRAINT `FK_post_comment_post` FOREIGN KEY (`postId`) REFERENCES `post` (`postId`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_post_comment_user` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `FK_post_comment_user` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='댓글 항목';
 
+-- 테이블 데이터 history.post_comment:~0 rows (대략적) 내보내기
 
 -- 테이블 history.post_image 구조 내보내기
 CREATE TABLE IF NOT EXISTS `post_image` (
   `imgId` int NOT NULL AUTO_INCREMENT,
-  `postId` int DEFAULT NULL,
+  `postId` int NOT NULL,
   `imgUrl` varchar(50) DEFAULT NULL,
   `imgDescription` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`imgId`),
@@ -102,6 +107,7 @@ CREATE TABLE IF NOT EXISTS `post_image` (
   CONSTRAINT `FK_post_image_post` FOREIGN KEY (`postId`) REFERENCES `post` (`postId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='게시글에 올라가는 이미지에 대한 항목';
 
+-- 테이블 데이터 history.post_image:~0 rows (대략적) 내보내기
 
 -- 테이블 history.quiz 구조 내보내기
 CREATE TABLE IF NOT EXISTS `quiz` (
@@ -115,6 +121,7 @@ CREATE TABLE IF NOT EXISTS `quiz` (
   CONSTRAINT `FK_quiz_post` FOREIGN KEY (`postId`) REFERENCES `post` (`postId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='퀴즈항목';
 
+-- 테이블 데이터 history.quiz:~0 rows (대략적) 내보내기
 
 -- 테이블 history.quiz_attempt 구조 내보내기
 CREATE TABLE IF NOT EXISTS `quiz_attempt` (
@@ -130,9 +137,10 @@ CREATE TABLE IF NOT EXISTS `quiz_attempt` (
   KEY `FK_quiz_attempt_quiz` (`quizId`),
   KEY `FK_quiz_attempt_user` (`userId`),
   CONSTRAINT `FK_quiz_attempt_quiz` FOREIGN KEY (`quizId`) REFERENCES `quiz` (`quizId`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `FK_quiz_attempt_user` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `FK_quiz_attempt_user` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='퀴즈 응시 기록';
 
+-- 테이블 데이터 history.quiz_attempt:~0 rows (대략적) 내보내기
 
 -- 테이블 history.quiz_score 구조 내보내기
 CREATE TABLE IF NOT EXISTS `quiz_score` (
@@ -142,12 +150,13 @@ CREATE TABLE IF NOT EXISTS `quiz_score` (
   `pointScore` int DEFAULT NULL,
   PRIMARY KEY (`scoreId`),
   KEY `FK_quiz_score_user` (`userId`),
-  CONSTRAINT `FK_quiz_score_user` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `FK_quiz_score_user` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='퀴즈 점수에 대한 항목';
 
+-- 테이블 데이터 history.quiz_score:~0 rows (대략적) 내보내기
 
--- 테이블 history.user 구조 내보내기
-CREATE TABLE IF NOT EXISTS `user` (
+-- 테이블 history.users 구조 내보내기
+CREATE TABLE IF NOT EXISTS `users` (
   `userId` int NOT NULL AUTO_INCREMENT,
   `userType` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
@@ -156,6 +165,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   PRIMARY KEY (`userId`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='관리자/일반유저';
 
+-- 테이블 데이터 history.users:~0 rows (대략적) 내보내기
 
 -- 테이블 history.user_attendance 구조 내보내기
 CREATE TABLE IF NOT EXISTS `user_attendance` (
@@ -165,9 +175,10 @@ CREATE TABLE IF NOT EXISTS `user_attendance` (
   `pointAdd` int DEFAULT NULL,
   PRIMARY KEY (`attendanceId`) USING BTREE,
   KEY `FK_attendance_user` (`userId`) USING BTREE,
-  CONSTRAINT `FK_user_attendance_user` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `FK_user_attendance_user` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=925 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='출석기록';
 
+-- 테이블 데이터 history.user_attendance:~0 rows (대략적) 내보내기
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
