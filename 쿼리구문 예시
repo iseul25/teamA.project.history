@@ -52,7 +52,7 @@ SET pointScore = score * 10
 WHERE userId IN (2, 3, 5);
 
 
-/*상점이용 생성*/
+/*point_transactions 테이블에 상점이용 생성*/
 INSERT INTO point_transactions (userId, attendanceId, itemId, scoreId, reason) 
 VALUES (2, NULL, 1, NULL, '상점이용');
 
@@ -70,7 +70,7 @@ WHERE pt.itemId IS NOT NULL
   AND pt.scoreId IS NULL;
   
   
-/*출석체크 생성*/
+/*point_transactions 테이블에 출석체크 생성*/
 INSERT INTO point_transactions (userId, attendanceId, itemId, scoreId, reason) 
 VALUES (2, 918, NULL, NULL, '출석체크');
 
