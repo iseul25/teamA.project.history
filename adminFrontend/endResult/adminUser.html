@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원 관리</title>
+    <!-- <link rel="stylesheet" href="css/adminUser.css"> -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ecf3fc;
+            padding: 0 100px;
+            border: 1px solid #ececec;
+            box-shadow: 0 2px 20px #e7e8e9;
+            z-index: 100;
+        }
+
+        header img {
+            width: 16%;
+            padding-top: 5px;
+        }
+
+        header>ul {
+            display: flex;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        header>ul li a {
+            display: block;
+            color: #222;
+            text-align: center;
+            justify-content: center;
+            padding: 14px 16px;
+            font-size: 18px;
+            text-decoration: none;
+            transition: transform 0.2s ease, font-size 0.2s ease;
+        }
+
+        header>ul li a:hover {
+            transform: scale(1.2);
+            color: #000;
+            font-weight: bold;
+        }
+
+        header>ul li a.active {
+            font-weight: bold;
+            font-size: 1.3em;
+            text-decoration: underline;
+            color: #000;
+        }
+
+        #user {
+            font-size: 16px;
+        }
+
+        #user>a {
+            color: #222;
+            text-decoration: none;
+        }
+
+        #user a:hover {
+            text-decoration: underline;
+        }
+
+        /* sideber */
+        #sideber {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 220px;
+            background-color: #f6f6f6;
+            position: fixed;
+            top: 55px;
+            height: 100%;
+            overflow: auto;
+            border-right: 1px solid #e2e2e2;
+            box-shadow: 0 2px 2px #dfdfdf;
+            z-index: 50;
+        }
+
+        #sideber li a {
+            display: block;
+            color: black;
+            padding: 15px;
+            font-size: 18px;
+            margin-top: 20px;
+            text-align: center;
+            letter-spacing: 1.2px;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            transition: transform 0.2s ease, font-size 0.2s ease;
+        }
+
+        #sideber li a.active {
+            font-weight: bold;
+            font-size: 1.4em;
+            text-decoration: underline;
+            color: #000;
+        }
+
+        #sideber li a:not(.active):hover {
+            transform: scale(1.2);
+            color: #000;
+            font-weight: bold;
+        }
+
+        /* 회원 등록 모델 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 380px;
+        }
+
+        .modal-content h2 {
+            text-align: center;
+            margin-bottom: 15px;
+            margin-left: 10px;
+        }
+
+        #addUserForm {
+            display: block;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        #addUserForm input {
+            margin: 10px;
+            padding: 10px;
+            width: 300px;
+            font-size: 15px;
+        }
+
+        #addUserForm>label {
+            display: block;
+            text-align: left;
+            margin-left: 20px;
+        }
+
+        .emailBox {
+            position: relative;
+            /* width: 100%; */
+        }
+
+        .emailBox button {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* 모델 안 회원 등록 버튼 */
+        .addBtn button {
+            padding: 4px 10px;
+            font-size: 14px;
+            border-radius: 10px;
+            border: 1px solid #a1a1a1;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .addBtn button:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* 모델 밖 회원 등록 버튼 */
+        #addUserBtn {
+            display: inline-block;
+            text-decoration: none;
+            padding: 5px 10px;
+            margin: 10px 0 8px;
+            border-radius: 10px;
+            border: 1px solid #7db9fd;
+            background-color: #cbe3ff;
+            color: #333;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #addUserBtn:hover {
+            background-color: #a7cefa;
+        }
+
+        /* container */
+        #container {
+            margin: auto;
+            padding: 20px;
+            width: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 2px #ddd;
+            border: 1px solid #dfdfdf;
+            border-radius: 15px
+        }
+
+        /* 회원 목록 테이블 */
+        .userlistBox {
+            padding: 0 20px;
+        }
+
+        .userlist-addUserBtn {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .userlist-title {
+            font-size: 35px;
+            font-weight: 600;
+            letter-spacing: 5px;
+            margin-top: 8px;
+        }
+
+        .userlist-table {
+            background-color: #fdfdfd;
+            border-radius: 10px;
+            border: 1px solid #c7c7c7;
+            border-collapse: collapse;
+            box-shadow: 0 2px 2px #7c7c7c;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .userlist-table th,
+        td {
+            border: 1px solid #d8d8d8;
+            padding: 10px 30px;
+            text-align: center;
+        }
+
+        .userlist-table th {
+            background-color: #e5f1ff;
+        }
+
+        /* 회원 삭제 버튼 */
+        .deleteBtn {
+            padding: 4px 10px;
+            font-size: 14px;
+            border-radius: 9px;
+            border: 1px solid #a1a1a1;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .deleteBtn:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* 페이징 버튼 */
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .pagination button {
+            border: 1px solid #ddd;
+            background: #fff;
+            padding: 5px 10px;
+            margin: 0 3px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .pagination button.active {
+            background: #0073e6;
+            color: white;
+            border-color: #0073e6;
+        }
+
+        .pagination button:hover {
+            background: #f0f0f0;
+        }
+
+        /* footer */
+        #footer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #e9e9e9;
+            padding: 0 200px;
+            z-index: 80;
+        }
+
+        #footer>ul {
+            display: flex;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #footer>ul li {
+            display: block;
+            color: #333;
+            text-align: center;
+            padding: 5px 8px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="http://127.0.0.1:5501/endResult.addver/home.html">
+            <img src="img/mainLg2.png" alt="메인 로고">
+        </a>
+        <ul>
+            <li><a href="">학습하기</a></li>
+            <li><a href="">퀴즈풀기</a></li>
+            <li><a href="http://127.0.0.1:5501/attend/attend.html">출석하기</a></li>
+            <li><a href="">포인트 상점</a></li>
+            <li><a href="http://127.0.0.1:5501/faq/faq.html">FAQ</a></li>
+            <li><a href="http://127.0.0.1:5501/notice/notice.html">공지사항</a></li>
+        </ul>
+        <div id="user" style="display: none;"> <!-- 로그인 했을 시에만 보이게 -->
+            <a href="http://127.0.0.1:5501/mypage/mypage.html" id="userName-link" class="active"> 님</a>
+        </div>
+    </header>
+    <div id="sideber">
+        <ul>
+            <li><a href="" class="active">회원관리</a></li>
+            <li><a href="">게시글관리</a></li>
+            <li><a href="">댓글관리</a></li>
+            <li><a href="">상점관리</a></li>
+        </ul>
+    </div>
+    <div id="container">
+        <div class="userlistBox">
+            <div class="userlist-title">회원관리</div>
+            <div class="userlist-addUserBtn">
+                <a href="javascript:void(0)" id="addUserBtn">회원등록</a>
+            </div>
+            <!-- 회원 등록 팝업 -->
+            <div id="addUserBox" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span id="closeModal" style="float:right; cursor:pointer;">&times;</span>
+                    <h2>회원 등록</h2>
+                    <form id="addUserForm">
+                        <label>ID</label>
+                        <div class="emailBox">
+                            <input type="email" id="emailInput" name="email" required placeholder="abc123@gmail.com">
+                            <button type="button" id="checkEmailBtn">중복확인</button>
+                        </div>
+                        <small id="emailMessage" style="color:red; display:none;"></small><br>
+
+                        <label>PASSWORD</label>
+                        <div class="passwordBox">
+                            <input type="password" name="password" required placeholder="*******">
+                        </div>
+                        <label>NAME</label>
+                        <div class="emailBox">
+                            <input type="text" name="name" required placeholder="홍길동">
+                        </div>
+                        <div class="addBtn">
+                            <button type="submit">등록</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- 회원 목록 테이블 -->
+            <table class="userlist-table">
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>이름</th>
+                        <th>이메일</th>
+                        <th>유저 타입</th>
+                        <th>출석 현황</th>
+                        <th>포인트</th>
+                        <th>작업</th>
+                    </tr>
+                </thead>
+                <tbody id="userlist-body">
+                </tbody>
+            </table>
+            <!-- 페이징 영역 -->
+            <div id="pagination" class="pagination"></div>
+        </div>
+    </div>
+    <div id="footer">
+        <ul>
+            <li>대표전화: 042-222-2402</li>
+            <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+            <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+            <li>© 2025 역사 한 걸음. All rights reserved.</li>
+        </ul>
+    </div>
+</body>
+<script>
+    // 관리자 로그인
+    async function checkLogin() {
+        try {
+            const response = await fetch("/api/check-login", {
+                credentials: "include"
+            });
+            const data = await response.json();
+
+            const userDiv = document.getElementById("user");
+            const usernameLink = document.getElementById("userName-link");
+            // id 수정됨
+
+            if (data.isLoggedIn) {
+                // 관리자인지 확인
+                if (data.role === "admin") {
+                    usernameLink.textContent = data.username + "관리자";
+                    usernameLink.href = "/admin/dashboard.html";
+                    // 관리자 페이지
+                } else {
+                    usernameLink.textContent = data.username;
+                    usernameLink.href = "/mypage/mypage.html";
+                    // 일반 유저 페이지
+                }
+                userDiv.style.display = "block";
+            } else {
+                userDiv.style.display = "none";
+            }
+        } catch (err) {
+            console.error("로그인 체크 에러:", err);
+        }
+    }
+
+    // 페이지 로드 시 로그인 체크
+    window.onload = checkLogin;
+
+    // 회원 등록
+    const addUserBtn = document.getElementById("addUserBtn");
+    const modal = document.getElementById("addUserBox");
+    const closeModal = document.getElementById("closeModal");
+    const addUserForm = document.getElementById("addUserForm");
+    const emailInput = document.getElementById("emailInput");
+    const checkEmailBtn = document.getElementById("checkEmailBtn");
+    const emailMessage = document.getElementById("emailMessage");
+
+    let emailValid = false; // 이메일 중복 여부
+
+    // 모달 열기
+    addUserBtn.addEventListener("click", () => {
+        modal.style.display = "flex";
+    });
+
+    // 모달 닫기
+    closeModal.addEventListener("click", () => {
+        modal.style.display = "none";
+        addUserForm.reset();
+        emailMessage.style.display = "none";
+        emailValid = false;
+    });
+
+    // 모달 외부 클릭 시 닫기
+    window.addEventListener("click", (e) => {
+        if (e.target === modal) modal.style.display = "none";
+    });
+
+    // 이메일 중복확인
+    checkEmailBtn.addEventListener("click", async () => {
+        const email = emailInput.value.trim();
+        if (!email) {
+            emailMessage.textContent = "이메일을 입력하세요.";
+            emailMessage.style.display = "block";
+            emailValid = false;
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/users/check-email?email=${encodeURIComponent(email)}`);
+            const data = await response.json();
+
+            if (data.exists) {
+                emailMessage.textContent = "이미 사용 중인 이메일입니다.";
+                emailMessage.style.color = "red";
+                emailValid = false;
+            } else {
+                emailMessage.textContent = "사용 가능한 이메일입니다.";
+                emailMessage.style.color = "green";
+                emailValid = true;
+            }
+            emailMessage.style.display = "block";
+        } catch (err) {
+            console.error(err);
+            emailMessage.textContent = "중복 확인 중 오류가 발생했습니다.";
+            emailMessage.style.color = "red";
+            emailMessage.style.display = "block";
+            emailValid = false;
+        }
+    });
+
+    // 회원 등록
+    addUserForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        if (!emailValid) {
+            alert("이메일 중복확인을 해주세요.");
+            return;
+        }
+
+        const formData = new FormData(addUserForm);
+        const userData = {
+            name: formData.get("name"),
+            email: formData.get("email"),
+            password: formData.get("password")
+        };
+
+        try {
+            const response = await fetch("/api/users", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(userData)
+            });
+
+            if (response.ok) {
+                alert("회원이 등록되었습니다!");
+                modal.style.display = "none";
+                addUserForm.reset();
+                emailMessage.style.display = "none";
+                emailValid = false;
+                loadUsers(); // 회원목록 새로고침
+            } else {
+                const errorData = await response.json();
+                alert("회원 등록 실패: " + errorData.message);
+            }
+        } catch (err) {
+            console.error(err);
+            alert("서버 오류");
+        }
+    });
+
+    // 회원 삭제
+    const tbody = document.getElementById("userlist-body");
+    const paginationDiv = document.getElementById("pagination");
+
+    // 설정
+    const useTestData = true; // true면 테스트용, false면 DB 연동
+    const pageSize = 10;        // 한 페이지에 보여줄 회원 수
+
+    // 테스트용 데이터
+    let testUsers = [
+        { id: 1, name: "홍길동", email: "hong@test.com", type: "일반", attend: true, point: 120 },
+        { id: 2, name: "신짱구", email: "kim@test.com", type: "일반", attend: true, point: 300 },
+        { id: 3, name: "김철수", email: "lee@test.com", type: "관리자", attend: true, point: 500 },
+        { id: 4, name: "유리", email: "park@test.com", type: "일반", attend: true, point: 50 },
+        { id: 5, name: "이훈이", email: "choi@test.com", type: "일반", attend: false, point: 200 },
+        { id: 6, name: "맹구", email: "jung@test.com", type: "일반", attend: true, point: 30 },
+        { id: 7, name: "이훈이", email: "choi@test.com", type: "일반", attend: false, point: 200 },
+        { id: 8, name: "맹구", email: "jung@test.com", type: "일반", attend: true, point: 30 },
+        { id: 9, name: "이훈이", email: "choi@test.com", type: "일반", attend: false, point: 200 },
+        { id: 10, name: "맹구", email: "jung@test.com", type: "일반", attend: false, point: 30 },
+        { id: 11, name: "이훈이", email: "choi@test.com", type: "일반", attend: false, point: 200 },
+        { id: 12, name: "맹구", email: "jung@test.com", type: "일반", attend: false, point: 30 }
+    ];
+
+    let currentPage = 1;
+    let users = [];
+
+    // 데이터 로드 
+    async function loadUsers() {
+        if (useTestData) {
+            users = [...testUsers]; // 테스트용 데이터
+            renderPage(1);
+        } else {
+            try {
+                const response = await fetch("/api/users");
+                users = await response.json(); // DB 데이터
+                renderPage(1);
+            } catch (err) {
+                console.error("회원 불러오기 실패:", err);
+            }
+        }
+    }
+
+    // 페이지 렌더링
+    function renderPage(page) {
+        currentPage = page;
+        tbody.innerHTML = "";
+
+        const start = (page - 1) * pageSize;
+        const end = start + pageSize;
+        const pageUsers = users.slice(start, end);
+
+        pageUsers.forEach(user => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+            <td>${user.id}</td>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${user.type}</td>
+            <td>${(user.attend === "Y" || user.attend === true) ? "출석" : "미출석"}</td>
+            <td>${user.point}</td>
+            <td><button class="deleteBtn" data-id="${user.id}">삭제</button></td>
+        `;
+            tbody.appendChild(tr);
+        });
+
+        // 삭제 버튼
+        document.querySelectorAll(".deleteBtn").forEach(btn => {
+            btn.addEventListener("click", async (e) => {
+                const userId = parseInt(e.target.dataset.id);
+                if (confirm("정말 삭제하시겠습니까?")) {
+                    if (useTestData) {
+                        testUsers = testUsers.filter(u => u.id !== userId);
+                        users = [...testUsers];
+                        renderPage(currentPage);
+                    } else {
+                        await fetch(`/api/users/${userId}`, { method: "DELETE" });
+                        loadUsers();
+                    }
+                }
+            });
+        });
+
+        renderPagination();
+    }
+
+    // 페이징
+    function renderPagination() {
+        paginationDiv.innerHTML = "";
+        const pageCount = Math.ceil(users.length / pageSize);
+
+        // 이전 버튼
+        const prevBtn = document.createElement("button");
+        prevBtn.textContent = "◀";
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.addEventListener("click", () => renderPage(currentPage - 1));
+        paginationDiv.appendChild(prevBtn);
+
+        // 페이지 번호 버튼
+        for (let i = 1; i <= pageCount; i++) {
+            const btn = document.createElement("button");
+            btn.textContent = i;
+            btn.classList.add("page-btn");
+            if (i === currentPage) btn.classList.add("active");
+            btn.addEventListener("click", () => renderPage(i));
+            paginationDiv.appendChild(btn);
+        }
+
+        // 다음 버튼
+        const nextBtn = document.createElement("button");
+        nextBtn.textContent = "▶";
+        nextBtn.disabled = currentPage === pageCount;
+        nextBtn.addEventListener("click", () => renderPage(currentPage + 1));
+        paginationDiv.appendChild(nextBtn);
+    }
+
+    // 페이지 로드 시 실행
+    loadUsers();
+</script>
+
+</html>
