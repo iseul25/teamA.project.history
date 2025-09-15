@@ -24,11 +24,11 @@ public class AdminRepository {
     public User save(User user) {
         if (findByEmail(user.getEmail()).isPresent()) {
             // 이미 존재하는 유저: UPDATE 쿼리 실행
-            String sql = "UPDATE user SET name = ?, password = ? WHERE email = ?";
+            String sql = "UPDATE users SET name = ?, password = ? WHERE email = ?";
             jdbc.update(sql, user.getName(), user.getPassword(), user.getEmail());
         } else {
             // 새로운 유저: INSERT 쿼리 실행
-            String sql = "INSERT INTO user (email, userType, name, password) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO users (email, userType, name, password) VALUES (?, ?, ?, ?)";
             jdbc.update(sql, user.getEmail(), user.getUserType(), user.getName(), user.getPassword());
         }
         return user;
@@ -38,7 +38,7 @@ public class AdminRepository {
      * 유저 정보 삭제
      */
     public void deleteByEmail(String email) {
-        String sql = "DELETE FROM user WHERE email = ?";
+        String sql = "DELETE FROM users WHERE email = ?";
         jdbc.update(sql, email);
     }
 
@@ -46,7 +46,7 @@ public class AdminRepository {
      * 이메일로 회원 조회
      */
     public Optional<User> findByEmail(String email) {
-        String sql = "SELECT * FROM user WHERE email = ?";
+        String sql = "SELECT * FROM users WHERE email = ?";
         try {
             User user = jdbc.queryForObject(sql, userRowMapper(), email);
             return Optional.ofNullable(user);
@@ -63,7 +63,7 @@ public class AdminRepository {
      * @return 이메일이 존재하면 true, 존재하지 않으면 false
      */
     public boolean existsByEmail(String email) {
-        String sql = "SELECT COUNT(*) FROM user WHERE email = ?";
+        String sql = "SELECT COUNT(*) FROM users WHERE email = ?";
         Integer count = jdbc.queryForObject(sql, Integer.class, email);
         return count != null && count > 0;
     }
@@ -72,7 +72,7 @@ public class AdminRepository {
      * 모든 사용자의 목록을 데이터베이스에서 조회합니다.
      */
     public List<User> findAllUsers() {
-        String sql = "SELECT email, userType, userName FROM user";
+        String sql = "SELECT email, userType, userName FROM users";
         return jdbc.query(sql, userRowMapper());
     }
 
@@ -94,7 +94,7 @@ public class AdminRepository {
      * 총 회원 수 반환
      */
     public int countAllUsers() {
-        String sql = "SELECT COUNT(*) FROM user";
+        String sql = "SELECT COUNT(*) FROM users";
         return jdbc.queryForObject(sql, Integer.class);
     }
 
@@ -102,7 +102,7 @@ public class AdminRepository {
      * 페이징 처리된 회원 목록 반환
      */
     public List<User> findUsersByPage(int page, int size) {
-        String sql = "SELECT * FROM user LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM users LIMIT ? OFFSET ?";
         int offset = (page - 1) * size;
         return jdbc.query(sql, userRowMapper(), size, offset);
     }
