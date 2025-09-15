@@ -9,6 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -43,9 +45,11 @@ public class UserController {
     // 이메일 중복 확인 API
     @GetMapping("/user/check-email")
     @ResponseBody
-    public boolean checkEmail(@RequestParam("email") String email) {
+    public Map<String, Boolean> checkEmail(@RequestParam("email") String email) {
         Optional<User> user = userService.findByEmail(email);
-        return user.isPresent();
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("available", user.isEmpty());
+        return response;
     }
 
     @PostMapping("/user/login")
@@ -56,7 +60,7 @@ public class UserController {
 
         Optional<User> userOptional = userService.findByEmail(email);
 
-        if (!userOptional.isPresent()) {
+        if (userOptional.isEmpty()) {
             // 아이디가 없는 경우, home으로 리다이렉트하며 notFound 에러 전달
             redirectAttributes.addFlashAttribute("loginError", "notFound");
             return "redirect:/";
