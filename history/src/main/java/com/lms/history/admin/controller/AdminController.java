@@ -146,7 +146,7 @@ public class AdminController {
         Optional<User> userOptional = adminService.findByEmail(email);
         if (userOptional.isPresent()) {
             model.addAttribute("user", userOptional.get());
-            return "admin/adminUserDetail";
+            return "admin/adminUserList";
         } else {
             return "redirect:/admin/users";
         }
@@ -167,7 +167,7 @@ public class AdminController {
         } catch (Exception e) {
             model.addAttribute("errorMessage", "유저 정보 수정에 실패했습니다: " + e.getMessage());
             model.addAttribute("user", user);
-            return "admin/adminUserDetail";
+            return "admin/adminUserList";
         }
     }
 }
