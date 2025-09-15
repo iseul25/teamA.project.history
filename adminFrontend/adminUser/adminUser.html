@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원 관리</title>
+    <link rel="stylesheet" href="css/adminUser.css">
+</head>
+
+<body>
+    <header>
+        <a href="http://127.0.0.1:5501/endResult.addver/home.html">
+            <img src="img/mainLg2.png" alt="메인 로고">
+        </a>
+        <ul>
+            <li><a href="">학습하기</a></li>
+            <li><a href="">퀴즈풀기</a></li>
+            <li><a href="http://127.0.0.1:5501/attend/attend.html">출석하기</a></li>
+            <li><a href="">포인트 상점</a></li>
+            <li><a href="http://127.0.0.1:5501/faq/faq.html">FAQ</a></li>
+            <li><a href="http://127.0.0.1:5501/notice/notice.html">공지사항</a></li>
+        </ul>
+        <div id="user" style="display: none;"> <!-- 로그인 했을 시에만 보이게 -->
+            <a href="http://127.0.0.1:5501/mypage/mypage.html" id="userName-link" class="active"> 님</a>
+        </div>
+    </header>
+    <div id="sideber">
+        <ul>
+            <li><a href="" class="active">회원관리</a></li>
+            <li><a href="">게시글관리</a></li>
+            <li><a href="">댓글관리</a></li>
+            <li><a href="">상점관리</a></li>
+        </ul>
+    </div>
+    <div id="container">
+        <div class="userlistBox">
+            <div class="userlist-title">회원관리</div>
+            <div class="userlist-addUserBtn">
+                <a href="javascript:void(0)" id="addUserBtn">회원등록</a>
+            </div>
+            <!-- 회원 등록 팝업 -->
+            <div id="addUserBox" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span id="closeModal" style="float:right; cursor:pointer;">&times;</span>
+                    <h2>회원 등록</h2>
+                    <form id="addUserForm">
+                        <label>ID</label>
+                        <div class="emailBox">
+                            <input type="email" id="emailInput" name="email" required placeholder="abc123@gmail.com">
+                            <button type="button" id="checkEmailBtn">중복확인</button>
+                        </div>
+                        <small id="emailMessage" style="color:red; display:none;"></small><br>
+
+                        <label>PASSWORD</label>
+                        <div class="passwordBox">
+                            <input type="password" name="password" required placeholder="*******">
+                        </div>
+                        <label>NAME</label>
+                        <div class="emailBox">
+                            <input type="text" name="name" required placeholder="홍길동">
+                        </div>
+                        <div class="addBtn">
+                            <button type="submit">등록</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- 회원 목록 테이블 -->
+            <table class="userlist-table">
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>이름</th>
+                        <th>이메일</th>
+                        <th>유저 타입</th>
+                        <th>출석 현황</th>
+                        <th>포인트</th>
+                        <th>작업</th>
+                    </tr>
+                </thead>
+                <tbody id="userlist-body">
+                </tbody>
+            </table>
+            <!-- 페이징 영역 -->
+            <div id="pagination" class="pagination"></div>
+        </div>
+    </div>
+    <div id="footer">
+        <ul>
+            <li>대표전화: 042-222-2402</li>
+            <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+            <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+            <li>© 2025 역사 한 걸음. All rights reserved.</li>
+        </ul>
+    </div>
+</body>
+<script src="js/adminUser.js"></script>
+
+</html>
