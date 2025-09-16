@@ -38,4 +38,6 @@ public class User {
 
     @Column(name = "point")
     private int point;
+
+
 }

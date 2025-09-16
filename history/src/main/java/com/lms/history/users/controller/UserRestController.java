@@ -99,14 +99,12 @@ public class UserRestController {
         }
 
         try {
-            // 🚩 수정: userService의 updateUser 메서드를 호출하여 데이터베이스를 업데이트합니다.
-            //        업데이트된 사용자 정보를 반환받아 세션에 저장합니다.
-            User resultUser = userService.updateUser(loginUser.getEmail(), updatedUser);
+            userService.updateUser(loginUser.getEmail(), updatedUser);
+            loginUser.setName(updatedUser.getName());
+            loginUser.setEmail(updatedUser.getEmail());
+            session.setAttribute("loginUser", loginUser);
 
-            // 🚩 수정: 세션에 저장된 사용자 정보를 최신 정보로 업데이트합니다.
-            session.setAttribute("loginUser", resultUser);
-
-            return ResponseEntity.ok(resultUser);
+            return ResponseEntity.ok(loginUser);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("{\"error\": \"" + e.getMessage() + "\"}");
         } catch (Exception e) {

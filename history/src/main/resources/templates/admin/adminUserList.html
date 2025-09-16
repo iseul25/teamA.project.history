@@ -88,8 +88,8 @@
                 <td th:text="${user.email}"></td>
                 <td th:text="${user.userType}"></td>
                 <td>
-                    <span th:if="${user.attend == true || user.attend == 'Y'}">출석</span>
-                    <span th:unless="${user.attend == true || user.attend == 'N'}">미출석</span>
+                    <span th:if="${user.attend == 'Y'}">출석</span>
+                    <span th:unless="${user.attend == 'Y'}">미출석</span>
                 </td>
                 <td th:text="${user.point}"></td>
                 <td>
