@@ -28,7 +28,6 @@ userId (FK/users)
 postType (게시글 유형 설명란(공지사항, 학습게시글(조선시대, 삼국시대 등등), 퀴즈))
 title (게시글 제목)
 content (게시글 내용)
-videoUrl (영상 링크)
 date(게시글 등록 일자)
 
 2. post_image (게시글 이미지)
@@ -90,4 +89,5 @@ itemId (PK)
 imgUrl (상품 이미지)
 itemName(상품 이름)
 cost(가격)
+
 
