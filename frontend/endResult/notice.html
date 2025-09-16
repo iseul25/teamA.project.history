@@ -294,7 +294,7 @@
             const data = await response.json();
 
             const userDiv = document.getElementById("user");
-            const usernameLink = document.getElementById("username-link");
+            const usernameLink = document.getElementById("userName-link");
 
             if (data.isLoggedIn) {
                 usernameLink.textContent = data.username;
@@ -308,13 +308,19 @@
         }
     }
 
-    // ✅ 임시 데이터 (30개 게시글)
-    const notices = Array.from({ length: 30 }, (_, i) => ({
-        id: i + 1,
-        title: `공지사항 제목 ${i + 1}`,
-        author: "관리자",
-        date: `2025-09-${String((i % 30) + 1).padStart(2, "0")}`
-    }));
+    // 관리자 페이지와 연결
+    let notices = JSON.parse(localStorage.getItem("notices")) || [];
+
+    if (notices.length === 0) {
+        notices = Array.from({ length: 30 }, (_, i) => ({
+            id: i + 1,
+            title: `공지사항 제목 ${i + 1}`,
+            content: `공지사항 내용 ${i + 1}`,   // 상세 페이지용
+            writer: "관리자",
+            createdAt: `2025-09-${String((i % 30) + 1).padStart(2, "0")}`
+        }));
+        localStorage.setItem("notices", JSON.stringify(notices));
+    }
 
     // 공지사항
     const rowsPerPage = 10;
@@ -332,9 +338,9 @@
             const tr = document.createElement("tr");
             tr.innerHTML = `
           <td>${n.id}</td>
-          <td><a href="#">${n.title}</a></td>
-          <td>${n.author}</td>
-          <td>${n.date}</td>
+          <td><a href="noticeDetail.html?id=${n.id}">${n.title}</a></td>
+          <td>${n.writer}</td>
+          <td>${n.createdAt}</td>
         `;
             tbody.appendChild(tr);
         });
