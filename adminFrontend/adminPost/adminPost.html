@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학습 게시글 관리</title>
+    <link rel="stylesheet" href="css/adminPost.css">
+</head>
+
+<body>
+    <header>
+        <a href="http://127.0.0.1:5501/endResult.addver/home.html">
+            <img src="img/mainLg2.png" alt="메인 로고">
+        </a>
+        <ul>
+            <li><a href="">학습하기</a></li>
+            <li><a href="">퀴즈풀기</a></li>
+            <li><a href="http://127.0.0.1:5501/attend/attend.html">출석하기</a></li>
+            <li><a href="">포인트 상점</a></li>
+            <li><a href="http://127.0.0.1:5501/faq/faq.html">FAQ</a></li>
+            <li><a href="http://127.0.0.1:5501/notice/notice.html">공지사항</a></li>
+        </ul>
+        <div id="user" style="display: none;"> <!-- 로그인 했을 시에만 보이게 -->
+            <a href="http://127.0.0.1:5501/mypage/mypage.html" id="userName-link" class="active"> 님</a>
+        </div>
+    </header>
+    <div id="sideber">
+        <ul>
+            <li><a href="http://127.0.0.1:5501/adminUser/adminUser.html">회원관리</a></li>
+            <li class="submenuBox">
+                <a href="http://127.0.0.1:5501/adminPost/adminPost.html" class="active">게시글관리</a>
+                <ul class="submenu">
+                    <li><a href="http://127.0.0.1:5501/adminPost/adminPost.html" class="active">학습 게시글</a></li>
+                    <li><a href="">퀴즈 게시글</a></li>
+                    <li><a href="http://127.0.0.1:5501/adminNotice/adminNotice.html">공지사항 게시글</a></li>
+                </ul>
+            </li>
+            <li><a href="">댓글관리</a></li>
+            <li><a href="">상점관리</a></li>
+        </ul>
+    </div>
+    <div id="container">
+        <div class="postBox">
+            <div class="post-title">학습게시글</div>
+            <!-- 게시물 관리 테이블 -->
+            <table class="post-table">
+                <thead>
+                    <tr>
+                        <th style="width: 100px;">번호</th>
+                        <th id="categoryHeader" style="width: 190px;">
+                            카테고리 <span class="arrow">▼</span>
+                            <ul id="categoryMenu" class="dropdown">
+                                <li data-category="전체">전체</li>
+                                <li data-category="선사시대">선사시대</li>
+                                <li data-category="고조선과 여러 나라">고조선과 여러 나라</li>
+                                <li data-category="삼국과 가야">삼국과 가야</li>
+                                <li data-category="남북극시대">남북극시대</li>
+                                <li data-category="고려시대">고려시대</li>
+                                <li data-category="조선시대">조선시대</li>
+                                <li data-category="근대">근대</li>
+                                <li data-category="현대">현대</li>
+                            </ul>
+                        </th>
+                        <th>제목</th>
+                        <th style="width: 150px;">등록 일자</th>
+                        <th style="width: 80px;">작업</th>
+                    </tr>
+                </thead>
+                <tbody id="post-body">
+                </tbody>
+            </table>
+            <!-- 게시물 수정 모델 -->
+            <div id="editModal" class="modal">
+                <div class="modal-content">
+                    <span class="closeBtn">&times;</span>
+                    <h2>게시글 수정</h2>
+                    <form id="editForm">
+                        <input type="text" id="editTitle" placeholder="제목">
+                        <textarea id="editContent" placeholder="내용"></textarea>
+                        <button type="submit" id="editPost-btn">수정 완료</button>
+                    </form>
+                </div>
+            </div>
+            <!-- 페이징 영역 -->
+            <div id="pagination" class="pagination"></div>
+        </div>
+    </div>
+    <div id="footer">
+        <ul>
+            <li>대표전화: 042-222-2402</li>
+            <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+            <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+            <li>© 2025 역사 한 걸음. All rights reserved.</li>
+        </ul>
+    </div>
+</body>
+<script src="js/adminPost.js"></script>
+</html>
