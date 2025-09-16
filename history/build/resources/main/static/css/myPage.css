@@ -1,0 +1,244 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-image: url(../img/mainBg1.png);
+    /* html, css 합치면 ../ 지우기 */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fcf4e1;
+    padding: 0 100px;
+    box-shadow: 0 2px 20px #e9e4d7;
+}
+
+header img {
+    width: 16%;
+    padding-top: 5px;
+}
+
+header>ul {
+    display: flex;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+header>ul li a {
+    display: block;
+    color: #222;
+    text-align: center;
+    justify-content: center;
+    padding: 14px 16px;
+    font-size: 18px;
+    text-decoration: none;
+    transition: transform 0.2s ease, font-size 0.2s ease;
+    /* 애니메이션 효과 */
+}
+
+header>ul li a:hover {
+    transform: scale(1.2); /* 글자 전체 커짐 */
+    color: #000;
+    font-weight: bold;
+}
+
+header> ul li a.active {
+    font-weight: bold;
+    font-size: 1.3em;    /* 글자 크기 키우기 */
+    text-decoration: underline;  /* 밑줄 표시 */
+    color: #000;
+}
+
+#user {
+    font-size: 16px;
+}
+
+#user > a {
+    color: #222;
+    text-decoration: none;
+}
+
+#user a:hover {
+    text-decoration: underline;
+}
+
+/* main */
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 컨테이너 */
+#container {
+    /* flex: 1; */
+    max-width: 700px;
+    min-height: 600px;
+    margin: 30px auto;
+    padding: 40px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+
+}
+
+#mypageInfo {
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 25px;
+    font-weight: 500;
+}
+
+/* 마이페이지 */
+#mypage {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    border: 1px solid #c4c3c3;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+}
+
+#pageBox {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+#pageBox td {
+    border: 1px solid #dfdfdf;
+    height: 80px;
+    padding: 5px;
+    padding-left: 8px;
+    font-size: 16px;
+    vertical-align: middle;
+    position: relative;
+}
+
+.label {
+    width: 30%;
+    text-align: center;
+    background-color: #f1f1f1;
+}
+
+/* 출석, 포인트 버튼 */
+#attendBtn, #pointBtn {
+    display: inline-block;
+    padding: 5px 12px;
+    color: #222;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 5px;
+    vertical-align: middle;
+    text-decoration: none;
+    background-color: #F5D2D2;
+    border: 1px solid #ffbaba;
+}
+
+#attendBtn:hover, #pointBtn:hover {
+    background-color: #ffbaba;
+}
+
+/* 수정, 탈퇴 버튼 */
+#btnBox {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: 15px;
+}
+
+#editBtn, #withdrawBtn {
+    display: inline-block;
+    padding: 5px 13px;
+    color: #222;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+#editBtn {
+    background-color: #bdd8fc;
+    border: 1px solid #82b7fc;
+}
+
+#withdrawBtn {
+    background-color: #ddd;
+    border: 1px solid #aaa;
+}
+
+#editBtn:hover {
+    background-color: #82b7fc;
+}
+
+#withdrawBtn:hover {
+    background-color: #aaa;
+}
+
+/* 저장, 취소 버튼 */
+#saveBtn, #cancelBtn {
+    display: inline-block;
+    padding: 5px 13px;
+    color: #222;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+#saveBtn {
+    background-color: rgb(167, 243, 160);
+    border: 1px solid rgb(112, 233, 102);
+}
+
+#cancelBtn {
+    background-color: #ddd;
+    border: 1px solid #aaa;
+}
+
+#saveBtn:hover {
+    background-color: rgb(112, 233, 102);
+}
+
+#cancelBtn:hover {
+    background-color: #aaa;
+}
+
+/* footer */
+#footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #EEE7DA;
+    padding: 0 200px;
+}
+
+#footer>ul {
+    display: flex;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#footer>ul li {
+    display: block;
+    color: #333;
+    text-align: center;
+    padding: 5px 8px;
+    text-decoration: none;
+}

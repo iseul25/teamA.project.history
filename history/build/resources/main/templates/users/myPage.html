@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지</title>
+    <link rel="stylesheet" href="/css/myPage.css">
+</head>
+
+<body>
+<header>
+    <a href="/home">
+        <img src="/img/mainLg2.png" alt="메인 로고">
+    </a>
+    <ul>
+        <li><a href="">학습하기</a></li>
+        <li><a href="">퀴즈풀기</a></li>
+        <li><a href="/attend">출석하기</a></li>
+        <li><a href="">포인트 상점</a></li>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/notice">공지사항</a></li>
+    </ul>
+    <div id="user">
+        <a href="/myPage" id="userName-link" class="active">사용자 님</a>
+    </div>
+</header>
+
+<main>
+    <div id="container">
+        <div id="mypageInfo">
+            <p>마이페이지</p>
+        </div>
+        <div id="mypage">
+            <table id="pageBox">
+                <tbody>
+                <tr>
+                    <td class="label">이름</td>
+                    <td class="value">
+                        <span id="userName">홍길동</span>
+                        <input type="text" id="userNameInput" class="edit-input" style="display: none;">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">이메일</td>
+                    <td class="value">
+                        <span id="userEmail">user@example.com</span>
+                        <input type="text" id="userEmailInput" class="edit-input" style="display: none;">
+                        <button id="checkEmailBtn" class="btn btn-email-check" style="display: none;">중복확인</button>
+                        <div id="emailMessage"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">출석</td>
+                    <td class="value" id="attendanceDate">
+                        <span id="attendanceStatus">미출석</span>
+                        <a href="/attend" id="attendBtn">출석하기</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">포인트</td>
+                    <td class="value" id="totalPoint">
+                        <span id="userPoint">100점</span>
+                        <a href="" id="pointBtn">포인트 상점</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="btnBox">
+            <button id="editBtn" class="btn btn-edit">수정</button>
+            <button id="saveBtn" class="btn btn-save" style="display: none;">저장</button>
+            <button id="cancelBtn" class="btn btn-cancel" style="display: none;">취소</button>
+            <button id="withdrawBtn" class="btn btn-withdraw">탈퇴</button>
+        </div>
+    </div>
+</main>
+
+<div id="footer">
+    <ul>
+        <li>대표전화: 042-222-2402</li>
+        <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+        <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+        <li>© 2025 역사 한 걸음. All rights reserved.</li>
+    </ul>
+</div>
+
+<script>
+    let isEditMode = false;
+    let originalData = {};
+    let isEmailChecked = true; // 🚩 수정: 이메일 중복 확인 플래그를 true로 초기화
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // DOM 요소들
+        const editBtn = document.getElementById("editBtn");
+        const saveBtn = document.getElementById("saveBtn");
+        const cancelBtn = document.getElementById("cancelBtn");
+        const withdrawBtn = document.getElementById("withdrawBtn");
+        const checkEmailBtn = document.getElementById("checkEmailBtn");
+        const userNameSpan = document.getElementById("userName");
+        const userEmailSpan = document.getElementById("userEmail");
+        const userNameInput = document.getElementById("userNameInput");
+        const userEmailInput = document.getElementById("userEmailInput");
+        const emailMessage = document.getElementById("emailMessage");
+
+        // 초기 사용자 정보 로드
+        loadUserInfo();
+
+        // 🚩 수정: 이메일 입력 필드에 입력 이벤트 리스너 추가 (중복 확인 상태 리셋)
+        userEmailInput.addEventListener("input", function() {
+            isEmailChecked = false;
+            emailMessage.style.display = "none";
+        });
+
+        // 1. 수정 버튼 클릭
+        editBtn.addEventListener("click", function() {
+            enterEditMode();
+        });
+
+        // 2. 저장 버튼 클릭
+        saveBtn.addEventListener("click", function() {
+            saveUserInfo();
+        });
+
+        // 3. 취소 버튼 클릭
+        cancelBtn.addEventListener("click", function() {
+            cancelEdit();
+        });
+
+        // 4. 탈퇴 버튼 클릭
+        withdrawBtn.addEventListener("click", function() {
+            withdrawUser();
+        });
+
+        // 5. 이메일 중복확인 버튼 클릭
+        checkEmailBtn.addEventListener("click", function() {
+            checkEmailDuplicate();
+        });
+    });
+
+    // 사용자 정보 로드
+    function loadUserInfo() {
+        fetch('/api/users/myPage')
+            .then(res => {
+                if (!res.ok) throw new Error("사용자 정보를 불러올 수 없습니다.");
+                return res.json();
+            })
+            .then(data => {
+                originalData = { ...data
+                }; // 원본 데이터 저장
+
+                document.getElementById("userName").textContent = data.name;
+                document.getElementById("userEmail").textContent = data.email;
+                document.getElementById("attendanceStatus").textContent = data.attendance || "미출석";
+                document.getElementById("userPoint").textContent = (data.point || 0) + "점";
+                document.getElementById("userName-link").textContent = data.name + " 님";
+
+                document.getElementById("userNameInput").value = data.name;
+                document.getElementById("userEmailInput").value = data.email;
+            })
+            .catch(err => {
+                console.error("사용자 정보 로드 실패:", err);
+                alert("사용자 정보를 불러올 수 없습니다.");
+            });
+    }
+
+    // 수정 모드 진입
+    function enterEditMode() {
+        isEditMode = true;
+        isEmailChecked = true;
+
+        document.getElementById("userName").style.display = "none";
+        document.getElementById("userEmail").style.display = "none";
+        document.getElementById("userNameInput").style.display = "inline-block";
+        document.getElementById("userEmailInput").style.display = "inline-block";
+        document.getElementById("checkEmailBtn").style.display = "inline-block";
+
+        document.getElementById("editBtn").style.display = "none";
+        document.getElementById("withdrawBtn").style.display = "none";
+        document.getElementById("saveBtn").style.display = "inline-block";
+        document.getElementById("cancelBtn").style.display = "inline-block";
+    }
+
+    // 수정 취소
+    function cancelEdit() {
+        isEditMode = false;
+        isEmailChecked = true;
+
+        document.getElementById("userNameInput").value = originalData.name;
+        document.getElementById("userEmailInput").value = originalData.email;
+
+        document.getElementById("userName").style.display = "inline";
+        document.getElementById("userEmail").style.display = "inline";
+        document.getElementById("userNameInput").style.display = "none";
+        document.getElementById("userEmailInput").style.display = "none";
+        document.getElementById("checkEmailBtn").style.display = "none";
+
+        document.getElementById("editBtn").style.display = "inline-block";
+        document.getElementById("withdrawBtn").style.display = "inline-block";
+        document.getElementById("saveBtn").style.display = "none";
+        document.getElementById("cancelBtn").style.display = "none";
+
+        document.getElementById("emailMessage").style.display = "none";
+    }
+
+    // 사용자 정보 저장
+    function saveUserInfo() {
+        const newName = document.getElementById("userNameInput").value.trim();
+        const newEmail = document.getElementById("userEmailInput").value.trim();
+
+        if (!newName || !newEmail) {
+            alert("이름과 이메일을 모두 입력해주세요.");
+            return;
+        }
+
+        // 🚩 수정: 백엔드에서 이메일 중복 검증을 처리하도록 변경
+        // 프론트엔드에서는 변경된 이메일일 경우 중복확인 버튼을 눌렀는지 여부만 확인
+        if (newEmail !== originalData.email && !isEmailChecked) {
+            alert("이메일을 변경하셨습니다. 중복확인을 해주세요.");
+            return;
+        }
+
+        const updatedUser = {
+            name: newName,
+            email: newEmail
+        };
+
+        fetch('/api/users/profile', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedUser)
+        })
+            .then(res => {
+                if (!res.ok) {
+                    return res.json().then(data => {
+                        throw new Error(data.error || "저장 실패");
+                    });
+                }
+                return res.json();
+            })
+            .then(data => {
+                alert("회원 정보가 수정되었습니다.");
+
+                // 화면 업데이트
+                document.getElementById("userName").textContent = data.name;
+                document.getElementById("userEmail").textContent = data.email;
+                document.getElementById("userName-link").textContent = data.name + " 님";
+
+                // 원본 데이터 업데이트
+                originalData = { ...data };
+                isEmailChecked = true;
+
+                cancelEdit();
+            })
+            .catch(err => {
+                console.error("저장 실패:", err);
+                alert("회원 정보 수정 중 오류가 발생했습니다: " + err.message);
+            });
+    }
+
+    // 이메일 중복확인
+    function checkEmailDuplicate() {
+        const email = document.getElementById("userEmailInput").value.trim();
+        const emailMessage = document.getElementById("emailMessage");
+        const originalEmail = originalData.email;
+
+        // 현재 이메일과 동일하면 중복확인 불필요 (백엔드 로직에 이미 포함되어 있음)
+        if (email === originalEmail) {
+            emailMessage.textContent = "현재 사용 중인 이메일입니다.";
+            emailMessage.style.color = "blue";
+            emailMessage.style.display = "block";
+            isEmailChecked = true;
+            return;
+        }
+
+        if (!email) {
+            alert("이메일을 입력해주세요.");
+            return;
+        }
+
+        fetch(`/api/users/check-email?email=${encodeURIComponent(email)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.exists) {
+                    emailMessage.textContent = "이미 사용 중인 이메일입니다.";
+                    emailMessage.style.color = "red";
+                    isEmailChecked = false;
+                } else {
+                    emailMessage.textContent = "사용 가능한 이메일입니다.";
+                    emailMessage.style.color = "green";
+                    isEmailChecked = true;
+                }
+                emailMessage.style.display = "block";
+            })
+            .catch(err => {
+                emailMessage.textContent = "중복 확인 중 오류가 발생했습니다.";
+                emailMessage.style.color = "red";
+                emailMessage.style.display = "block";
+                isEmailChecked = false;
+            });
+    }
+
+    // 회원 탈퇴
+    function withdrawUser() {
+        const point = document.getElementById("userPoint").textContent;
+        const pointNumber = point.match(/\d+/) ? point.match(/\d+/)[0] : 0;
+        const confirmMsg = `현재 보유하고 계신 포인트 ${pointNumber}점이 전부 소멸됩니다.\n정말 탈퇴하시겠습니까?`;
+
+        if (!confirm(confirmMsg)) {
+            return;
+        }
+
+        fetch('/api/users/withdraw', {
+            method: 'DELETE'
+        })
+            .then(res => {
+                if (!res.ok) {
+                    return res.text().then(text => {
+                        throw new Error(text || "탈퇴 실패");
+                    });
+                }
+                alert("탈퇴가 완료되었습니다.");
+                window.location.href = "/home";
+            })
+            .catch(err => {
+                console.error("탈퇴 실패:", err);
+                alert("탈퇴 처리 중 오류가 발생했습니다: " + err.message);
+            });
+    }
+</script>
+</body>
+</html>
