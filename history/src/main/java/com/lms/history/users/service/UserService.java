@@ -29,6 +29,14 @@ public class UserService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
+
+        // 기본 userType 설정 (일반 사용자)
+        if (user.getUserType() == null || user.getUserType().isEmpty()) {
+            user.setUserType("일반유저"); // U = 일반 사용자, A = 관리자
+        }
+
+        // 기본 포인트 설정 (필요시 - int 타입이므로 기본값 0으로 이미 초기화됨)
+
         return userRepository.save(user);
     }
 
