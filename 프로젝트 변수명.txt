@@ -58,8 +58,8 @@ history01 아이디
  - optionId (PK)
  - quizId (FK/quiz)
  - optionOrder (선택지 순서: 1, 2, 3, 4) -- 화면 표시 순서 제어
- - optionText (선택지 내용)
  - isCorrect (정답 여부(optionOrder와 비교용))
+ - optionText (선택지 내용)
  - createdAt (생성 시간)
 
 3. quiz_score (퀴즈 점수 및 포인트 정보)
@@ -102,6 +102,7 @@ history01 아이디
  - imgUrl (상품 이미지)
  - itemName(상품 이름)
  - cost(가격)
+
 
 
 
