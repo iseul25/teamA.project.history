@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원 목록 관리</title>
+    <link rel="stylesheet" href="/css/adminPage.css">
+</head>
+<body>
+<header>
+    <a href="/home">
+        <img src="/img/mainLg2.png" alt="메인 로고">
+    </a>
+    <ul>
+        <li><a href="">학습하기</a></li>
+        <li><a href="">퀴즈풀기</a></li>
+        <li><a href="/attend">출석하기</a></li>
+        <li><a href="">포인트 상점</a></li>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/notice">공지사항</a></li>
+    </ul>
+    <div id="user" style="display: none;">
+        <a href="/myPage" id="userName-link" class="active"> 님</a>
+    </div>
+</header>
+
+<div id="sideber">
+    <ul>
+        <li><a href="/admin/users" class="active">회원관리</a></li>
+        <li><a href="">게시글관리</a></li>
+        <li><a href="">댓글관리</a></li>
+        <li><a href="">상점관리</a></li>
+    </ul>
+</div>
+
+<div id="container">
+    <div class="userlistBox">
+        <div class="userlist-title">회원관리</div>
+        <div class="userlist-addUserBtn">
+            <a href="javascript:void(0)" id="addUserBtn">회원등록</a>
+        </div>
+
+        <!-- 회원 등록 팝업 -->
+        <div id="addUserBox" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span id="closeModal" style="float:right; cursor:pointer;">&times;</span>
+                <h2>회원 등록</h2>
+                <form id="addUserForm">
+                    <label>ID</label>
+                    <div class="emailBox">
+                        <input type="email" id="emailInput" name="email" required placeholder="abc123@gmail.com">
+                        <button type="button" id="checkEmailBtn">중복확인</button>
+                    </div>
+                    <small id="emailMessage" style="color:red; display:none;"></small><br>
+
+                    <label>PASSWORD</label>
+                    <div class="passwordBox">
+                        <input type="password" name="password" required placeholder="*******">
+                    </div>
+                    <label>NAME</label>
+                    <div class="emailBox">
+                        <input type="text" name="name" required placeholder="홍길동">
+                    </div>
+                    <div class="addBtn">
+                        <button type="submit">등록</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 회원 목록 테이블 -->
+        <table class="userlist-table">
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>이름</th>
+                <th>이메일</th>
+                <th>유저 타입</th>
+                <th>출석 현황</th>
+                <th>포인트</th>
+                <th>작업</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user, iterStat : ${users}">
+                <td th:text="${iterStat.count}"></td>
+                <td th:text="${user.name}"></td>
+                <td th:text="${user.email}"></td>
+                <td th:text="${user.userType}"></td>
+                <td th:text="${user.attend == true || user.attend == 'Y' ? '출석' : '미출석'}"></td>
+                <td th:text="${user.point}"></td>
+                <td>
+                    <a th:if="${user.userType != '관리자'}"
+                       th:href="@{|/admin/users/delete?email=${user.email}|}"
+                       class="delete-button"
+                       onclick="return confirm('정말로 이 회원을 삭제하시겠습니까?');">삭제</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- 페이징 -->
+        <div class="pagination">
+            <a th:if="${currentPage > 1}" th:href="@{|/admin/users?page=${currentPage - 1}|}">◀ 이전</a>
+            <span th:each="i : ${#numbers.sequence(1, totalPages)}">
+                <a th:if="${i != currentPage}" th:href="@{|/admin/users?page=${i}|}" th:text="${i}"></a>
+                <span th:if="${i == currentPage}" class="current-page" th:text="${i}"></span>
+            </span>
+            <a th:if="${currentPage < totalPages}" th:href="@{|/admin/users?page=${currentPage + 1}|}">다음 ▶</a>
+        </div>
+
+    </div>
+</div>
+
+<div id="footer">
+    <ul>
+        <li>대표전화: 042-222-2402</li>
+        <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+        <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+        <li>© 2025 역사 한 걸음. All rights reserved.</li>
+    </ul>
+</div>
+
+<!-- 스크립트 -->
+<script>
+    // 로그인 체크
+    async function checkLogin() {
+        try {
+            const response = await fetch("/api/check-login", {
+                credentials: "include"
+            });
+            const data = await response.json();
+            const userDiv = document.getElementById("user");
+            const usernameLink = document.getElementById("userName-link");
+
+            if (data.isLoggedIn) {
+                if (data.role === "admin") {
+                    usernameLink.textContent = data.username + " 관리자";
+                    usernameLink.href = "/admin/dashboard.html";
+                } else {
+                    usernameLink.textContent = data.username;
+                    usernameLink.href = "/mypage/mypage.html";
+                }
+                userDiv.style.display = "block";
+            } else {
+                userDiv.style.display = "none";
+            }
+        } catch (err) {
+            console.error("로그인 체크 에러:", err);
+        }
+    }
+
+    window.onload = checkLogin;
+
+    // 회원 등록 팝업 관련
+    const addUserBtn = document.getElementById("addUserBtn");
+    const modal = document.getElementById("addUserBox");
+    const closeModal = document.getElementById("closeModal");
+    const addUserForm = document.getElementById("addUserForm");
+    const emailInput = document.getElementById("emailInput");
+    const checkEmailBtn = document.getElementById("checkEmailBtn");
+    const emailMessage = document.getElementById("emailMessage");
+
+    let emailValid = false;
+
+    addUserBtn.addEventListener("click", () => {
+        modal.style.display = "flex";
+    });
+
+    closeModal.addEventListener("click", () => {
+        modal.style.display = "none";
+        addUserForm.reset();
+        emailMessage.style.display = "none";
+        emailValid = false;
+    });
+
+    window.addEventListener("click", (e) => {
+        if (e.target === modal) modal.style.display = "none";
+    });
+
+    // 🚩 수정된 이메일 중복 확인 스크립트
+    checkEmailBtn.addEventListener("click", async () => {
+        const email = emailInput.value.trim();
+        if (!email) {
+            emailMessage.textContent = "이메일을 입력하세요.";
+            emailMessage.style.color = "red";
+            emailMessage.style.display = "block";
+            emailValid = false;
+            return;
+        }
+
+        try {
+            // 🚩 수정: API URL을 '/api/admin/users/check-email'로 변경
+            const response = await fetch(`/api/admin/users/check-email?email=${encodeURIComponent(email)}`);
+            const data = await response.json();
+
+            if (data.exists) {
+                emailMessage.textContent = "이미 사용 중인 이메일입니다.";
+                emailMessage.style.color = "red";
+                emailValid = false;
+            } else {
+                emailMessage.textContent = "사용 가능한 이메일입니다.";
+                emailMessage.style.color = "green";
+                emailValid = true;
+            }
+            emailMessage.style.display = "block";
+        } catch (err) {
+            emailMessage.textContent = "중복 확인 중 오류가 발생했습니다.";
+            emailMessage.style.color = "red";
+            emailMessage.style.display = "block";
+            emailValid = false;
+        }
+    });
+
+    // 🚩 수정된 회원 등록 스크립트
+    addUserForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!emailValid) {
+            alert("이메일 중복확인을 해주세요.");
+            return;
+        }
+
+        const formData = new FormData(addUserForm);
+        const userData = {
+            name: formData.get("name"),
+            email: formData.get("email"),
+            password: formData.get("password")
+        };
+
+        try {
+            // 🚩 수정: API URL을 '/api/admin/users/register'로 변경
+            const response = await fetch("/api/admin/users/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(userData)
+            });
+
+            if (response.ok) {
+                alert("회원이 등록되었습니다!");
+                modal.style.display = "none";
+                addUserForm.reset();
+                emailMessage.style.display = "none";
+                emailValid = false;
+                window.location.reload(); // 서버 렌더링 방식이라 페이지 새로고침
+            } else {
+                const errorData = await response.json();
+                alert("회원 등록 실패: " + errorData.message);
+            }
+        } catch (err) {
+            console.error(err);
+            alert("서버 오류");
+        }
+    });
+</script>
+</body>
+</html>
