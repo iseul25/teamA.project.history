@@ -1,56 +1,5 @@
 쿼리구문 예시(숫자 및 ''안의 단어는 예시입니다. -- 및 /* */ 안의 항목은 설명용이라 실제 구문에 반영되지 않습니다.)
 
--- 퀴즈의 각 항목 별 점수 배정
-UPDATE quiz_attempt
-SET quizScore = CASE
-    WHEN quizId = 1 THEN 2 /*quizId 1번의 득점은 2*/
-    WHEN quizId = 2 THEN 3 /*quizId 2번의 득점은 3*/
-    WHEN quizId IN (3, 4) THEN 5 /*quizId 3번, 4번의 득점은 각각 5*/
-    ELSE quizScore -- 다른 경우 기존 값을 유지
-END
-WHERE quizId IN (1, 2, 3, 4);
-
-
--- 퀴즈의 각 항목 별 정답 배정
-UPDATE quiz_attempt
-SET answer = CASE
-    WHEN quizId = 1 THEN 1 /*quizId 1번의 정답은 1*/
-    WHEN quizId = 2 THEN 4 /*quizId 2번의 정답은 4*/
-    WHEN quizId = 3 THEN 3
-    WHEN quizId = 4 THEN 4
-    ELSE answer -- 다른 경우 기존 값을 유지
-END
-WHERE quizId IN (1, 2, 3, 4);
-
--- 퀴즈 각 항목 별 정답, 오답 배정
-UPDATE quiz_attempt
-SET correct = CASE
-    WHEN selected = answer THEN '정답'
-    ELSE '오답'
-END;
-
--- quiz_attempt의 correct 항목이 '정답'인 경우에만 해당 항목의 quizScore 점수를 합산하여 quiz_score 테이블의 score 항목에 기입
-UPDATE quiz_score qs/*(=quiz_score)*/
-JOIN (
-    SELECT
-        qa/*(=quiz_attempt)*/.userId,
-        SUM(qa.quizScore) AS total_score
-    FROM
-        quiz_attempt qa
-    WHERE
-        qa.correct = '정답'
-    GROUP BY
-        qa.userId
-) AS sub ON qs.userId = sub.userId
-SET
-    qs.score = sub.total_score;
-    
-    
-/* score의 10배로 pointScore 기입*/
-UPDATE quiz_score
-SET pointScore = score * 10
-WHERE userId IN (2, 3, 5);
-
 
 /*point_transactions 테이블에 상점이용 생성*/
 INSERT INTO point_transactions (userId, attendanceId, itemId, scoreId, reason) 
