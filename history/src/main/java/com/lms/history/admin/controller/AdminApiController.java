@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+// ✅ 모든 관리자 API 요청은 /api/admin/users 아래에 둡니다.
 @RestController
 @RequestMapping("/api/admin/users")
 public class AdminApiController {
@@ -19,24 +20,22 @@ public class AdminApiController {
         this.adminService = adminService;
     }
 
-    // ✅ 전체 유저 목록 반환
-    // URL: /api/admin/users (GET)
+    // ✅ 전체 유저 목록 반환: /api/admin/users (GET)
     @GetMapping
     public ResponseEntity<?> getUsers() {
         return ResponseEntity.ok(adminService.findAllUsers());
     }
 
-    // ✅ 회원 등록 (AJAX 요청 처리용)
-    // URL: /api/admin/users/register (POST)
-    @PostMapping("/register") // 🚩 수정: 회원 등록을 위한 별도 URL 추가
+    // ✅ 회원 등록: /api/admin/users/register (POST)
+    @PostMapping("/register")
     public ResponseEntity<Map<String, String>> registerUser(@RequestBody User user) {
         Map<String, String> response = new HashMap<>();
         try {
-            user.setUserType("일반유저"); // 기본 유저 타입 설정
+            user.setUserType("일반유저");
             adminService.registerUser(user);
             response.put("message", "회원 등록 성공");
-            return ResponseEntity.status(HttpStatus.CREATED).body(response); // 🚩 수정: HTTP 상태 코드를 201 Created로 변경
-        } catch (IllegalArgumentException e) { // 🚩 수정: 구체적인 예외 처리
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (IllegalArgumentException e) {
             response.put("message", "회원 등록 실패: " + e.getMessage());
             return ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
@@ -45,8 +44,7 @@ public class AdminApiController {
         }
     }
 
-    // ✅ 이메일 중복 확인
-    // URL: /api/admin/users/check-email (GET)
+    // ✅ 이메일 중복 확인: /api/admin/users/check-email (GET)
     @GetMapping("/check-email")
     public ResponseEntity<Map<String, Boolean>> checkEmail(@RequestParam String email) {
         boolean exists = adminService.isEmailDuplicated(email);
@@ -55,10 +53,9 @@ public class AdminApiController {
         return ResponseEntity.ok(result);
     }
 
-    // ✅ 회원 삭제 (AJAX 요청 처리용)
-    // URL: /api/admin/users/{email} (DELETE)
-    @DeleteMapping("/{email}") // 🚩 수정: 경로 변수를 email로 변경하여 명확하게 함
-    public ResponseEntity<?> deleteUser(@PathVariable String email) { // 🚩 수정: @PathVariable의 변수명을 email로 통일
+    // ✅ 회원 삭제: /api/admin/users/{email} (DELETE)
+    @DeleteMapping("/{email}")
+    public ResponseEntity<?> deleteUser(@PathVariable String email) {
         try {
             adminService.deleteByEmail(email);
             return ResponseEntity.ok().build();
