@@ -87,7 +87,10 @@
                 <td th:text="${user.name}"></td>
                 <td th:text="${user.email}"></td>
                 <td th:text="${user.userType}"></td>
-                <td th:text="${user.attend == true || user.attend == 'Y' ? '출석' : '미출석'}"></td>
+                <td>
+                    <span th:if="${user.attend == true || user.attend == 'Y'}">출석</span>
+                    <span th:unless="${user.attend == true || user.attend == 'N'}">미출석</span>
+                </td>
                 <td th:text="${user.point}"></td>
                 <td>
                     <a th:if="${user.userType != '관리자'}"
@@ -139,7 +142,7 @@
                     usernameLink.href = "/admin/dashboard.html";
                 } else {
                     usernameLink.textContent = data.username;
-                    usernameLink.href = "/mypage/mypage.html";
+                    usernameLink.href = "/myPage";
                 }
                 userDiv.style.display = "block";
             } else {
@@ -178,7 +181,6 @@
         if (e.target === modal) modal.style.display = "none";
     });
 
-    // 🚩 수정된 이메일 중복 확인 스크립트
     checkEmailBtn.addEventListener("click", async () => {
         const email = emailInput.value.trim();
         if (!email) {
@@ -190,7 +192,7 @@
         }
 
         try {
-            // 🚩 수정: API URL을 '/api/admin/users/check-email'로 변경
+            // ✅ URL 수정: /api/users/check-email -> /api/admin/users/check-email
             const response = await fetch(`/api/admin/users/check-email?email=${encodeURIComponent(email)}`);
             const data = await response.json();
 
@@ -212,7 +214,7 @@
         }
     });
 
-    // 🚩 수정된 회원 등록 스크립트
+    // 회원 등록 폼 제출 이벤트 리스너
     addUserForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         if (!emailValid) {
@@ -228,10 +230,10 @@
         };
 
         try {
-            // 🚩 수정: API URL을 '/api/admin/users/register'로 변경
+            // ✅ URL 수정: /api/users/ -> /api/admin/users/register
             const response = await fetch("/api/admin/users/register", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(userData)
             });
 
@@ -241,7 +243,7 @@
                 addUserForm.reset();
                 emailMessage.style.display = "none";
                 emailValid = false;
-                window.location.reload(); // 서버 렌더링 방식이라 페이지 새로고침
+                window.location.reload(); // 페이지 새로고침
             } else {
                 const errorData = await response.json();
                 alert("회원 등록 실패: " + errorData.message);
