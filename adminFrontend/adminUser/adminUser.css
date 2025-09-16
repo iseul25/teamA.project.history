@@ -89,11 +89,11 @@ header>ul li a.active {
     z-index: 50;
 }
 
-#sideber li a {
+#sideber>ul>li>a {
     display: block;
     color: black;
     padding: 15px;
-    font-size: 18px;
+    font-size: 19px;
     margin-top: 20px;
     text-align: center;
     letter-spacing: 1.2px;
@@ -114,6 +114,39 @@ header>ul li a.active {
     transform: scale(1.2);
     color: #000;
     font-weight: bold;
+}
+
+/* 사이드바 서브메뉴 */
+#sideber .submenu {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-5px);
+    pointer-events: none;
+    transition: max-height 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+    list-style: none;
+    text-align: center;
+}
+
+#sideber .submenu li a.active {
+    font-size: 1.2em;
+}
+
+#sideber .submenuBox:hover>.submenu {
+    max-height: 500px;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+#sideber .submenu li a {
+    display: block;
+    padding: 5px;
+    font-size: 16px;
+    color: #222;
+    text-decoration: none;
+    line-height: 1.4;
+    transition: transform 0.2s ease, font-size 0.2s ease;
 }
 
 /* 회원 등록 모델 */
