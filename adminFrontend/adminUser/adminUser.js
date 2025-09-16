@@ -33,6 +33,8 @@ async function checkLogin() {
 // 페이지 로드 시 로그인 체크
 window.onload = checkLogin;
 
+// -----
+
 // 회원 등록
 const addUserBtn = document.getElementById("addUserBtn");
 const modal = document.getElementById("addUserBox");
