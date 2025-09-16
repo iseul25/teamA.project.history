@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지사항 상세보기</title>
+    <style>
+        * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    #notice-container {
+        width: 600px;
+        height: 400px;
+        border: 1px solid #ddd;
+        margin: 0 auto;
+        margin-top: 200px;
+    }
+
+    #notice-title {
+        text-align: center;
+        margin: 20px;
+    }
+
+    #notice-cd {
+        display: flex;
+        justify-content: space-between;
+        margin: 25px;
+    }
+
+    #notice-content {
+        border: 1px solid #ddd;
+        width: 500px;
+        height: 230px;
+    }
+
+    #contentBox {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    </style>
+</head>
+<body>
+    <div id="notice-container">
+        <h1 id="notice-title"></h1>
+        <div id="notice-cd">
+            <p id="notice-writer"></p>
+            <p id="notice-createdAt"></p>
+        </div>
+        <div id="contentBox">
+            <div id="notice-content"></div>
+        </div>
+    </div>
+    <a href="adminNotice.html">목록으로</a>
+</body>
+<script>
+        // noticeDetail.js
+        // URL에서 게시글 id 추출
+        const urlParams = new URLSearchParams(window.location.search);
+        const noticeId = parseInt(urlParams.get("id"), 10);
+
+        // 테스트 데이터 (실제로는 fetch로 서버에서 받아옴)
+        // const notices = [
+        //     { id: 1, category: "조선시대", title: "첫 번째 글", content: "내용1", date: "2025-09-15" },
+        //     { id: 2, category: "선사시대", title: "두 번째 글", content: "내용2", date: "2025-09-15" },
+            
+        // ];
+
+        // localStorage에서 최신 notices 불러오기
+        const savednotices = JSON.parse(localStorage.getItem("notices")) || [];
+        const notice = savednotices.find(p => p.id === noticeId);
+
+        if (notice) {
+            document.getElementById("notice-title").textContent = notice.title;
+            document.getElementById("notice-writer").textContent = "작성자: " + notice.writer;
+            document.getElementById("notice-createdAt").textContent = "등록일: " + notice.createdAt;
+            document.getElementById("notice-content").textContent = notice.content;
+        } else {
+            document.getElementById("notice-container").innerHTML = "<p>게시글을 찾을 수 없습니다.</p>";
+        }
+    </script>
+</html>
