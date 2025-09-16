@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -102,8 +103,8 @@ public class UserController {
     // ---------------- 이메일 중복 확인 ----------------
     @GetMapping("/check-email")
     @ResponseBody
-    public String checkEmail(@RequestParam String email) {
-        return userService.existsByEmail(email) ? "duplicate" : "available";
+    public Map<String, Boolean> checkEmail(@RequestParam String email) {
+        return Map.of("available", !userService.existsByEmail(email));
     }
 
     // ---------------- 회원 정보 수정 폼 ----------------
