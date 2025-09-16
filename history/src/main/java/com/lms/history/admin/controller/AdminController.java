@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +30,7 @@ public class AdminController {
         if (loginUserObject instanceof User loginUser) {
             if ("관리자".equals(loginUser.getUserType())) {
                 model.addAttribute("loginUser", loginUser);
-                return "admin/adminPage";
+                return "admin/adminUserList";
             }
         }
         return "redirect:/user/login";
@@ -111,63 +110,5 @@ public class AdminController {
             System.out.println("삭제하려는 회원이 존재하지 않습니다: " + email);
         }
         return "redirect:/admin/users";
-    }
-
-    // 회원 상세 정보 보기
-    @GetMapping("/users/details/{email}")
-    public String userDetails(@PathVariable String email, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
-        Object loginUserObject = session.getAttribute("loginUser");
-        if (!(loginUserObject instanceof User loginUser) || !"관리자".equals(loginUser.getUserType())) {
-            return "redirect:/user/login";
-        }
-
-        if (loginUser.getEmail().equals(email)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "관리자는 본인의 상세 정보를 조회할 수 없습니다.");
-            return "redirect:/admin/users";
-        }
-
-        Optional<User> userOptional = adminService.findByEmail(email);
-        if (userOptional.isPresent()) {
-            model.addAttribute("user", userOptional.get());
-            return "admin/adminUserDetail";
-        } else {
-            return "redirect:/admin/users";
-        }
-    }
-
-    // 회원 정보 수정 폼으로 이동
-    @GetMapping("/users/edit/{email}")
-    public String showEditUserPage(@PathVariable String email, Model model, HttpSession session) {
-        Object loginUserObject = session.getAttribute("loginUser");
-        if (!(loginUserObject instanceof User) || !"관리자".equals(((User) loginUserObject).getUserType())) {
-            return "redirect:/user/login";
-        }
-
-        Optional<User> userOptional = adminService.findByEmail(email);
-        if (userOptional.isPresent()) {
-            model.addAttribute("user", userOptional.get());
-            return "admin/adminUserList";
-        } else {
-            return "redirect:/admin/users";
-        }
-    }
-
-    // 회원 정보 수정 처리
-    @PostMapping("/users/edit")
-    public String editUser(@ModelAttribute("user") User user, HttpSession session, Model model) {
-        Object loginUserObject = session.getAttribute("loginUser");
-        if (!(loginUserObject instanceof User) || !"관리자".equals(((User) loginUserObject).getUserType())) {
-            return "redirect:/user/login";
-        }
-
-        try {
-            adminService.save(user);
-            // 수정이 완료된 후 회원 목록 페이지로 리다이렉트
-            return "redirect:/admin/users";
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "유저 정보 수정에 실패했습니다: " + e.getMessage());
-            model.addAttribute("user", user);
-            return "admin/adminUserList";
-        }
     }
 }
