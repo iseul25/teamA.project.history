@@ -1,0 +1,161 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #faf0d8;
+}
+
+.wrapper {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+header {
+    background-color: #fcf4e1;
+    box-shadow: 0 2px 20px #e9e4d7;
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+
+header img {
+    width: 150px;
+}
+
+header ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+}
+
+header ul li a {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: #222;
+    font-size: 18px;
+    transition: 0.2s;
+    height: 100%;
+
+}
+
+header ul li a:hover {
+    font-weight: bold;
+    transform: scale(1.1);
+}
+
+main {
+    padding: 100px 0 40px;
+    flex: 1;
+}
+
+main h1 {
+    text-align: center;
+    font-size: 28px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* 4열 */
+    grid-template-rows: repeat(2, 1fr);
+    /* 2행 */
+    gap: 50px 100px;
+    /* 세로15px, 가로10px 간격 */
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    margin-top: 100px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.grid-container button {
+    width: 140%;
+    height: 160px;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: rgb(22, 185, 104);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.grid-container button:hover {
+    background-color: #005fa3;
+}
+
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+    }
+
+    .grid-container button {
+        height: 100px;
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(8, 1fr);
+    }
+
+    .grid-container button {
+        height: 80px;
+        font-size: 1.2rem;
+    }
+}
+
+
+
+
+#footer {
+    background-color: #EEE7DA;
+    padding: 20px 0;
+    margin-top: auto;
+}
+
+#footer .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#footer ul {
+    display: flex;
+    list-style: none;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 0;
+    margin: 0;
+}
+
+#footer ul li {
+    font-size: 14px;
+    color: #333;
+}
