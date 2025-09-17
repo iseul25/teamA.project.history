@@ -1,8 +1,10 @@
 package com.lms.history.users.controller;
 
 import com.lms.history.users.entity.User;
+import com.lms.history.users.service.PointsService;
 import com.lms.history.users.service.UserService;
 import jakarta.servlet.http.HttpSession;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +14,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserRestController {
 
     private final UserService userService;
+    @Getter
+    private final PointsService pointsService;
 
-    public UserRestController(UserService userService) {
+    public UserRestController(UserService userService, PointsService pointsService) {
         this.userService = userService;
+        this.pointsService = pointsService;
     }
 
     // ---------------- 로그인 상태 확인 ----------------
@@ -55,13 +60,15 @@ public class UserRestController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
 
+            int totalPoints = pointsService.getTotalPoints(user.getUserId());
+
             String attendanceStatus = userService.getAttendanceStatus(user.getUserId());
 
             MyPageResponse response = new MyPageResponse(
                     user.getName(),
                     user.getEmail(),
                     attendanceStatus,
-                    user.getPoint()
+                    totalPoints
             );
 
             return ResponseEntity.ok(response);

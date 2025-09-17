@@ -169,7 +169,7 @@ header>ul li a.active {
     width: 60px;
     height: 60px;
     margin: 0 auto;
-    background-image: url(img/stamp1.png);
+    background-image: url(../img/stamp1.png);
     background-size: cover;
     background-repeat: no-repeat;
     display: flex;
