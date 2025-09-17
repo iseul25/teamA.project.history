@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원 목록 관리</title>
+    <title>관리자 페이지</title>
     <link rel="stylesheet" href="/css/adminPage.css">
 </head>
 <body>
@@ -95,10 +95,14 @@
                 <td th:text="${user.email}"></td>
                 <td th:text="${user.userType}"></td>
                 <td>
-                    <span th:if="${user.attend == 'Y'}">출석</span>
-                    <span th:unless="${user.attend == 'Y'}">미출석</span>
+            <span th:if="${user.userType != '관리자'}">
+                <span th:if="${user.attend == 'Y'}">출석</span>
+                <span th:unless="${user.attend == 'Y'}">미출석</span>
+            </span>
                 </td>
-                <td th:text="${user.point}"></td>
+                <td>
+                    <span th:if="${user.userType != '관리자'}" th:text="${user.point}"></span>
+                </td>
                 <td>
                     <a th:if="${user.userType != '관리자'}"
                        th:href="@{|/admin/users/delete?email=${user.email}|}"
