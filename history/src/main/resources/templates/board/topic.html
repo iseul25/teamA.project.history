@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>시대 선택</title>
+    <link rel="stylesheet" th:href="@{/css/topicstyle.css}" />
+</head>
+<body>
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <a th:href="@{/}">
+                <img th:src="@{/img/mainLg2.png}" alt="메인 로고" />
+            </a>
+            <ul>
+                <li><a th:href="@{/board/topic}" class="active">학습하기</a></li>
+                <li><a href="#">퀴즈풀기</a></li>
+                <li><a href="#">출석하기</a></li>
+                <li><a th:href="@{/pointshop}">포인트 상점</a></li>
+                <li><a th:href="@{/faq}">FAQ</a></li>
+                <li><a href="#">공지사항</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <h1>시대 배경을 선택해주세요</h1>
+            <div class="grid-container">
+                <button><a th:href="@{/board/list(boardType='선사시대')}">선사시대</a></button>
+                <button><a th:href="@{/board/list(boardType='삼국시대')}">삼국시대</a></button>
+                <button><a th:href="@{/board/list(boardType='고려시대')}">고려시대</a></button>
+                <button><a th:href="@{/board/list(boardType='조선시대')}">조선시대</a></button>
+                <button><a th:href="@{/board/list(boardType='일제강점기')}">일제강점기</a></button>
+                <button><a th:href="@{/board/list(boardType='한국전쟁')}">한국전쟁</a></button>
+                <button><a th:href="@{/board/list(boardType='근현대사')}">근현대사</a></button>
+                <button><a th:href="@{/board/list(boardType='민주화시대')}">민주화시대</a></button>
+        </div>
+        </div>
+    </main>
+
+    <footer id="footer">
+        <div class="container">
+            <ul>
+                <li>대표전화: 042-222-2402</li>
+                <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+                <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+                <li>© 2025 역사 한 걸음. All rights reserved.</li>
+            </ul>
+        </div>
+    </footer>
+</div>
+</body>
+</html>
