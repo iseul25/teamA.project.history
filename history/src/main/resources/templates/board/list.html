@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>학습 게시판</title>
+    <link rel="stylesheet" th:href="@{/css/boardstyle.css}" />
+</head>
+
+<body>
+<header>
+    <a th:href="@{/}">
+        <img th:src="@{/img/mainLg2.png}" alt="메인 로고" />
+    </a>
+    <ul>
+        <li>
+            <a th:href="@{/board/topic}" class="active">학습하기</a>
+        </li>
+        <li><a href="#">퀴즈풀기</a></li>
+        <li><a href="#">출석하기</a></li>
+        <li><a th:href="@{/pointshop}">포인트 상점</a></li>
+        <li><a th:href="@{/faq}">FAQ</a></li>
+        <li><a href="#">공지사항</a></li>
+    </ul>
+</header>
+
+<aside class="sidebar-fixed">
+    <h3>시대 배경</h3>
+    <ul class="accordion-menu">
+        <li>
+            <button class="accordion-toggle"
+                    th:classappend="${selectedBoardType == '선사시대'} ? 'active' : ''">선사시대 ▾</button>
+            <ul class="submenu" th:classappend="${selectedBoardType == '선사시대'} ? 'open' : ''">
+                <li><a th:href="@{/board/list(boardType='선사시대')}">학습하기</a></li>
+                <li><a href="#">퀴즈풀기</a></li>
+            </ul>
+        </li>
+        <li>
+            <button class="accordion-toggle"
+                    th:classappend="${selectedBoardType == '고조선과 여러 나라'} ? 'active' : ''">고조선과 여러 나라 ▾</button>
+            <ul class="submenu" th:classappend="${selectedBoardType == '고조선과 여러 나라'} ? 'open' : ''">
+                <li><a th:href="@{/board/list(boardType='고조선과 여러 나라')}">학습하기</a></li>
+                <li><a href="#">퀴즈풀기</a></li>
+            </ul>
+        </li>
+        <li>
+            <button class="accordion-toggle"
+                    th:classappend="${selectedBoardType == '삼국과 가야'} ? 'active' : ''">삼국과 가야 ▾</button>
+            <ul class="submenu" th:classappend="${selectedBoardType == '삼국과 가야'} ? 'open' : ''">
+                <li><a th:href="@{/board/list(boardType='삼국과 가야')}">학습하기</a></li>
+                <li><a href="#">퀴즈풀기</a></li>
+            </ul>
+        </li>
+        <li>
+            <button class="accordion-toggle"
+                    th:classappend="${selectedBoardType == '남북국시대'} ? 'active' : ''">남북국시대 ▾</button>
+            <ul class="submenu" th:classappend="${selectedBoardType == '남북국시대'} ? 'open' : ''">
+                <li><a th:href="@{/board/list(boardType='남북국시대')}">학습하기</a></li>
+                <li><a href="#">퀴즈풀기</a></li>
+            </ul>
+        </li>
+        <li>
+            <button class="accordion-toggle"
+                    th:classappend="${selectedBoardType == '고려시대'} ? 'active' : ''">고려시대 ▾</button>
+            <ul class="submenu" th:classappend="${selectedBoardType == '고려시대'} ? 'open' : ''">
+                <li><a th:href="@{/board/list(boardType='고려시대')}">학습하기</a></li>
+                <li><a href="#">퀴즈풀기</a></li>
+            </ul>
+        </li>
+        <li>
+            <button class="accordion-toggle"
+                    th:classappend="${selectedBoardType == '조선시대'} ? 'active' : ''">조선시대 ▾</button>
+            <ul class="submenu" th:classappend="${selectedBoardType == '조선시대'} ? 'open' : ''">
+                <li><a th:href="@{/board/list(boardType='조선시대')}">학습하기</a></li>
+                <li><a href="#">퀴즈풀기</a></li>
+            </ul>
+        </li>
+        <li>
+            <button class="accordion-toggle"
+                    th:classappend="${selectedBoardType == '근대'} ? 'active' : ''">근대 ▾</button>
+            <ul class="submenu" th:classappend="${selectedBoardType == '근대'} ? 'open' : ''">
+                <li><a th:href="@{/board/list(boardType='근대')}">학습하기</a></li>
+                <li><a href="#">퀴즈풀기</a></li>
+            </ul>
+        </li>
+        <li>
+            <button class="accordion-toggle"
+                    th:classappend="${selectedBoardType == '현대'} ? 'active' : ''">현대 ▾</button>
+            <ul class="submenu" th:classappend="${selectedBoardType == '현대'} ? 'open' : ''">
+                <li><a th:href="@{/board/list(boardType='현대')}">학습하기</a></li>
+                <li><a href="#">퀴즈풀기</a></li>
+            </ul>
+        </li>
+    </ul>
+</aside>
+
+<div class="board-layout">
+    <main class="board-main">
+        <h1>
+            <span th:if="${selectedBoardType != null}" th:text="${selectedBoardType} + ' 학습 게시판'"></span>
+            <span th:if="${selectedBoardType == null}">전체 학습 게시판</span>
+        </h1>
+
+        <table>
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>작성일</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="board, iterStat : ${boards}" th:if="${boards != null and !boards.isEmpty()}">
+                <td th:text="${iterStat.index + 1}" class="text-center"></td>
+                <td class="title-cell">
+                    <a th:href="@{/board/detail(boardId=${board.boardId})}" th:text="${board.title}"></a>
+                </td>
+                <td th:text="${board.name}" class="text-center"></td>
+                <td th:text="${#dates.format(board.created, 'yyyy-MM-dd')}" class="text-center"></td>
+            </tr>
+
+            <tr th:if="${boards == null or boards.isEmpty()}">
+                <td colspan="4" class="no-posts">
+                    <div class="empty-message">
+                        <p>게시글이 없습니다</p>
+                        <p th:if="${selectedBoardType != null}">
+                            <span th:text="${selectedBoardType}"></span>에 대한 첫 번째 게시글을 작성해보세요!
+                        </p>
+                        <p th:if="${selectedBoardType == null}">첫 번째 게시글을 작성해보세요!</p>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="write-button-wrapper" th:if="${session.loginUser != null and session.loginUser.userType == '관리자'}">
+            <a th:href="@{/board/create(boardType=${selectedBoardType})}" class="floating-write-button">게시글 작성</a>
+        </div>
+    </main>
+</div>
+
+<footer id="footer">
+    <div class="container">
+        <ul>
+            <li>대표전화: 042-222-2402</li>
+            <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+            <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+            <li>© 2025 역사 한 걸음. All rights reserved.</li>
+        </ul>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggles = document.querySelectorAll('.accordion-toggle');
+        toggles.forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const submenu = toggle.nextElementSibling;
+                document.querySelectorAll('.submenu').forEach(menu => {
+                    if (menu !== submenu && menu.classList.contains('open')) {
+                        menu.classList.remove('open');
+                        menu.previousElementSibling.innerHTML = menu.previousElementSibling.textContent.replace('▴', '▾');
+                    }
+                });
+
+                if (submenu.classList.contains('open')) {
+                    submenu.classList.remove('open');
+                    toggle.innerHTML = toggle.textContent.replace('▴', '▾');
+                } else {
+                    submenu.classList.add('open');
+                    toggle.innerHTML = toggle.textContent.replace('▾', '▴');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
