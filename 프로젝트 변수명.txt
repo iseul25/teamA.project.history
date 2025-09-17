@@ -46,11 +46,11 @@ history01 아이디
  - userId (FK/users)
  - imgUrl (퀴즈에 쓰일 이미지 링크)
  - question (퀴즈의 질문 내용)
- - item1 (선택지 번호 1)
- - item2 (선택지 번호 2)
- - item3 (선택지 번호 3)
- - item4 (선택지 번호 4)
- - selected (사용자가 선택한 번호)
+ - item1 (선택지 1 내용)
+ - item2 (선택지 2 내용)
+ - item3 (선택지 3 내용)
+ - item4 (선택지 4 내용)
+ - selectedItem (사용자가 선택한 번호)
  - answer (실제 정답)
  - quizScore (각 퀴즈 문항에 대한 점수(맞으면 배정된 점수, 틀리면 0))
  - totalScore (총 획득 점수)
@@ -73,6 +73,7 @@ history01 아이디
  - imgUrl (상품 이미지)
  - itemName(상품 이름)
  - cost(가격)
+
 
 
 
