@@ -1,6 +1,7 @@
 package com.lms.history.users.controller;// UserAttendController.java
 
 import com.lms.history.users.entity.User;
+import com.lms.history.users.service.PointsService;
 import com.lms.history.users.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,9 +23,14 @@ import java.util.HashMap;
 public class UserAttendController {
 
     private final UserService userService;
+    private final PointsService pointsService; // 포인트 서비스 추가
 
-    public UserAttendController(UserService userService) {
+    // 기본 출석 포인트 (설정값으로 변경 가능)
+    private static final int DEFAULT_ATTENDANCE_POINTS = 10;
+
+    public UserAttendController(UserService userService, PointsService pointsService) {
         this.userService = userService;
+        this.pointsService = pointsService;
     }
 
     @GetMapping("/attend")
@@ -54,18 +61,23 @@ public class UserAttendController {
         boolean attendedToday = attendedDates != null ? attendedDates.contains(today) : false;
         List<List<Map<String, Object>>> calendarDays = generateCalendarData(viewDate, attendedDates != null ? attendedDates : new ArrayList<>());
 
+        // 사용자의 현재 총 포인트 조회 추가
+        int totalPoints = pointsService.getTotalPoints(loginUser.getUserId());
+
         model.addAttribute("loginUser", loginUser);
         model.addAttribute("attendedToday", attendedToday);
-        model.addAttribute("year", displayYear);        // int 값 보장
-        model.addAttribute("month", displayMonth);      // int 값 보장
-        model.addAttribute("yearMonth", formattedYearMonth); // 포맷된 문자열
+        model.addAttribute("year", displayYear);
+        model.addAttribute("month", displayMonth);
+        model.addAttribute("yearMonth", formattedYearMonth);
         model.addAttribute("calendarDays", calendarDays);
+        model.addAttribute("totalPoints", totalPoints); // 총 포인트 추가
 
         return "attend";
     }
 
     @PostMapping("/api/attend/check")
     @ResponseBody
+    @Transactional // 트랜잭션 처리로 출석과 포인트가 함께 처리되도록
     public ResponseEntity<Map<String, Object>> checkAttendance(@SessionAttribute(name = "loginUser", required = false) User loginUser) {
         Map<String, Object> response = new HashMap<>();
 
@@ -76,10 +88,23 @@ public class UserAttendController {
         }
 
         try {
-            userService.markAttendance(loginUser);
+            // 1. 출석 체크 및 출석 기록 생성
+            Integer attendanceId = userService.markAttendanceWithReturn(loginUser, DEFAULT_ATTENDANCE_POINTS);
+
+            // 2. 포인트 적립
+            int newTotalPoints = pointsService.addAttendancePoint(
+                    loginUser.getUserId(),
+                    attendanceId,
+                    DEFAULT_ATTENDANCE_POINTS
+            );
+
             response.put("success", true);
-            response.put("message", "출석 완료!");
+            response.put("message", String.format("출석 완료! %d 포인트가 적립되었습니다.", DEFAULT_ATTENDANCE_POINTS));
+            response.put("pointsEarned", DEFAULT_ATTENDANCE_POINTS);
+            response.put("totalPoints", newTotalPoints);
+
             return ResponseEntity.ok(response);
+
         } catch (IllegalArgumentException e) {
             response.put("success", false);
             response.put("message", e.getMessage());
@@ -91,7 +116,53 @@ public class UserAttendController {
         }
     }
 
-    // 🚩 이 메소드 블록 전체를 클래스 내부에, 다른 메소드들과 같은 레벨에 위치시켜야 합니다.
+    // 포인트 조회 API 추가
+    @GetMapping("/api/attend/points")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getCurrentPoints(@SessionAttribute(name = "loginUser", required = false) User loginUser) {
+        Map<String, Object> response = new HashMap<>();
+
+        if (loginUser == null) {
+            response.put("success", false);
+            response.put("message", "로그인이 필요합니다.");
+            return ResponseEntity.status(401).body(response);
+        }
+
+        try {
+            int totalPoints = pointsService.getTotalPoints(loginUser.getUserId());
+            response.put("success", true);
+            response.put("totalPoints", totalPoints);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "포인트 조회 중 오류가 발생했습니다.");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    // 출석 포인트 설정 변경을 위한 메서드 (관리자용)
+    @PostMapping("/api/attend/points/config")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updateAttendancePoints(
+            @SessionAttribute(name = "loginUser", required = false) User loginUser,
+            @RequestParam int points) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        if (loginUser == null || !"admin".equals(loginUser.getUserType())) {
+            response.put("success", false);
+            response.put("message", "관리자 권한이 필요합니다.");
+            return ResponseEntity.status(403).body(response);
+        }
+
+        // 여기서 포인트 설정을 DB에 저장하거나 설정 파일에 저장할 수 있습니다.
+        // 현재는 상수로 되어 있지만, 추후 동적 설정으로 변경 가능
+        response.put("success", true);
+        response.put("message", "출석 포인트가 " + points + "로 설정되었습니다.");
+
+        return ResponseEntity.ok(response);
+    }
+
     private List<List<Map<String, Object>>> generateCalendarData(LocalDate date, List<LocalDate> attendedDates) {
         LocalDate firstDayOfMonth = date.withDayOfMonth(1);
         int firstDayOfWeek = firstDayOfMonth.getDayOfWeek().getValue() % 7;

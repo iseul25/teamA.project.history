@@ -104,7 +104,7 @@ public class UserService {
     }
 
     /**
-     * 출석 처리
+     * 출석 처리 (기존 메서드 - 호환성 유지)
      * @param user 로그인한 유저
      * @return 갱신된 유저 정보
      */
@@ -113,7 +113,7 @@ public class UserService {
             throw new IllegalArgumentException("오늘은 이미 출석하셨습니다.");
         }
 
-        // 🚩 수정: Attend 객체 생성 방식 변경 (테이블 스키마에 맞춤)
+        // Attend 객체 생성
         Attend attend = new Attend(user.getUserId(), 10);
         userAttendRepository.save(attend);
 
@@ -125,7 +125,44 @@ public class UserService {
     }
 
     /**
-     * 특정 유저의 출석 기록 전체 조회
+     * 출석 처리 후 출석 ID 반환 (포인트 연동용)
+     * @param user 로그인한 유저
+     * @param pointAdd 출석으로 추가할 포인트
+     * @return 생성된 출석 기록의 ID
+     */
+    public Integer markAttendanceWithReturn(User user, int pointAdd) {
+        if (userAttendRepository.existsByUserIdAndDate(user.getUserId(), LocalDate.now())) {
+            throw new IllegalArgumentException("오늘은 이미 출석하셨습니다.");
+        }
+
+        // Attend 객체 생성 (pointAdd 값 포함)
+        Attend attend = new Attend(user.getUserId(), pointAdd);
+        Attend savedAttend = userAttendRepository.saveAndReturn(attend);
+
+        // User 엔티티의 포인트는 points 테이블에서 관리하므로 여기서는 업데이트하지 않음
+        // 포인트 업데이트는 PointsService에서 처리
+
+        return savedAttend.getAttendanceId();
+    }
+
+    /**
+     * 출석 처리만 수행 (포인트 업데이트 없음)
+     * PointsService와 함께 사용할 때 사용
+     * @param user 로그인한 유저
+     * @param pointAdd 출석으로 추가할 포인트 (기록용)
+     * @return 생성된 출석 기록 객체
+     */
+    public Attend recordAttendanceOnly(User user, int pointAdd) {
+        if (userAttendRepository.existsByUserIdAndDate(user.getUserId(), LocalDate.now())) {
+            throw new IllegalArgumentException("오늘은 이미 출석하셨습니다.");
+        }
+
+        Attend attend = new Attend(user.getUserId(), pointAdd);
+        return userAttendRepository.saveAndReturn(attend);
+    }
+
+    /**
+     * 특정 유저의 출석 기록 전체 조회 (날짜 목록)
      * @param userId 유저 ID
      * @return 출석한 날짜 목록
      */
@@ -133,5 +170,54 @@ public class UserService {
         return userAttendRepository.findByUserId(userId).stream()
                 .map(attend -> attend.getAttendanceDate().toLocalDate())
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 특정 날짜의 출석 기록 조회
+     * @param userId 유저 ID
+     * @param date 조회할 날짜
+     * @return 출석 기록 (없으면 empty)
+     */
+    public Optional<Attend> getAttendanceByDate(int userId, LocalDate date) {
+        return userAttendRepository.findByUserIdAndDate(userId, date);
+    }
+
+    /**
+     * 월별 출석 통계 조회
+     * @param userId 유저 ID
+     * @param year 년도
+     * @param month 월
+     * @return 해당 월의 출석 일수
+     */
+    public int getMonthlyAttendanceCount(int userId, int year, int month) {
+        return userAttendRepository.countByUserIdAndYearMonth(userId, year, month);
+    }
+
+    /**
+     * 연속 출석 일수 조회
+     * @param userId 유저 ID
+     * @return 현재까지의 연속 출석 일수
+     */
+    public int getConsecutiveAttendanceDays(int userId) {
+        List<LocalDate> attendedDates = userAttendRepository.findAttendanceDatesByUserId(userId);
+        if (attendedDates.isEmpty()) {
+            return 0;
+        }
+
+        LocalDate today = LocalDate.now();
+        LocalDate checkDate = today;
+        int consecutiveDays = 0;
+
+        // 오늘부터 거슬러 올라가며 연속 출석 확인
+        for (LocalDate attendedDate : attendedDates) {
+            if (attendedDate.equals(checkDate)) {
+                consecutiveDays++;
+                checkDate = checkDate.minusDays(1);
+            } else if (attendedDate.isBefore(checkDate)) {
+                break; // 연속이 끊어짐
+            }
+        }
+
+        return consecutiveDays;
     }
 }
