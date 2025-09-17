@@ -70,26 +70,6 @@ public class AdminController {
         return ResponseEntity.ok(isDuplicated);
     }
 
-    // 회원 등록
-    @GetMapping("/user/register")
-    public String showAddAdminUserPage(Model model) {
-        model.addAttribute("user", new User());
-        return "admin/adminAddUser";
-    }
-
-    @PostMapping("/user/register")
-    public String registerUser(@ModelAttribute("user") User user, Model model) {
-        try {
-            user.setUserType("일반유저");
-            adminService.registerUser(user);
-            model.addAttribute("successMessage", "유저 등록이 완료되었습니다.");
-            model.addAttribute("user", new User());
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "유저 등록에 실패했습니다: " + e.getMessage());
-        }
-        return "admin/adminAddUser";
-    }
-
     // 회원 삭제
     @GetMapping("/users/delete")
     public String deleteUser(@RequestParam String email, HttpSession session) {
