@@ -4,7 +4,6 @@ history01 아이디
 0123 비밀번호
 
 
-
 사용자 관련 테이블
 1. users (사용자 정보)
  - userId (PK=프라이머리 키)
@@ -29,13 +28,9 @@ history01 아이디
  - boardType (게시글 유형 설명란(공지사항, 학습게시글(조선시대, 삼국시대 등등)))
  - title (게시글 제목)
  - content (게시글 내용)
- - date(게시글 등록 일자)
-
-2. board_image (게시글 이미지)
- - imgId (PK)
- - boardId (FK/board)
  - imgUrl (이미지 링크)
  - imgDescription (이미지 설명란)
+ - date(게시글 등록 일자)
 
 2. board_comment (댓글)
  - commentId (PK)
@@ -48,56 +43,32 @@ history01 아이디
 퀴즈 관련 테이블
 1. quiz (퀴즈)
  - quizId (PK)
+ - userId (FK/users)
  - imgUrl (퀴즈에 쓰일 이미지 링크)
  - question (퀴즈의 질문 내용)
- - maxScore (문제별 배점)
- - createdAt (생성 시간)
- - updatedAt (수정 시간)
-
-2. quiz_options (퀴즈 선택지)
- - optionId (PK)
- - quizId (FK/quiz)
- - optionOrder (선택지 순서: 1, 2, 3, 4) -- 화면 표시 순서 제어
- - isCorrect (정답 여부(optionOrder와 비교용))
- - optionText (선택지 내용)
- - createdAt (생성 시간)
-
-3. quiz_score (퀴즈 점수 및 포인트 정보)
- - scoreId (PK)
- - userId (FK/users)
- - quizId (FK/quiz)
+ - item1 (선택지 번호 1)
+ - item2 (선택지 번호 2)
+ - item3 (선택지 번호 3)
+ - item4 (선택지 번호 4)
+ - selected (사용자가 선택한 번호)
+ - answer (실제 정답)
+ - quizScore (각 퀴즈 문항에 대한 점수(맞으면 배정된 점수, 틀리면 0))
  - totalScore (총 획득 점수)
- - earnedPoints (획득 포인트)
- - createdAt (생성 시간)
-
-4. quiz_attempt (퀴즈 응시 기록)
- - attemptId (PK)
- - sessionId (FK/quiz_session)
- - userId (FK/users)
- - quizId (FK/quiz)
- - selectedAnswer (optionOrder 값 저장) -- 사용자가 선택한 순서 번호
- - isCorrect (정답 여부(selectedAnswer와 비교용))
- - scoreEarned (획득 점수)
- - attemptTime (응시 시간)
+ - earnedPoint (획득 포인트) 
 
 
 포인트 관련 테이블
 1. points (포인트 적립/차감 내역)
  - pointId (PK)
  - userId (FK/users)
- - totalPoint (총량)
-
-2. point_transactions (포인트 사용 내역)
- - transactionId (PK)
- - userId (FK/users)
  - attendanceId (FK/users_attendance)
  - itemId (FK/point_shop)
  - scoreId (FK/quiz_score)
- - reason (변동 사유 기술)
- - pointChange (출석에 따른 포인트 증가량)
+ - pointChange (포인트 증감량)
+ - totalPoint (총량)
  - date (사용 일시)
 
-3. point_shop (포인트 상점)
+2. point_shop (포인트 상점)
  - itemId (PK)
  - imgUrl (상품 이미지)
  - itemName(상품 이름)
