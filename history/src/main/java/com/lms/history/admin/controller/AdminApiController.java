@@ -52,17 +52,4 @@ public class AdminApiController {
         result.put("exists", exists);
         return ResponseEntity.ok(result);
     }
-
-    // ✅ 회원 삭제: /api/admin/users/{email} (DELETE)
-    @DeleteMapping("/{email}")
-    public ResponseEntity<?> deleteUser(@PathVariable String email) {
-        try {
-            adminService.deleteByEmail(email);
-            return ResponseEntity.ok().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "회원 삭제 중 오류가 발생했습니다."));
-        }
-    }
 }
