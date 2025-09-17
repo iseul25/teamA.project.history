@@ -118,12 +118,10 @@ header>ul li a.active {
 
 /* 사이드바 서브메뉴 */
 #sideber .submenu {
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(-5px);
-    pointer-events: none;
-    transition: max-height 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+    max-height: 500px;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
     list-style: none;
     text-align: center;
 }
@@ -141,7 +139,7 @@ header>ul li a.active {
 
 #sideber .submenu li a {
     display: block;
-    padding: 5px;
+    padding: 10px;
     font-size: 16px;
     color: #222;
     text-decoration: none;
@@ -149,103 +147,98 @@ header>ul li a.active {
     transition: transform 0.2s ease, font-size 0.2s ease;
 }
 
-/* 회원 등록 모델 */
+/* 공지사항 수정 모델 */
 .modal {
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
 }
 
+.modal.show {
+    display: flex;
+}
+
 .modal-content {
+    position: relative;
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
-    width: 380px;
+    width: 60%;
+    height: 85%;
+}
+
+.closeBtn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #333;
+    cursor: pointer;
 }
 
 .modal-content h2 {
     text-align: center;
-    margin-bottom: 15px;
-    margin-left: 10px;
+    font-size: 30px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
-#addUserForm {
+#editForm {
+    display: flex;
+    flex-direction: column;
+    /* 세로 정렬 */
+    align-items: center;
+    /* 가로축 가운데 정렬 */
+    height: 100%;
+}
+
+#editForm input,
+#editForm textarea {
+    width: 90%;
+    padding: 15px;
+    padding-left: 20px;
+    margin: 10px 0;
+    border: 1px solid #c9c9c9;
+    border-radius: 5px;
+    font-size: 16px;
+    box-shadow: 0 1.5px 1.5px #d1d1d1;
+}
+
+#editForm textarea {
+    resize: none;
+    height: 540px;
+    overflow-y: auto;
+    /* 게시글 내용이 길면 자동 스크롤 */
+}
+
+/* 모델 안 수정 버튼 */
+#editPost-btn {
     display: block;
-    margin: 0 auto;
-    text-align: center;
-}
-
-#addUserForm input {
-    margin: 10px;
-    padding: 10px;
-    width: 300px;
+    margin: 10px auto;
+    padding: 6px 12px;
+    background-color: #919191;
+    border: 1px solid #7e7e7e;
+    border-radius: 5px;
+    color: white;
     font-size: 15px;
-}
-
-#addUserForm>label {
-    display: block;
-    text-align: left;
-    margin-left: 20px;
-}
-
-.emailBox {
-    position: relative;
-    /* width: 100%; */
-}
-
-.emailBox button {
-    position: absolute;
-    right: 30px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-/* 모델 안 회원 등록 버튼 */
-.addBtn button {
-    padding: 4px 10px;
-    font-size: 14px;
-    border-radius: 10px;
-    border: 1px solid #a1a1a1;
     cursor: pointer;
-    transition: all 0.2s ease;
 }
 
-.addBtn button:hover {
-    background-color: #e0e0e0;
-}
-
-/* 모델 밖 회원 등록 버튼 */
-#addUserBtn {
-    display: inline-block;
-    text-decoration: none;
-    padding: 5px 10px;
-    margin: 10px 0 8px;
-    border-radius: 10px;
-    border: 1px solid #7db9fd;
-    background-color: #cbe3ff;
-    color: #333;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-#addUserBtn:hover {
-    background-color: #a7cefa;
+#editPost-btn:hover {
+    background-color: #7e7e7e;
 }
 
 /* container */
 #container {
     margin: auto;
     padding: 20px;
-    width: 50%;
+    width: auto;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -255,58 +248,80 @@ header>ul li a.active {
     border-radius: 15px
 }
 
-/* 회원 목록 테이블 */
-.userlistBox {
+/* 공지사항 관리 테이블 */
+.noticeBox {
     padding: 0 20px;
 }
 
-.userlist-addUserBtn {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.userlist-title {
+.notice-title {
     font-size: 35px;
     font-weight: 600;
     letter-spacing: 5px;
     margin-top: 8px;
+    margin-bottom: 20px;
 }
 
-.userlist-table {
+.notice-table {
     background-color: #fdfdfd;
     border-radius: 10px;
     border: 1px solid #c7c7c7;
     border-collapse: collapse;
     box-shadow: 0 2px 2px #7c7c7c;
-    width: 100%;
-    max-width: 1200px;
     margin: 0 auto;
     overflow: hidden;
+    height: auto;
+    width: 1000px;
+    table-layout: auto;
 }
 
-.userlist-table th,
+.notice-table th,
 td {
     border: 1px solid #d8d8d8;
     padding: 10px 30px;
     text-align: center;
+    height: 40px;
 }
 
-.userlist-table th {
+.notice-table th {
     background-color: #e5f1ff;
+    height: 50px;
 }
 
-/* 회원 삭제 버튼 */
+.notice-table td {
+    height: 40px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 수정, 삭제 버튼 */
+.editBtn,
 .deleteBtn {
-    padding: 4px 10px;
+    display: inline-block;
+    padding: 2px 8px;
+    color: #222;
     font-size: 14px;
-    border-radius: 9px;
-    border: 1px solid #a1a1a1;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    font-weight: 500;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.editBtn {
+    background-color: #bdd8fc;
+    border: 1px solid #82b7fc;
+}
+
+.deleteBtn {
+    background-color: #ddd;
+    border: 1px solid #aaa;
+}
+
+.editBtn:hover {
+    background-color: #82b7fc;
 }
 
 .deleteBtn:hover {
-    background-color: #e0e0e0;
+    background-color: #aaa;
 }
 
 /* 페이징 버튼 */
@@ -330,7 +345,7 @@ td {
     border-color: #0073e6;
 }
 
-.pagination button:hover {
+.pagination button:hover:not(.active) {
     background: #f0f0f0;
 }
 

@@ -60,4 +60,14 @@ public class HomeController {
     public String myPage() {
         return "users/myPage";
     }
+
+    @GetMapping("/adminNotice")
+    public String adminNotice(){
+        return "admin/adminNotice";
+    }
+
+    @GetMapping("/adminPost")
+    public String adminPost(){
+        return "admin/adminPost";
+    }
 }
