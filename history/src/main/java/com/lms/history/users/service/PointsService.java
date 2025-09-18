@@ -45,13 +45,4 @@ public class PointsService {
         Integer totalPoints = pointsRepository.getTotalPointsByUserId(userId);
         return totalPoints != null ? totalPoints : 0;
     }
-
-    /**
-     * 사용자의 포인트 내역 조회
-     * @param userId 사용자 ID
-     * @return 포인트 내역 리스트
-     */
-    public List<Points> getPointHistory(int userId) {
-        return pointsRepository.findByUserId(userId);
-    }
 }

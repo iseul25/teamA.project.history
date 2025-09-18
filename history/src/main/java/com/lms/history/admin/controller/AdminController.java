@@ -30,7 +30,7 @@ public class AdminController {
         if (loginUserObject instanceof User loginUser) {
             if ("관리자".equals(loginUser.getUserType())) {
                 model.addAttribute("loginUser", loginUser);
-                return "admin/adminUserList";
+                return "/admin/adminPage";
             }
         }
         return "redirect:/user/login";
@@ -53,7 +53,7 @@ public class AdminController {
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("totalUsers", totalUsers);
 
-        return "admin/adminUserList";
+        return "/admin/adminPage";
     }
 
     /**

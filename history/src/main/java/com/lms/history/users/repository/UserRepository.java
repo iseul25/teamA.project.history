@@ -19,9 +19,7 @@ public class UserRepository {
 
     // 🚩 수정된 save 메서드
     public User save(User user) {
-        // user.getUserId()가 0보다 크면 (즉, ID가 이미 할당된 기존 사용자면)
         if (user.getUserId() > 0) {
-            // UPDATE 쿼리 실행
             String sql = "UPDATE users SET userType = ?, name = ?, password = ?, email = ? WHERE userId = ?";
             jdbc.update(sql,
                     user.getUserType(),
@@ -31,7 +29,6 @@ public class UserRepository {
                     user.getUserId()
             );
         } else {
-            // 신규 사용자이므로 INSERT 쿼리 실행
             String sql = "INSERT INTO users (userType, name, password, email) VALUES (?,?,?,?)";
             jdbc.update(sql,
                     user.getUserType(),
@@ -65,19 +62,32 @@ public class UserRepository {
         }
     }
 
-    // 회원 전체 조회
+    // 회원 전체 조회 (포인트 제외)
     public List<User> findAll() {
         String sql = "SELECT * FROM users";
         return jdbc.query(sql, userRowMapper());
     }
 
-    // 🚩 기존 update 메서드는 삭제 또는 주석 처리하는 것을 추천합니다.
-    // 현재 코드에서는 사용하지 않으므로 혼란을 방지하기 위함입니다.
-    // public void update(User user) { ... }
+    // 🚩 회원 전체 조회 (누적 포인트 포함)
+    public List<User> findAllWithPoints() {
+        String sql =
+                "SELECT u.userId, u.userType, u.name, u.password, u.email, " +
+                        "       COALESCE(SUM(p.pointChange), 0) AS totalPoint " +
+                        "FROM users u " +
+                        "LEFT JOIN points p ON u.userId = p.userId " +
+                        "GROUP BY u.userId, u.userType, u.name, u.password, u.email";
 
-    // 🚩 updateProfile 메서드는 더 이상 필요하지 않습니다.
-    // save 메서드가 이 기능을 대신합니다.
-    // public int updateProfile(String currentEmail, String newName, String newEmail) { ... }
+        return jdbc.query(sql, (rs, rowNum) -> {
+            User user = new User();
+            user.setUserId(rs.getInt("userId"));
+            user.setUserType(rs.getString("userType"));
+            user.setName(rs.getString("name"));
+            user.setPassword(rs.getString("password"));
+            user.setEmail(rs.getString("email"));
+            user.setPoint(rs.getInt("totalPoint")); // 🚩 User 엔티티에 point 필드 있어야 함
+            return user;
+        });
+    }
 
     // 회원 삭제 (ID 기준)
     public void deleteById(int userId) {
@@ -85,7 +95,7 @@ public class UserRepository {
         jdbc.update(sql, userId);
     }
 
-    // RowMapper
+    // RowMapper (findAll, findById, findByEmail 등에서 사용)
     private RowMapper<User> userRowMapper() {
         return (rs, rowNum) -> {
             User user = new User();
@@ -94,8 +104,7 @@ public class UserRepository {
             user.setName(rs.getString("name"));
             user.setPassword(rs.getString("password"));
             user.setEmail(rs.getString("email"));
-            // 🚩 포인트와 다른 필드도 매핑하는 것을 권장합니다.
-            // user.setPoint(rs.getInt("point"));
+            // 포인트는 points 테이블에서 관리하므로 여기서는 매핑 안 함
             return user;
         };
     }
@@ -125,14 +134,10 @@ public class UserRepository {
         return count != null && count > 0;
     }
 
-    // 포인트는 points 테이블에서 관리
+    // 특정 사용자 총 포인트 조회
     public Integer getTotalPointByUserId(int userId) {
-        String sql = "SELECT totalPoint FROM points WHERE userId = ?";
-        try {
-            return jdbc.queryForObject(sql, Integer.class, userId);
-        } catch (EmptyResultDataAccessException e) {
-            return 0; // 포인트 정보가 없을 경우 0으로 반환
-        }
+        String sql = "SELECT COALESCE(SUM(pointChange), 0) FROM points WHERE userId = ?";
+        return jdbc.queryForObject(sql, Integer.class, userId);
     }
 
     public Integer getAttendanceCountByUserId(int userId) {
@@ -141,7 +146,7 @@ public class UserRepository {
             Integer count = jdbc.queryForObject(sql, Integer.class, userId);
             return count != null ? count : 0;
         } catch (EmptyResultDataAccessException e) {
-            return 0; // 출석 정보가 없을 경우 0으로 반환
+            return 0;
         }
     }
 

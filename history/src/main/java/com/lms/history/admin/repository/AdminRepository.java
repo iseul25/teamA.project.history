@@ -76,17 +76,31 @@ public class AdminRepository {
      */
     public Optional<User> findByEmail(String email) {
         String sql = """
-            SELECT
-                u.userId, u.userType, u.name, u.password, u.email,
-                ua.attendanceDate, p.totalPoint
-            FROM
-                users u
-            LEFT JOIN
-                user_attendance ua ON u.userId = ua.userId
-            LEFT JOIN
-                points p ON u.userId = p.userId
-            WHERE u.email = ?
-            """;
+        SELECT
+            u.userId, u.userType, u.name, u.password, u.email,
+            CASE 
+                WHEN ua.attendanceDate IS NOT NULL THEN ua.attendanceDate
+                ELSE NULL 
+            END as attendanceDate,
+            COALESCE(p.totalPoint, 0) as totalPoint
+        FROM users u 
+        LEFT JOIN (
+            SELECT userId, MAX(attendanceDate) as attendanceDate
+            FROM user_attendance 
+            WHERE DATE(attendanceDate) = CURDATE()
+            GROUP BY userId
+        ) ua ON u.userId = ua.userId
+        LEFT JOIN (
+            SELECT userId, totalPoint
+            FROM (
+                SELECT userId, totalPoint,
+                       ROW_NUMBER() OVER (PARTITION BY userId ORDER BY pointId DESC) as rn
+                FROM points
+            ) ranked_points
+            WHERE rn = 1
+        ) p ON u.userId = p.userId
+        WHERE u.email = ?
+        """;
         try {
             User user = jdbc.queryForObject(sql, userRowMapper(), email);
             return Optional.ofNullable(user);
@@ -109,19 +123,33 @@ public class AdminRepository {
      */
     public List<User> findAllUsers() {
         String sql = """
-            SELECT
-                u.userId, u.userType, u.name, u.password, u.email,
-                ua.attendanceDate, p.totalPoint
-            FROM
-                users u
-            LEFT JOIN
-                user_attendance ua ON u.userId = ua.userId
-            LEFT JOIN
-                points p ON u.userId = p.userId
-            """;
+        SELECT
+            u.userId, u.userType, u.name, u.password, u.email,
+            CASE 
+                WHEN ua.attendanceDate IS NOT NULL THEN ua.attendanceDate
+                ELSE NULL 
+            END as attendanceDate,
+            COALESCE(p.totalPoint, 0) as totalPoint
+        FROM users u 
+        LEFT JOIN (
+            SELECT userId, MAX(attendanceDate) as attendanceDate
+            FROM user_attendance 
+            WHERE DATE(attendanceDate) = CURDATE()
+            GROUP BY userId
+        ) ua ON u.userId = ua.userId
+        LEFT JOIN (
+            SELECT userId, totalPoint
+            FROM (
+                SELECT userId, totalPoint,
+                       ROW_NUMBER() OVER (PARTITION BY userId ORDER BY pointId DESC) as rn
+                FROM points
+            ) ranked_points
+            WHERE rn = 1
+        ) p ON u.userId = p.userId
+        ORDER BY u.userId ASC
+        """;
         return jdbc.query(sql, userRowMapper());
     }
-
     /**
      * DB 결과를 User 객체로 매핑합니다.
      */
@@ -172,18 +200,32 @@ public class AdminRepository {
      */
     public List<User> findUsersByPage(int page, int size) {
         String sql = """
-    SELECT
-        u.userId, u.userType, u.name, u.password, u.email,
-        ua.attendanceDate, p.totalPoint
-    FROM
-        users u
-    LEFT JOIN
-        user_attendance ua ON u.userId = ua.userId
-    LEFT JOIN
-        points p ON u.userId = p.userId
-    ORDER BY u.userId ASC  -- 💡 DESC를 ASC로 변경하여 오름차순 정렬
-    LIMIT ? OFFSET ?
-    """;
+        SELECT
+            u.userId, u.userType, u.name, u.password, u.email,
+            CASE 
+                WHEN ua.attendanceDate IS NOT NULL THEN ua.attendanceDate
+                ELSE NULL 
+            END as attendanceDate,
+            COALESCE(p.totalPoint, 0) as totalPoint
+        FROM users u 
+        LEFT JOIN (
+            SELECT userId, MAX(attendanceDate) as attendanceDate
+            FROM user_attendance 
+            WHERE DATE(attendanceDate) = CURDATE()
+            GROUP BY userId
+        ) ua ON u.userId = ua.userId
+        LEFT JOIN (
+            SELECT userId, totalPoint
+            FROM (
+                SELECT userId, totalPoint,
+                       ROW_NUMBER() OVER (PARTITION BY userId ORDER BY pointId DESC) as rn
+                FROM points
+            ) ranked_points
+            WHERE rn = 1
+        ) p ON u.userId = p.userId
+        ORDER BY u.userId ASC
+        LIMIT ? OFFSET ?
+        """;
         int offset = (page - 1) * size;
         return jdbc.query(sql, userRowMapper(), size, offset);
     }
