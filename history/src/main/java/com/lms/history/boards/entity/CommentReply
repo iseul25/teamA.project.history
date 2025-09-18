@@ -15,7 +15,7 @@ public class CommentReply {
     private int replyId;
     private int commentId;
     private int userId;
-    private String content;
+    private String reply;
     private LocalDateTime date;
 
     private String name;
