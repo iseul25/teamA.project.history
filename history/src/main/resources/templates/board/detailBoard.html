@@ -1,24 +1,192 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${board.title}">게시글 상세보기</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${board.title}">게시글 보기</title>
+    <link rel="stylesheet" th:href="@{/css/boardstyle.css}">
 </head>
 <body>
-<h1 th:text="${board.title}">제목</h1>
-<p th:text="${board.content}">내용</p>
-<hr>
-<a th:href="@{/board/list}">목록으로</a>
+<header>
+    <a th:href="@{/}">
+        <img th:src="@{/img/mainLg2.png}" alt="메인 로고">
+    </a>
+    <ul>
+        <li><a th:href="@{/board/topic}">학습하기</a></li>
+        <li><a href="#">퀴즈풀기</a></li>
+        <li><a href="#">출석하기</a></li>
+        <li><a th:href="@{/pointshop}">포인트 상점</a></li>
+        <li><a th:href="@{/faq}">FAQ</a></li>
+        <li><a th:href="@{/notice}">공지사항</a></li>
+    </ul>
+</header>
 
-<!-- 관리자만 수정/삭제 버튼 표시 -->
-<div th:if="${session.loginUser != null and session.loginUser.userType == '관리자'}">
-    <a th:href="@{/board/edit(boardId=${board.boardId})}">수정</a>
+<main>
+    <!-- 목록으로 돌아가기 버튼 -->
+    <a th:href="@{/board/list(boardType=${board.boardType})}" class="list-button">📋 게시글 목록</a>
 
-    <!-- 삭제는 POST 방식으로 폼 사용 -->
-    <form th:action="@{/board/delete}" method="post" style="display: inline;">
+    <!-- 게시글 제목 -->
+    <h2 id="post-title" th:text="${board.title}">게시글 제목</h2>
+    <hr />
+
+    <!-- 게시글 내용 (HTML 허용으로 변경) -->
+    <div id="post-content" th:utext="${board.content}">게시글 내용</div>
+
+    <!-- 이미지가 내용에 포함되지 않은 경우에만 별도 표시 -->
+    <div th:if="${board.imgUrl != null and board.imgUrl != '' and !#strings.contains(board.content, board.imgUrl)}" class="post-image">
+        <img th:src="${board.imgUrl}" th:alt="${board.imgDescription}"
+             style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px; margin: 15px 0;"/>
+        <p th:if="${board.imgDescription != null and board.imgDescription != ''}"
+           th:text="${board.imgDescription}"
+           style="color: #666; font-style: italic; text-align: center; margin-top: 5px;">이미지 설명</p>
+    </div>
+
+    <!-- 수정/삭제 버튼 (관리자만 표시) -->
+    <div id="post-actions" class="post-actions"
+         th:if="${loginUser != null and loginUser.userType == '관리자'}">
+        <button id="edit-btn" th:onclick="|location.href='@{/board/edit(boardId=${board.boardId})}'|">수정</button>
+
+        <!-- 삭제는 POST 방식으로 폼 사용 -->
+        <form th:action="@{/board/delete}" method="post" style="display: inline;">
+            <input type="hidden" name="boardId" th:value="${board.boardId}">
+            <button id="delete-btn" type="submit" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</button>
+        </form>
+    </div>
+
+    <!-- 댓글 섹션 -->
+    <h3>댓글</h3>
+    <ul id="comment-list">
+        <li th:each="comment : ${comments}" class="comment-item">
+            <div class="comment-content">
+                <strong th:text="${comment.name}">작성자</strong>
+                <div th:text="${comment.comment}">댓글 내용</div>
+                <small th:text="${#temporals.format(comment.date, 'yyyy-MM-dd')}">작성일</small>
+
+                <div class="comment-actions">
+                    <!-- 답글 버튼 -->
+                    <button th:if="${loginUser != null}"
+                            th:onclick="|toggleReplyForm(${comment.commentId})|"
+                            class="reply-btn">답글</button>
+
+                    <!-- 본인 댓글이거나 관리자인 경우 삭제 버튼 표시 -->
+                    <form th:if="${loginUser != null and (loginUser.userId == comment.userId or loginUser.userType == '관리자')}"
+                          th:action="@{/board/comment/delete}" method="post" style="display: inline;">
+                        <input type="hidden" name="commentId" th:value="${comment.commentId}">
+                        <input type="hidden" name="boardId" th:value="${board.boardId}">
+                        <button type="submit" onclick="return confirm('댓글을 삭제하시겠습니까?')">삭제</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 답글 목록 -->
+            <div th:if="${repliesMap[comment.commentId] != null and !repliesMap[comment.commentId].isEmpty()}"
+                 class="replies-list">
+                <div th:each="reply : ${repliesMap[comment.commentId]}" class="reply-item">
+                    <strong th:text="${reply.name}">답글 작성자</strong>
+                    <div th:text="${reply.reply}">답글 내용</div>
+                    <small th:text="${#temporals.format(reply.date, 'yyyy-MM-dd')}">작성일</small>
+
+                    <!-- 답글 삭제 버튼 -->
+                    <form th:if="${loginUser != null and (loginUser.userId == reply.userId or loginUser.userType == '관리자')}"
+                          th:action="@{/board/reply/delete}" method="post" style="display: inline;">
+                        <input type="hidden" name="replyId" th:value="${reply.replyId}">
+                        <input type="hidden" name="boardId" th:value="${board.boardId}">
+                        <button type="submit" onclick="return confirm('답글을 삭제하시겠습니까?')">삭제</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 답글 작성 폼 -->
+            <div th:id="|reply-form-${comment.commentId}|" class="reply-form" style="display: none;">
+                <form th:action="@{/board/reply}" method="post" th:if="${loginUser != null}">
+                    <input type="hidden" name="commentId" th:value="${comment.commentId}">
+                    <input type="hidden" name="boardId" th:value="${board.boardId}">
+                    <textarea name="content" placeholder="답글을 입력하세요" required></textarea>
+                    <div class="reply-form-buttons">
+                        <button type="submit">답글 등록</button>
+                        <button type="button" th:onclick="|toggleReplyForm(${comment.commentId})|">취소</button>
+                    </div>
+                </form>
+            </div>
+        </li>
+    </ul>
+
+    <p id="editing-status" style="color: red; font-weight: bold; display: none;">✏️ 댓글 수정 중...</p>
+
+    <!-- 댓글 작성 폼 -->
+    <form id="comment-form" th:action="@{/board/detail}" method="post" th:if="${loginUser != null}">
         <input type="hidden" name="boardId" th:value="${board.boardId}">
-        <button type="submit" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</button>
+        <textarea id="comment-content" name="content" placeholder="댓글 내용을 입력하세요" required></textarea>
+        <button type="submit">댓글 등록</button>
     </form>
+
+    <!-- 로그인 안 된 경우 메시지 -->
+    <div th:if="${loginUser == null}">
+        <p>댓글을 작성하려면 로그인이 필요합니다.</p>
+    </div>
+</main>
+
+<div id="footer">
+    <ul>
+        <li>대표전화: 042-222-2402</li>
+        <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+        <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+        <li>© 2025 역사 한 걸음. All rights reserved.</li>
+    </ul>
 </div>
+
+<script th:src="@{/js/board.js}"></script>
+<script>
+    function replyToComment(userName) {
+        const textarea = document.getElementById('comment-content');
+        // 로그인 체크
+        if (!textarea) return;
+
+        // 이미 멘션이 있는지 확인하고 추가
+        const currentValue = textarea.value;
+        const mention = '@' + userName + ' ';
+
+        // 이미 같은 멘션이 있으면 추가하지 않음
+        if (!currentValue.includes(mention)) {
+            textarea.value = mention + currentValue;
+        }
+
+        // 커서를 텍스트 끝으로 이동하고 포커스
+        textarea.focus();
+        textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+
+        // 텍스트 영역으로 스크롤
+        textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // 답글 폼 토글 함수
+    function toggleReplyForm(commentId) {
+        const replyForm = document.getElementById(`reply-form-${commentId}`);
+        if (replyForm.style.display === 'none' || replyForm.style.display === '') {
+            replyForm.style.display = 'block';
+            // 답글 textarea에 포커스
+            const textarea = replyForm.querySelector('textarea');
+            if (textarea) {
+                textarea.focus();
+            }
+        } else {
+            replyForm.style.display = 'none';
+        }
+    }
+
+    // 이미지가 내용에 없으면 자동으로 추가하는 스크립트
+    document.addEventListener('DOMContentLoaded', function() {
+        const content = document.getElementById('post-content');
+        const imgUrl = /*[[${board.imgUrl}]]*/ '';
+        const imgDesc = /*[[${board.imgDescription}]]*/ '';
+
+        if (imgUrl && !content.innerHTML.includes(imgUrl)) {
+            const imgHtml = `<br><img src="${imgUrl}" alt="${imgDesc}"
+                             style="max-width: 100%; height: auto; margin: 15px 0; border: 1px solid #ddd; border-radius: 5px;">
+                             ${imgDesc ? `<p style="color: #666; font-style: italic; text-align: center; margin-top: 5px;">${imgDesc}</p>` : ''}`;
+            content.innerHTML += imgHtml;
+        }
+    });
+</script>
 </body>
 </html>
