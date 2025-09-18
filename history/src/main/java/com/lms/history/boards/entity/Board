@@ -19,6 +19,8 @@ public class Board {
     private String boardType;
     private Date created;
     private Date updated;
+    private String imgUrl;
+    private String imgDescription;
 
     private String name;
 }
