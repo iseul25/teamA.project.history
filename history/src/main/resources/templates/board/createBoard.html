@@ -12,18 +12,34 @@
     <p th:text="${errorMessage}"></p>
 </div>
 
-<form th:action="@{/board/create}" method="post">
-    <input type="hidden" name="boardType" th:value="${board.boardType}" />
+<form th:action="@{/board/create}" method="post" enctype="multipart/form-data">
+    <!-- boardType hidden 필드 추가 -->
+    <input type="hidden" name="boardType" th:value="${board.boardType}">
 
-    <label>제목:</label>
-    <input type="text" name="title" th:value="${board.title}" required><br><br>
+    <div>
+        <label>제목</label><br/>
+        <input type="text" name="title" placeholder="제목" required>
+    </div>
 
-    <label>내용:</label><br>
-    <textarea name="content" rows="10" cols="50" th:text="${board.content}" required></textarea><br><br>
+    <div>
+        <label>내용</label><br/>
+        <textarea name="content" rows="10" cols="50" placeholder="내용" required></textarea>
+    </div>
 
-    <button type="submit">등록</button>
+    <div>
+        <label>이미지</label><br/>
+        <input type="file" name="imageFile" accept="image/*">
+    </div>
+
+    <div>
+        <label>이미지 설명</label><br/>
+        <input type="text" name="imgDescription" placeholder="이미지 설명 (선택사항)">
+    </div>
+
+    <div>
+        <button type="submit">등록</button>
+        <a th:href="@{/board/list(boardType=${board.boardType})}">취소</a>
+    </div>
 </form>
-
-<a th:href="@{/board/list(boardType=${board.boardType})}">목록으로</a>
 </body>
 </html>
