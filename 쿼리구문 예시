@@ -11,10 +11,10 @@ UPDATE quiz
 SET answer = 2
 WHERE quizId IN (2, 3);
 
--- quiz의 selectedItem 항목과 answer 항목이 같으면 5점, 다르면 0점을 quizScore  항목에 기입
+-- quiz의 selectedItem 항목과 answer 항목이 같으면 10점, 다르면 0점을 quizScore  항목에 기입
 UPDATE quiz
 SET quizScore = CASE
-    WHEN selectedItem = answer THEN 5
+    WHEN selectedItem = answer THEN 10
     ELSE 0
 END;
     
@@ -27,9 +27,9 @@ SET totalScore = (
 )
 WHERE userId = 2;
     
-/* 2번, 3번, 5번 유저를 대상으로 totalScore의 10배로 earnedPoint 기입*/
+/* 2번, 3번, 5번 유저를 대상으로 totalScore의 0.1배로 earnedPoint 기입*/
 UPDATE quiz
-SET earnedPoint = totalScore * 10
+SET earnedPoint = totalScore * 0.1
 WHERE userId IN (2, 3, 5);
 
 
