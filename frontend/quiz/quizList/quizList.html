@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>퀴즈 목록</title>
+    <link rel="stylesheet" href="css/quizList.css">
+</head>
+
+<body>
+    <header>
+        <a href="http://127.0.0.1:5501/endResult.addver/home.html">
+            <img src="img/mainLg2.png" alt="메인 로고">
+        </a>
+        <ul>
+            <li><a href="">학습하기</a></li>
+            <li><a href="http://127.0.0.1:5501/quiz/quizHome.html" class="active">퀴즈풀기</a></li>
+            <li><a href="http://127.0.0.1:5501/attend/attend.html">출석하기</a></li>
+            <li><a href="">포인트 상점</a></li>
+            <li><a href="http://127.0.0.1:5501/faq/faq.html">FAQ</a></li>
+            <li><a href="http://127.0.0.1:5501/notice/notice.html">공지사항</a></li>
+        </ul>
+        <div id="user" style="display: none;"> <!-- 로그인 했을 시에만 보이게 -->
+            <a href="http://127.0.0.1:5501/mypage/mypage.html" id="userName-link"> 님</a>
+        </div>
+    </header>
+    <div id="sideber">
+        <div class="sideBox">
+            <ul>
+                <li class="submenuBox">
+                    <span class="mainMenu">
+                        선사시대
+                        <span class="arrow">&#9660;</span>
+                    </span>
+                    <ul class="submenu">
+                        <li><a href="">학습하기</a></li>
+                        <li><a href="#" class="quiz-link" data-category="선사시대">퀴즈풀기</a></li>
+                    </ul>
+                </li>
+                <li class="submenuBox">
+                    <span class="mainMenu">
+                        고조선과 여러 나라
+                        <span class="arrow">&#9660;</span>
+                    </span>
+                    <ul class="submenu">
+                        <li><a href="">학습하기</a></li>
+                        <li><a href="#" class="quiz-link" data-category="고조선과 여러 나라">퀴즈풀기</a></li>
+                    </ul>
+                </li>
+                <li class="submenuBox">
+                    <span class="mainMenu">
+                        삼국과 가야
+                        <span class="arrow">&#9660;</span>
+                    </span>
+                    <ul class="submenu">
+                        <li><a href="">학습하기</a></li>
+                        <li><a href="#" class="quiz-link" data-category="삼국과 가야">퀴즈풀기</a></li>
+                    </ul>
+                </li>
+                <li class="submenuBox">
+                    <span class="mainMenu">
+                        남북극시내
+                        <span class="arrow">&#9660;</span>
+                    </span>
+                    <ul class="submenu">
+                        <li><a href="">학습하기</a></li>
+                        <li><a href="#" class="quiz-link" data-category="남북극시대">퀴즈풀기</a></li>
+                    </ul>
+                </li>
+                <li class="submenuBox">
+                    <span class="mainMenu">
+                        고려시대
+                        <span class="arrow">&#9660;</span>
+                    </span>
+                    <ul class="submenu">
+                        <li><a href="">학습하기</a></li>
+                        <li><a href="#" class="quiz-link" data-category="고려시대">퀴즈풀기</a></li>
+                    </ul>
+                </li>
+                <li class="submenuBox">
+                    <span class="mainMenu">
+                        조선시대
+                        <span class="arrow">&#9660;</span>
+                    </span>
+                    <ul class="submenu">
+                        <li><a href="">학습하기</a></li>
+                        <li><a href="#" class="quiz-link" data-category="조선시대">퀴즈풀기</a></li>
+                    </ul>
+                </li>
+                <li class="submenuBox">
+                    <span class="mainMenu">
+                        근대
+                        <span class="arrow">&#9660;</span>
+                    </span>
+                    <ul class="submenu">
+                        <li><a href="">학습하기</a></li>
+                        <li><a href="#" class="quiz-link" data-category="근대">퀴즈풀기</a></li>
+                    </ul>
+                </li>
+                <li class="submenuBox">
+                    <span class="mainMenu">
+                        현대
+                        <span class="arrow">&#9660;</span>
+                    </span>
+                    <ul class="submenu lastUl">
+                        <li><a href="">학습하기</a></li>
+                        <li><a href="#" class="quiz-link" data-category="현대">퀴즈풀기</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="container">
+        <div class="listBox">
+            <div class="list-title"></div>
+            <table class="list-table">
+                <thead>
+                    <tr>
+                        <th style="width: 120px;">번호</th>
+                        <th style="width: auto;">제목</th>
+                        <th style="width: 200px;">출제자</th>
+                        <th style="width: 180px;" id="last-header">수료여부</th>
+                    </tr>
+                </thead>
+                <tbody id="list-body">
+                </tbody>
+            </table>
+            <div class="pagination-container">
+                <div id="pagination" class="pagination"></div>
+
+                <!-- 관리자 퀴즈 출제 버튼 -->
+                <div id="quiz-btn-box">
+                    <button id="create-quiz-btn">퀴즈출제</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+        <ul>
+            <li>대표전화: 042-222-2402</li>
+            <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+            <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+            <li>© 2025 역사 한 걸음. All rights reserved.</li>
+        </ul>
+    </div>
+</body>
+<script src="js/quizList.js"></script>
+
+</html>
