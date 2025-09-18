@@ -1,6 +1,7 @@
 package com.lms.history.boards.repository;
 
 import com.lms.history.boards.entity.Board;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -38,7 +39,9 @@ public class BoardRepository {
             board.setBoardType(rs.getString("boardType"));
             board.setCreated(rs.getTimestamp("date"));
             board.setUpdated(rs.getTimestamp("date"));
-            board.setName(rs.getString("name")); // 작성자 이름
+            board.setName(rs.getString("name"));
+            board.setImgUrl(rs.getString("imgUrl"));           // 추가
+            board.setImgDescription(rs.getString("imgDescription")); // 추가
             return board;
         }, boardType);
     }
@@ -49,12 +52,14 @@ public class BoardRepository {
             board.setBoardId(rs.getInt("boardId"));
             board.setTitle(rs.getString("title"));
             board.setCreated(rs.getTimestamp("created"));
+            board.setImgUrl(rs.getString("imgUrl"));           // 추가
+            board.setImgDescription(rs.getString("imgDescription")); // 추가
             return board;
         };
     }
 
     public Board save(Board board, int userId) {
-        String sql = "INSERT INTO Board (boardType, title, content, userId) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Board (boardType, title, content, userId, imgUrl, imgDescription) VALUES (?, ?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbc.update(connection -> {
@@ -63,6 +68,8 @@ public class BoardRepository {
             ps.setString(2, board.getTitle());
             ps.setString(3, board.getContent());
             ps.setInt(4, userId);
+            ps.setString(5, board.getImgUrl());
+            ps.setString(6, board.getImgDescription());
             return ps;
         }, keyHolder);
 
@@ -75,18 +82,37 @@ public class BoardRepository {
     }
 
     public void update(Board board) {
-        String sql = "UPDATE Board SET boardType = ?, title = ?, content = ? WHERE boardId = ?";
+        String sql = "UPDATE Board SET boardType = ?, title = ?, content = ?, imgUrl = ?, imgDescription = ? WHERE boardId = ?";
         jdbc.update(sql,
                 board.getBoardType(),
                 board.getTitle(),
                 board.getContent(),
+                board.getImgUrl(),
+                board.getImgDescription(),
                 board.getBoardId()
         );
     }
 
     public Board findById(int boardId) {
         String sql = "SELECT * FROM Board WHERE boardId = ?";
-        return jdbc.queryForObject(sql, new BeanPropertyRowMapper<>(Board.class), boardId);
+        try {
+            return jdbc.queryForObject(sql, (rs, rowNum) -> {
+                Board board = new Board();
+                board.setBoardId(rs.getInt("boardId"));
+                board.setUserId(rs.getInt("userId"));
+                board.setTitle(rs.getString("title"));
+                board.setContent(rs.getString("content"));
+                board.setBoardType(rs.getString("boardType"));
+                board.setCreated(rs.getTimestamp("date"));
+                board.setUpdated(rs.getTimestamp("date"));
+                board.setImgUrl(rs.getString("imgUrl"));
+                board.setImgDescription(rs.getString("imgDescription"));
+                return board;
+            }, boardId);
+        } catch (EmptyResultDataAccessException e) {
+            System.out.println("Board ID " + boardId + "를 찾을 수 없습니다.");
+            return null; // null 반환
+        }
     }
 
     public void deleteById(int boardId) {
