@@ -1,0 +1,326 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-image: url(../img/mainBg1.png);
+    /* background-color: #F7F4EA; */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fcf4e1;
+    padding: 0 100px;
+    box-shadow: 0 2px 20px #e9e4d7;
+    z-index: 100;
+}
+
+header img {
+    width: 16%;
+    padding-top: 5px;
+}
+
+header>ul {
+    display: flex;
+    /* justify-content: flex-end; */
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+header>ul li a {
+    display: block;
+    color: #222;
+    text-align: center;
+    justify-content: center;
+    padding: 14px 16px;
+    font-size: 18px;
+    text-decoration: none;
+    transition: transform 0.2s ease, font-size 0.2s ease;
+    /* 애니메이션 효과 */
+}
+
+header>ul li a:hover {
+    transform: scale(1.2);
+    /* 글자 전체 커짐 */
+    color: #000;
+    font-weight: bold;
+}
+
+header>ul li a.active {
+    font-weight: bold;
+    font-size: 1.3em;
+    /* 글자 크기 키우기 */
+    text-decoration: underline;
+    /* 밑줄 표시 */
+    color: #000;
+}
+
+#user {
+    font-size: 16px;
+}
+
+#user>a {
+    color: #222;
+    text-decoration: none;
+}
+
+#user a:hover {
+    text-decoration: underline;
+}
+
+/* 사이드바 */
+#sideber {
+    margin: 0;
+    padding: 0;
+    width: 290px;
+    /* background-color: #fcf7ed; faf1e0 */
+    background: linear-gradient(to bottom, #faf3e5, #f5efe0);
+    position: fixed;
+    top: 55px;
+    height: 100%;
+    overflow: auto;
+    border-right: 1px solid #fcf7ed;
+    box-shadow: 0 2px 2px rgb(199, 199, 199);
+    z-index: 50;
+}
+
+.sideBox {
+    margin-top: 30px;
+}
+
+.submenuBox {
+    padding-top: 20px;
+    padding-left: 55px;
+}
+
+.mainMenu {
+    width: 220px;
+    display: flex;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 18px;
+}
+
+.submenu {
+    margin-left: 35px;
+    list-style: none;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.8s ease, opacity 0.8s ease;
+}
+
+.submenu.show {
+    opacity: 1;
+}
+
+.sideBox .lastUl::after {
+    content: "";
+    display: block;
+    height: 350px;
+}
+
+.submenu>li {
+    padding-bottom: 2px;
+}
+
+.submenu>li>a {
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.arrow {
+    font-size: 14px;
+    color: #333;
+    margin-left: 10px;
+    transition: transform 0.3s ease;
+}
+
+.submenuBox.open .arrow {
+    transform: rotate(180deg);
+}
+
+.mainMenu:hover {
+    background-color: #ece4d5;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+/* container */
+#container {
+    margin: auto;
+    padding: 20px;
+    width: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8f8f8;
+    box-shadow: 0 2px 2px #ddd;
+    border: 1px solid #dfdfdf;
+    border-radius: 15px
+}
+
+/* 퀴즈 목록 테이블 */
+.listBox {
+    padding: 0 20px;
+}
+
+.list-title {
+    text-align: center;
+    font-size: 35px;
+    font-weight: 600;
+    letter-spacing: 5px;
+    margin-top: 8px;
+    margin-bottom: 20px;
+}
+
+.list-table {
+    background-color: #fdfdfd;
+    border-radius: 10px;
+    border: 1px solid #c7c7c7;
+    border-collapse: collapse;
+    box-shadow: 0 2px 2px #7c7c7c;
+    margin: 0 auto;
+    overflow: hidden;
+    height: auto;
+    width: 1000px;
+    table-layout: auto;
+}
+
+.list-table th,
+td {
+    padding: 10px 30px;
+    text-align: center;
+    height: 40px;
+}
+
+.list-table th {
+    background-color: #f3c1b3;
+    border: 1px solid #f1dada;
+    height: 50px;
+}
+
+.list-table td {
+    border: 1px solid #e0e0e0;
+    height: 40px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 페이징 버튼 */
+.pagination-container {
+    display: flex;
+    justify-content: space-between; /* 좌우로 배치 */
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination {
+    flex: 1;
+    text-align: center;
+}
+
+.pagination button {
+    border: 1px solid #ddd;
+    background: #fff;
+    padding: 5px 10px;
+    margin: 0 3px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.pagination button.active {
+    background: #6fb39f;
+    color: white;
+    border-color: #6fb39f;
+}
+
+.pagination button:hover:not(.active) {
+    background: #f0f0f0;
+}
+
+/* 관리자 버튼 */
+#quiz-btn-box {
+    display: none;
+    text-align: right;
+}
+
+#create-quiz-btn {
+    background-color: #26968e;
+    color: white;
+    font-size: 14px;
+    border: 1px solid #10857d;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#create-quiz-btn:hover {
+    background-color: #10857d;
+}
+
+.editBtn,
+.deleteBtn {
+    display: inline-block;
+    padding: 2px 8px;
+    color: #222;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.editBtn {
+    background-color: #bdd8fc;
+    border: 1px solid #82b7fc;
+}
+
+.deleteBtn {
+    background-color: #ddd;
+    border: 1px solid #aaa;
+}
+
+.editBtn:hover {
+    background-color: #82b7fc;
+}
+
+.deleteBtn:hover {
+    background-color: #aaa;
+}
+
+/* 하단 부분 */
+#footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #EEE7DA;
+    padding: 0 200px;
+    z-index: 80;
+}
+
+#footer>ul {
+    display: flex;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#footer>ul li {
+    display: block;
+    color: #333;
+    text-align: center;
+    padding: 5px 8px;
+    text-decoration: none;
+}
