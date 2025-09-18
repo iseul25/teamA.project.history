@@ -1,135 +1,87 @@
 쿼리구문 예시(숫자 및 ''안의 단어는 예시입니다. -- 및 /* */ 안의 항목은 설명용이라 실제 구문에 반영되지 않습니다.)
 
 
-/*point_transactions 테이블에 상점이용 생성*/
-INSERT INTO point_transactions (userId, attendanceId, itemId, scoreId, reason) 
-VALUES (2, NULL, 1, NULL, '상점이용');
+-- quizId 1의 정답을 선택지 3으로 지정
+UPDATE quiz
+SET answer = 3
+WHERE quizId = 1;
 
-INSERT INTO point_transactions (userId, attendanceId, itemId, scoreId, reason) 
-VALUES (3, NULL, 2, NULL, '상점이용');
+-- quizId 2, 3의 정답을 선택지 2로 지정
+UPDATE quiz
+SET answer = 2
+WHERE quizId IN (2, 3);
 
-INSERT INTO point_transactions (userId, attendanceId, itemId, scoreId, reason) 
-VALUES (5, NULL, 3, NULL, '상점이용');
+-- quiz의 selectedItem 항목과 answer 항목이 같으면 5점, 다르면 0점을 quizScore  항목에 기입
+UPDATE quiz
+SET quizScore = CASE
+    WHEN selectedItem = answer THEN 5
+    ELSE 0
+END;
+    
+-- 2번 유저의 quizScore를 모두 합산해 totalScore에 기입
+UPDATE quiz
+SET totalScore = (
+    SELECT SUM(quizScore)
+    FROM quiz
+    WHERE userId = 2
+)
+WHERE userId = 2;
+    
+/* 2번, 3번, 5번 유저를 대상으로 totalScore의 10배로 earnedPoint 기입*/
+UPDATE quiz
+SET earnedPoint = totalScore * 10
+WHERE userId IN (2, 3, 5);
+
+
+/*points 테이블에 상점이용 생성*/
+INSERT INTO points (userId, attendanceId, itemId, quizId) 
+VALUES (2, NULL, 1, NULL);
+
+INSERT INTO points (userId, attendanceId, itemId, quizId) 
+VALUES (3, NULL, 2, NULL);
+
+INSERT INTO points (userId, attendanceId, itemId, quizId) 
+VALUES (5, NULL, 3, NULL);
 
 /*상점이용에 따른 포인트 차감*/
-UPDATE point_transactions pt
+UPDATE points pt
 SET pointChange = - (SELECT cost FROM point_shop WHERE itemId = pt.itemId)
 WHERE pt.itemId IS NOT NULL
   AND pt.attendanceId IS NULL
   AND pt.scoreId IS NULL;
   
   
-/*point_transactions 테이블에 출석체크 생성*/
-INSERT INTO point_transactions (userId, attendanceId, itemId, scoreId, reason) 
-VALUES (2, 918, NULL, NULL, '출석체크');
+/* points 테이블에 출석체크 생성*/
+INSERT INTO point_transactions (userId, attendanceId, itemId, quizId) 
+VALUES (2, 918, NULL, NULL);
 
-INSERT INTO point_transactions (userId, attendanceId, itemId, scoreId, reason) 
-VALUES (3, 919, NULL, NULL, '출석체크');
+INSERT INTO points (userId, attendanceId, itemId, quizId) 
+VALUES (3, 919, NULL, NULL);
 
-INSERT INTO point_transactions (userId, attendanceId, itemId, scoreId, reason) 
-VALUES (5, 920, NULL, NULL, '출석체크');
+INSERT INTO points (userId, attendanceId, itemId, quizId) 
+VALUES (5, 920, NULL, NULL);
 
 /*출석체크에 따른 포인트 적립*/
-UPDATE point_transactions pt
+UPDATE points pt
 SET pointChange = (SELECT pointAdd FROM user_attendance WHERE attendanceId = pt.attendanceId)
 WHERE pt.attendanceId IS NOT NULL
   AND pt.itemId IS NULL
   AND pt.scoreId IS NULL;
   
   
-/* point_transactions 테이블에 퀴즈응시 생성*/
-INSERT INTO point_transactions (userId, attendanceId, itemId, scoreId, reason) 
-VALUES (2, NULL, NULL, 7, '퀴즈응시');
+/* points 테이블에 퀴즈응시 생성*/
+INSERT INTO points (userId, attendanceId, itemId, quizId) 
+VALUES (2, NULL, NULL, 7);
 
-INSERT INTO point_transactions (userId, attendanceId, itemId, scoreId, reason) 
-VALUES (3, NULL, NULL, 8, '퀴즈응시');
+INSERT INTO points (userId, attendanceId, itemId, quizId) 
+VALUES (3, NULL, NULL, 8);
 
-INSERT INTO point_transactions (userId, attendanceId, itemId, scoreId, reason) 
-VALUES (5, NULL, NULL, 9, '퀴즈응시');
+INSERT INTO points (userId, attendanceId, itemId, quizId) 
+VALUES (5, NULL, NULL, 9);
 
 /*퀴즈응시에 따른 포인트 적립*/
-UPDATE point_transactions pt
-SET pointChange = (SELECT pointScore FROM quiz_score WHERE scoreId = pt.scoreId)
+UPDATE points pt
+SET pointChange = (SELECT pointScore FROM quiz WHERE quizId = pt.quizId)
 WHERE pt.scoreId IS NOT NULL
   AND pt.itemId IS NULL
   AND pt.attendanceId IS NULL;
-
--- 2번 유저의 totalPoint를 업데이트
-UPDATE points
-SET totalPoint = totalPoint + (SELECT pointChange FROM point_transactions WHERE transactionId = 17)
-WHERE userId = 2;
-
-UPDATE points
-SET totalPoint = totalPoint + (SELECT pointChange FROM point_transactions WHERE transactionId = 20)
-WHERE userId = 2;
-
-UPDATE points
-SET totalPoint = totalPoint + (SELECT pointChange FROM point_transactions WHERE transactionId = 23)
-WHERE userId = 2;
-
--- 3번 유저의 totalPoint를 모두 업데이트
-UPDATE points
-SET totalPoint = totalPoint + (
-    SELECT SUM(pointChange)
-    FROM point_transactions
-    WHERE transactionId IN (18, 21, 24)
-)
-WHERE userId = 3;
-
--- 5번 유저의 totalPoint를 모두 업데이트
-UPDATE points
-SET totalPoint = totalPoint + (
-    SELECT SUM(pointChange)
-    FROM point_transactions
-    WHERE transactionId IN (19, 22, 25)
-)
-WHERE userId = 5;
-
-
--- (비효율적)2번 유저의 출석기록 추가와 그에 따른 포인트 적립
-INSERT INTO user_attendance (userId, pointAdd) VALUES (2, 10);
-
-INSERT INTO point_transactions (userId, attendanceId, itemId, scoreId, reason) 
-VALUES (2, 922, NULL, NULL, '출석체크');
-
-UPDATE point_transactions pt
-SET pointChange = (SELECT pointAdd FROM user_attendance WHERE attendanceId = pt.attendanceId)
-WHERE pt.attendanceId IS NOT NULL
-  AND pt.itemId IS NULL
-  AND pt.scoreId IS NULL;
-  
-UPDATE points
-SET totalPoint = totalPoint + (SELECT pointChange FROM point_transactions WHERE transactionId = 26)
-WHERE userId = 2;
-
-
--- 3번 유저의 출석기록 추가와 그에 따른 포인트 적립
-INSERT INTO user_attendance (userId, pointAdd) VALUES (3, 10);
-
-INSERT INTO point_transactions (userId, attendanceId, itemId, scoreId, reason, pointChange) 
-SELECT 3, 923, NULL, NULL, '출석체크', pointAdd
-FROM user_attendance
-WHERE attendanceId = 923;
-
-UPDATE points
-SET totalPoint = totalPoint + (SELECT pointChange FROM point_transactions WHERE transactionId = 27)
-WHERE userId = 3;
-
--- 5번 유저의 출석기록 추가와 그에 따른 포인트 적립
-INSERT INTO user_attendance (userId, pointAdd) VALUES (5, 10);
-
-INSERT INTO point_transactions (userId, attendanceId, itemId, scoreId, reason, pointChange) 
-SELECT 5, 924, NULL, NULL, '출석체크', pointAdd
-FROM user_attendance
-WHERE attendanceId = 924;
-
-UPDATE points
-SET totalPoint = totalPoint + (SELECT pointChange FROM point_transactions WHERE transactionId = 28)
-WHERE userId = 5;
-
-
--- 2번 유저의 포인트 총량과 사용내역 찾기
-SELECT p/*(=points)*/.totalPoint, pt/*(=point_transactions)*/.*
-FROM points p
-JOIN point_transactions pt ON p.userId = pt.userId
-WHERE p.userId = 2;
