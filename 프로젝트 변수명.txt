@@ -3,7 +3,6 @@
 history01 아이디
 0123 비밀번호
 
-
 사용자 관련 테이블
 1. users (사용자 정보)
  - userId (PK=프라이머리 키)
@@ -37,24 +36,53 @@ history01 아이디
  - boardId (FK/board)
  - userId (FK/users)
  - comment (댓글 내용)
- - date (댓글 등록 일자)
+ - date (등록 일자)
+
+3. comment_reply (답글)
+ - replyId (PK)
+ - commentId (FK/board_comment)
+ - userId (FK/users)
+ - comment (답글 내용)
+ - date (등록 일자)
+
 
 
 퀴즈 관련 테이블
-1. quiz (퀴즈)
+1. quiz_category (퀴즈 카테고리)
+ - quizCategoryId (PK)
+ - userId (FK/users(등록한 관리자 ID))
+ - quizType (시대분류)
+ - quizListName (퀴즈 회차 이름)
+ - createAt (등록 일자)
+
+2. quiz (퀴즈)
  - quizId (PK)
- - userId (FK/users)
+ - quizCategoryId (FK/quiz_category)
  - imgUrl (퀴즈에 쓰일 이미지 링크)
  - question (퀴즈의 질문 내용)
  - item1 (선택지 1 내용)
  - item2 (선택지 2 내용)
  - item3 (선택지 3 내용)
  - item4 (선택지 4 내용)
- - selectedItem (사용자가 선택한 번호)
  - answer (실제 정답)
- - quizScore (각 퀴즈 문항에 대한 점수(맞으면 배정된 점수, 틀리면 0))
- - totalScore (총 획득 점수)
- - earnedPoint (획득 포인트) 
+ - quizScore (각 퀴즈 문항에 대한 점수) 
+
+3. quiz_attempt (퀴즈 응시)
+ - attemptId (PK)
+ - userId (FK/users(응시자 ID))
+ - quizCategoryId (FK/quiz_category)
+ - quizId (FK/quiz)
+ - selected (응시자가 선택한 번호)
+ - earnedScore (득점(맞으면 quizScore 점수, 틀리면 0 기입))
+ - attemptAt (답변 제출 시간)
+
+4. quiz_score (퀴즈 총점)
+ - scoreId (PK)
+ - quizCategoryId (FK/quiz_category)
+ - userId (FK/users(응시자 ID))
+ - totalScore (총점)
+ - earnedPoint (환산 포인트)
+
 
 
 포인트 관련 테이블
@@ -66,15 +94,10 @@ history01 아이디
  - scoreId (FK/quiz_score)
  - pointChange (포인트 증감량)
  - totalPoint (총량)
- - date (사용 일시)
 
 2. point_shop (포인트 상점)
  - itemId (PK)
+ - category (상품 카테고리)
  - imgUrl (상품 이미지)
  - itemName(상품 이름)
  - cost(가격)
-
-
-
-
-
