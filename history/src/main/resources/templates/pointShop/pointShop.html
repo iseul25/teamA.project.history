@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>포인트 상점</title>
+  <link rel="stylesheet" href="/css/pointShop.css" />
+</head>
+
+<body>
+  <header>
+    <a href="/home">
+      <img src="/img/mainLg2.png" alt="메인 로고" />
+    </a>
+    <div class="nav-wrapper">
+      <ul class="nav-menu">
+        <li><a href="/board/topic">학습하기</a></li>
+        <li><a href="">퀴즈풀기</a></li>
+        <li><a href="/attend">출석하기</a></li>
+        <li><a href="/pointShop">포인트 상점</a></li>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/notice">공지사항</a></li>
+      </ul>
+      <div class="user-info">
+        사용자: <strong>USER</strong> | 포인트: <span id="point">100점</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="product-list">
+      <h2>상품 목록</h2>
+      <div class="products">
+        <div class="product">
+          <img src="/img/voucher5.png" alt="문화상품권 50000원" />
+          <h3>문화상품권</h3>
+          <p>500점</p>
+          <button class="buy-btn">구매</button>
+        </div>
+        <div class="product">
+          <img src="/img/voucher3.png" alt="문화상품권 30000원" />
+          <h3>문화상품권</h3>
+          <p>300점</p>
+          <button class="buy-btn">구매</button>
+        </div>
+        <div class="product">
+          <img src="/img/voucher1.png" alt="문화상품권 10000원" />
+          <h3>문화상품권</h3>
+          <p>100점</p>
+          <button class="buy-btn">구매</button>
+        </div>
+        <div class="product">
+          <img src="/img/icecoffee.png" alt="커피교환권" />
+          <h3>커피교환권</h3>
+          <p>50점</p>
+          <button class="buy-btn">구매</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="point-history">
+      <h2>포인트 내역</h2>
+      <ul>
+        <li>[+10점] 출석 포인트</li>
+        <li>[+25점] 퀴즈풀기 포인트</li>
+        <li>[+25점] 퀴즈풀기 포인트</li>
+        <li>[+10점] 출석 포인트</li>
+        <li>[-50점] 커피교환권 구매</li>
+        <li>[+25점] 퀴즈풀기 포인트</li>
+        <li>[+10점] 출석 포인트</li>
+        <li>[+25점] 퀴즈풀기 포인트</li>
+        <li>[+25점] 퀴즈풀기 포인트</li>
+        <li>[-300점] 문화상품권 구매</li>
+      </ul>
+    </section>
+  </main>
+  <div id="footer">
+    <ul>
+      <li>대표전화: 042-222-2402</li>
+      <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+      <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+      <li>© 2025 역사 한 걸음. All rights reserved.</li>
+    </ul>
+  </div>
+
+  <script src="pointshop.js"></script>
+</body>
+
+</html>
+<script>
+  // 초기 포인트 설정
+  let point = 100;
+
+  // 상품 정보: 가격
+  const products = [
+    { name: '문화상품권', price: 500 },
+    { name: '문화상품권', price: 300 },
+    { name: '문화상품권', price: 100 },
+    { name: '커피교환권', price: 50 },
+  ];
+
+  // 포인트와 내역 DOM 참조
+  const pointDisplay = document.getElementById('point');
+  const historyList = document.querySelector('.point-history ul');
+
+  // 버튼에 이벤트 연결
+  document.querySelectorAll('.buy-btn').forEach((button, index) => {
+    button.addEventListener('click', () => {
+      const product = products[index];
+
+      if (point < product.price) {
+        alert("포인트가 부족합니다.");
+        return;
+      }
+
+      const confirmed = confirm(`${product.name}을(를) ${product.price}점으로 구매하시겠습니까?`);
+      if (confirmed) {
+        // 포인트 차감
+        point -= product.price;
+        pointDisplay.textContent = point + '점';
+
+        // 포인트 내역에 추가
+        const li = document.createElement('li');
+        li.textContent = `[-${product.price}점] ${product.name} 구매`;
+        historyList.prepend(li); // 가장 위에 추가
+
+        alert("구매가 완료되었습니다.");
+      }
+    });
+  });
+
+</script>

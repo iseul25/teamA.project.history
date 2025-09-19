@@ -61,10 +61,10 @@ public class HomeController {
         return "users/myPage";
     }
 
-    @GetMapping("/notice")
-    public String notice(){
-        return "notice";
-    }
+//    @GetMapping("/notice")
+//    public String notice(){
+//        return "notice";
+//    }
 
     @GetMapping("/adminNotice")
     public String adminNotice(){
@@ -79,6 +79,11 @@ public class HomeController {
     @GetMapping("/adminStore")
     public String adminStore(){
         return "admin/adminStore";
+    }
+
+    @GetMapping("/pointShop")
+    public String pointShop(){
+        return "pointShop/pointShop";
     }
 
 }

@@ -23,7 +23,7 @@ public class PointsRepository {
 
     // 포인트 기록 저장
     public Points save(Points points) {
-        String sql = "INSERT INTO points (userId, attendanceId, itemId, quizId, pointChange, totalPoint) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO points (userId, attendanceId, itemId, pointChange, totalPoint) VALUES (?, ?, ?, ?, ?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -32,9 +32,9 @@ public class PointsRepository {
             ps.setInt(1, points.getUserId());
             ps.setObject(2, points.getAttendanceId()); // null 가능
             ps.setObject(3, points.getItemId()); // null 가능
-            ps.setObject(4, points.getQuizId()); // null 가능
-            ps.setInt(5, points.getPointChange());
-            ps.setInt(6, points.getTotalPoint());
+//            ps.setObject(4, points.getQuizId()); // null 가능
+            ps.setInt(4, points.getPointChange());
+            ps.setInt(5, points.getTotalPoint());
             return ps;
         }, keyHolder);
 
@@ -87,8 +87,8 @@ public class PointsRepository {
             Integer itemId = (Integer) rs.getObject("itemId");
             points.setItemId(itemId);
 
-            Integer quizId = (Integer) rs.getObject("quizId");
-            points.setQuizId(quizId);
+//            Integer quizId = (Integer) rs.getObject("quizId");
+//            points.setQuizId(quizId);
 
             points.setPointChange(rs.getInt("pointChange"));
             points.setTotalPoint(rs.getInt("totalPoint"));

@@ -77,7 +77,7 @@ public class UserAttendController {
 
     @PostMapping("/api/attend/check")
     @ResponseBody
-    @Transactional // 트랜잭션 처리로 출석과 포인트가 함께 처리되도록
+    @Transactional
     public ResponseEntity<Map<String, Object>> checkAttendance(@SessionAttribute(name = "loginUser", required = false) User loginUser) {
         Map<String, Object> response = new HashMap<>();
 
@@ -88,10 +88,7 @@ public class UserAttendController {
         }
 
         try {
-            // 1. 출석 체크 및 출석 기록 생성
             Integer attendanceId = userService.markAttendanceWithReturn(loginUser, DEFAULT_ATTENDANCE_POINTS);
-
-            // 2. 포인트 적립
             int newTotalPoints = pointsService.addAttendancePoint(
                     loginUser.getUserId(),
                     attendanceId,
@@ -106,13 +103,20 @@ public class UserAttendController {
             return ResponseEntity.ok(response);
 
         } catch (IllegalArgumentException e) {
+            // 이미 롤백되므로 메시지만 반환
             response.put("success", false);
             response.put("message", e.getMessage());
             return ResponseEntity.status(400).body(response);
         } catch (Exception e) {
+            // 내부에서 어떤 예외가 발생하든,
+            // 사용자에게는 일반적인 오류 메시지를 전달
             response.put("success", false);
             response.put("message", "출석 체크 중 오류가 발생했습니다.");
-            return ResponseEntity.status(500).body(response);
+            // 여기서 로그를 남기는 것이 중요합니다.
+            // log.error("출석 체크 중 예외 발생", e);
+
+            // 예외를 다시 던져서 트랜잭션 롤백이 자연스럽게 일어나도록 함
+            throw new RuntimeException("Transaction rollback due to internal error", e);
         }
     }
 

@@ -46,14 +46,27 @@ public class UserController {
                         @RequestParam String password,
                         HttpServletRequest request,
                         RedirectAttributes redirectAttributes) {
+
+        // 1. 먼저 사용자 존재 여부 확인
+        Optional<User> userExists = userService.findByEmail(email);
+
+        if (userExists.isEmpty()) {
+            // 사용자가 존재하지 않는 경우
+            redirectAttributes.addFlashAttribute("loginError", "notFound");
+            return "redirect:/";
+        }
+
+        // 2. 사용자는 존재하므로 로그인 시도
         Optional<User> loginResult = userService.login(email, password);
 
         if (loginResult.isPresent()) {
+            // 로그인 성공
             HttpSession session = request.getSession();
             session.setAttribute("loginUser", loginResult.get());
             return "redirect:/";
         } else {
-            redirectAttributes.addFlashAttribute("loginError", "아이디 또는 비밀번호를 확인해주세요.");
+            // 사용자는 존재하지만 비밀번호가 틀린 경우
+            redirectAttributes.addFlashAttribute("loginError", "invalidPassword");
             return "redirect:/";
         }
     }

@@ -78,8 +78,8 @@ header>ul li a.active {
     text-decoration: underline;
 }
 
-/* sideber */
-#sideber {
+/* sidebar */
+#sidebar {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -94,11 +94,11 @@ header>ul li a.active {
     z-index: 50;
 }
 
-#sideber>ul {
+#sidebar>ul {
     padding-top: 55px;
 }
 
-#sideber>ul>li>a {
+#sidebar>ul>li>a {
     display: block;
     color: black;
     padding: 15px;
@@ -112,21 +112,21 @@ header>ul li a.active {
     transition: transform 0.2s ease, font-size 0.2s ease;
 }
 
-#sideber li a.active {
+#sidebar li a.active {
     font-weight: bold;
     font-size: 1.4em;
     text-decoration: underline;
     color: #000;
 }
 
-#sideber li a:not(.active):hover {
+#sidebar li a:not(.active):hover {
     transform: scale(1.2);
     color: #000;
     font-weight: bold;
 }
 
 /* 사이드바 서브메뉴 */
-#sideber .submenu {
+#sidebar .submenu {
     max-height: 0;
     overflow: hidden;
     opacity: 0;
@@ -137,18 +137,18 @@ header>ul li a.active {
     text-align: center;
 }
 
-#sideber .submenu li a.active {
+#sidebar .submenu li a.active {
     font-size: 1.2em;
 }
 
-#sideber .submenuBox:hover>.submenu {
+#sidebar .submenuBox:hover>.submenu {
     max-height: 500px;
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
 }
 
-#sideber .submenu li a {
+#sidebar .submenu li a {
     display: block;
     padding: 5px;
     font-size: 16px;
