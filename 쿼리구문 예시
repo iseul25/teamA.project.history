@@ -11,7 +11,7 @@ VALUES (
 1/*정답은 선택지 1인 '서울'*/, 10/* 퀴즈에 10점배정*/);
 
 
--- 41번 유저가 n시대 제n회 퀴즈문항에 응시하여 답변을 제출함(quiz_attempt 테이블에 답변 저장)
+-- 41번 유저가 n시대 제n회 퀴즈문항에 응시하여 답변을 제출함(quiz_attempt 테이블에 답변 저장, 해당 답변 제출 이후 1번 트리거 활성화 -> 이후 2번 트리거 활성화)
 INSERT INTO quiz_attempt (userId, quizCategoryId, quizId, selected, attemptAt)
 VALUES
   (41, 1, 1, 1, NOW()),
@@ -26,7 +26,7 @@ VALUES
   (41, 1, 10, 4, NOW()); /*quizId 1~10까지 n(선사)시대 제n(1)회 퀴즈문항*/
   
 
--- (트리거로 대체함)41번 유저가 낸 답변을 각 항목별로 채점(quiz_attempt 테이블에 채점기록,)
+-- (1번 트리거로 대체함)41번 유저가 낸 답변을 각 항목별로 채점(quiz_attempt 테이블에 채점기록,)
 UPDATE quiz_attempt qa
 JOIN quiz q ON qa.quizId = q.quizId
 SET qa.earnedScore = CASE
@@ -36,7 +36,7 @@ END
 WHERE qa.userId = 41;
 
 
--- (트리거로 대체함)41번 유저가 선사시대 제1회 퀴즈문항에서 맞은 총점 및 환산 포인트 생성
+-- (2번 트리거로 대체함)41번 유저가 선사시대 제1회 퀴즈문항에서 맞은 총점 및 환산 포인트 생성
 INSERT INTO quiz_score (quizCategoryId, userId, totalScore,earnedPoint)
 VALUES (
     1, 41,
