@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학습 게시글 관리</title>
+    <link rel="stylesheet" th:href="@{/css/adminBoardList.css}">
+</head>
+
+<body>
+<header>
+    <a th:href="@{/home}">
+        <img th:src="@{/img/mainLg2.png}" alt="메인 로고">
+    </a>
+    <ul>
+        <li><a th:href="@{/study}">학습하기</a></li>
+        <li><a th:href="@{/quiz}">퀴즈풀기</a></li>
+        <li><a th:href="@{/attend}">출석하기</a></li>
+        <li><a th:href="@{/shop}">포인트 상점</a></li>
+        <li><a th:href="@{/faq}">FAQ</a></li>
+        <li><a th:href="@{/notice}">공지사항</a></li>
+    </ul>
+    <!-- Thymeleaf로 로그인 상태 처리 -->
+    <div id="user" th:if="${session.loginUser != null}">
+        <a th:href="@{/admin/board}" th:if="${session.loginUser.userType == 'admin'}"
+           id="userName-link" class="active"
+           th:text="${session.loginUser.name} + '관리자님'">
+        </a>
+        <a th:href="@{/mypage}" th:unless="${session.loginUser.userType == 'admin'}"
+           class="active"
+           th:text="${session.loginUser.name} + '님'">
+        </a>
+    </div>
+    <!-- 로그인 안되어 있으면 리다이렉트 (관리자 페이지인 경우) -->
+    <script th:if="${session.loginUser == null}" th:inline="javascript">
+        window.location.href = '/login';
+    </script>
+</header>
+
+<div id="sidebar">
+    <ul>
+        <li><a th:href="@{/admin/users}">회원관리</a></li>
+        <li class="submenuBox">
+            <a th:href="@{/admin/board}" class="active">게시글관리</a>
+            <ul class="submenu">
+                <li><a th:href="@{/admin/board}" class="active">학습 게시글</a></li>
+                <li><a th:href="@{/admin/quiz}">퀴즈 게시글</a></li>
+                <li><a th:href="@{/admin/notice}">공지사항 게시글</a></li>
+            </ul>
+        </li>
+        <li><a th:href="@{/admin/comment}">댓글관리</a></li>
+        <li><a th:href="@{/admin/shop}">상점관리</a></li>
+    </ul>
+</div>
+
+<div id="container">
+    <div class="boardBox">
+        <div class="board-title">학습게시글</div>
+
+        <!-- URL 파라미터 메시지 표시 (Thymeleaf로 처리) -->
+        <div th:if="${param.success}" class="alert success" th:text="${param.success[0]}"></div>
+        <div th:if="${param.error}" class="alert error" th:text="'오류: ' + ${param.error[0]}"></div>
+
+        <!-- 게시물 관리 테이블 -->
+        <table class="board-table">
+            <thead>
+            <tr>
+                <th style="width: 100px;">번호</th>
+                <th id="categoryHeader" style="width: 190px;">
+                    카테고리
+                    <span class="dropdown-arrow">▼</span>
+                    <ul id="categoryMenu" class="dropdown">
+                        <li><a th:href="@{/admin/board(boardType='전체', page=0)}" data-category="전체">전체</a></li>
+                        <li><a th:href="@{/admin/board(boardType='선사시대', page=0)}" data-category="선사시대">선사시대</a></li>
+                        <li><a th:href="@{/admin/board(boardType='고조선과 여러 나라', page=0)}" data-category="고조선과 여러 나라">고조선과 여러 나라</a></li>
+                        <li><a th:href="@{/admin/board(boardType='삼국과 가야', page=0)}" data-category="삼국과 가야">삼국과 가야</a></li>
+                        <li><a th:href="@{/admin/board(boardType='남북극시대', page=0)}" data-category="남북극시대">남북극시대</a></li>
+                        <li><a th:href="@{/admin/board(boardType='고려시대', page=0)}" data-category="고려시대">고려시대</a></li>
+                        <li><a th:href="@{/admin/board(boardType='조선시대', page=0)}" data-category="조선시대">조선시대</a></li>
+                        <li><a th:href="@{/admin/board(boardType='근대', page=0)}" data-category="근대">근대</a></li>
+                        <li><a th:href="@{/admin/board(boardType='현대', page=0)}" data-category="현대">현대</a></li>
+                    </ul>
+                </th>
+                <th>제목</th>
+                <th style="width: 150px;">등록 일자</th>
+                <th style="width: 80px;">작업</th>
+            </tr>
+            </thead>
+
+            <tbody id="board-body">
+            <!-- 실제 게시글 출력 -->
+            <tr th:each="board, stat : ${boards}">
+                <td th:text="${(currentPage != null ? currentPage : 0) * 10 + stat.count}">1</td>
+                <td th:text="${board.boardType}">학습</td>
+                <td>
+                    <a th:href="@{/board/detail(boardId=${board.boardId})}"
+                       class="board-link"
+                       th:text="${board.title}">게시글 제목</a>
+                </td>
+                <td th:text="${#dates.format(board.created, 'yyyy-MM-dd')}">2025-01-01</td>
+                <td>
+                    <button th:onclick="'editBoard(' + ${board.boardId} + ')'" class="editBtn">수정</button>
+                    <button th:onclick="'deleteBoard(' + ${board.boardId} + ')'" class="deleteBtn">삭제</button>
+                </td>
+            </tr>
+
+            <!-- 부족한 만큼 빈 행 추가 -->
+            <tr th:each="i : ${#numbers.sequence(1, 10 - #lists.size(boards))}">
+                <td>&nbsp;</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+
+            <!-- 게시글이 아예 없는 경우 -->
+            <tr th:if="${#lists.isEmpty(boards)}">
+                <td colspan="5" style="text-align: center; padding: 50px;">등록된 게시글이 없습니다.</td>
+            </tr>
+            </tbody>
+
+        </table>
+
+        <!-- 게시물 수정 모달 -->
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <span class="closeBtn">&times;</span>
+                <h2>게시글 수정</h2>
+                <form id="editForm" th:action="@{/admin/board/edit}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" id="editBoardId" name="id" />
+                    <input type="hidden" name="page" th:value="${currentPage}" />
+                    <input type="hidden" name="boardType" th:value="${currentBoardType}" />
+                    <input type="text" id="editTitle" name="title" placeholder="제목" required>
+                    <textarea id="editContent" name="content" placeholder="내용" required></textarea>
+                    <div class="image-upload-section">
+                        <label for="editImageFile">이미지 업로드:</label>
+                        <div id="currentImagePreview" style="margin: 10px 0;">
+                            <!-- 기존 이미지가 있으면 여기에 표시 -->
+                        </div>
+                        <input type="file" id="editImageFile" name="imageFile" accept="image/*">
+                        <input type="text" id="editImgDescription" name="imgDescription" placeholder="이미지 설명 (선택사항)">
+                    </div>
+                    <button type="submit" id="editBoard-btn">수정 완료</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Thymeleaf로 페이징 처리 -->
+        <div id="pagination" class="pagination" th:if="${totalPages > 0}">
+            <!-- 이전 페이지 -->
+            <a th:if="${currentPage > 0}"
+               th:href="@{/admin/board(page=${currentPage - 1}, boardType=${currentBoardType})}"
+               class="page-btn">◀</a>
+            <span th:unless="${currentPage > 0}" class="page-btn disabled">◀</span>
+
+            <!-- 페이지 번호들 -->
+            <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                <a th:unless="${i == currentPage}"
+                   th:href="@{/admin/board(page=${i}, boardType=${currentBoardType})}"
+                   th:text="${i + 1}"
+                   class="page-btn"></a>
+                <span th:if="${i == currentPage}"
+                      th:text="${i + 1}"
+                      class="page-btn active"></span>
+            </th:block>
+
+            <!-- 다음 페이지 -->
+            <a th:if="${currentPage < totalPages - 1}"
+               th:href="@{/admin/board(page=${currentPage + 1}, boardType=${currentBoardType})}"
+               class="page-btn">▶</a>
+            <span th:unless="${currentPage < totalPages - 1}" class="page-btn disabled">▶</span>
+        </div>
+    </div>
+</div>
+
+<div id="footer">
+    <ul>
+        <li>대표전화: 042-222-2402</li>
+        <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+        <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+        <li>© 2025 역사 한 걸음. All rights reserved.</li>
+    </ul>
+</div>
+
+<script>
+    // 드롭다운 메뉴 토글 (인터랙션이므로 JavaScript 필요)
+    const categoryHeader = document.getElementById("categoryHeader");
+    const categoryMenu = document.getElementById("categoryMenu");
+    const arrow = categoryHeader.querySelector(".dropdown-arrow");
+
+    // 클릭하면 드롭다운 토글
+    categoryHeader.addEventListener("click", (e) => {
+        categoryMenu.classList.toggle("show");
+        if (arrow) arrow.classList.toggle("up");
+    });
+
+    // 바깥 클릭 시 닫기
+    window.addEventListener("click", (e) => {
+        if (!categoryHeader.contains(e.target)) {
+            categoryMenu.classList.remove("show");
+            if (arrow) arrow.classList.remove("up");
+        }
+    });
+
+    // 게시글 삭제 (AJAX 필요)
+    async function deleteBoard(boardId) {
+        if (!confirm(`${boardId}번 게시물을 삭제하시겠습니까?`)) return;
+
+        try {
+            const response = await fetch(`/admin/board/delete/${boardId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                alert('게시글이 삭제되었습니다.');
+                location.reload();
+            } else {
+                const errorText = await response.text();
+                alert('삭제에 실패했습니다: ' + errorText);
+            }
+        } catch (error) {
+            alert('삭제 중 오류가 발생했습니다.');
+        }
+    }
+
+    // 게시글 수정 모달 열기
+    const modal = document.getElementById("editModal");
+    const closeBtn = document.querySelector(".closeBtn");
+
+    // HTML 태그를 제거하는 함수 (이미지 태그는 보존)
+    function stripHtmlTags(html) {
+        if (!html) return '';
+
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+
+        // 이미지 태그를 제거하고 텍스트만 추출
+        const images = tempDiv.querySelectorAll('img');
+        images.forEach(img => img.remove());
+
+        return tempDiv.textContent || tempDiv.innerText || '';
+    }
+
+    // 이미지 태그에서 이미지 정보를 추출하는 함수 (개선된 버전)
+    function extractImageInfo(html) {
+        if (!html) {
+            console.log('No HTML content provided');
+            return null;
+        }
+
+        console.log('Extracting image from HTML:', html);
+
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        const imgTag = tempDiv.querySelector('img');
+
+        if (imgTag) {
+            let src = imgTag.src;
+
+            // src 속성이 없으면 다른 속성들도 확인
+            if (!src) {
+                src = imgTag.getAttribute('src') || imgTag.getAttribute('data-src');
+            }
+
+            // 상대 경로인 경우 절대 경로로 변환
+            if (src && !src.startsWith('http') && !src.startsWith('/')) {
+                src = '/' + src;
+            }
+
+            console.log('Found img tag:', imgTag);
+            console.log('Original image src:', imgTag.src);
+            console.log('Processed image src:', src);
+
+            return {
+                src: src,
+                alt: imgTag.alt || imgTag.getAttribute('alt') || '',
+                originalSrc: imgTag.src // 디버깅용
+            };
+        } else {
+            console.log('No img tag found in HTML');
+            // HTML에 img 태그가 없어도 이미지 URL이 직접 포함되어 있는지 확인
+            const imageUrlPattern = /(https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|svg))/i;
+            const match = html.match(imageUrlPattern);
+            if (match) {
+                console.log('Found image URL in text:', match[1]);
+                return {
+                    src: match[1],
+                    alt: '',
+                    originalSrc: match[1]
+                };
+            }
+        }
+        return null;
+    }
+
+    function editBoard(boardId) {
+        console.log('Opening edit modal for board:', boardId);
+
+        fetch(`/admin/board/api/${boardId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(board => {
+                console.log('Board data received:', board);
+                console.log('imgUrl:', board.imgUrl);
+                console.log('imgDescription:', board.imgDescription);
+
+                document.getElementById("editBoardId").value = board.boardId;
+                document.getElementById("editTitle").value = board.title || '';
+
+                // HTML 태그를 제거한 순수 텍스트만 표시
+                const cleanContent = stripHtmlTags(board.content);
+                document.getElementById("editContent").value = cleanContent;
+
+                // 이미지 표시 처리
+                const previewDiv = document.getElementById("currentImagePreview");
+
+                if (board.imgUrl) {
+                    console.log('Found image URL:', board.imgUrl);
+
+                    // 이미지 로드 테스트
+                    const testImg = new Image();
+                    testImg.onload = function() {
+                        console.log('Image loaded successfully from imgUrl');
+                        previewDiv.innerHTML = `
+                            <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9;">
+                                <p style="margin: 0 0 10px 0; font-weight: bold; color: #333;">현재 등록된 이미지:</p>
+                                <img src="${board.imgUrl}"
+                                     alt="${board.imgDescription || ''}"
+                                     style="max-width: 200px; max-height: 150px; object-fit: contain; border: 1px solid #ccc; border-radius: 3px; display: block;">
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
+                                    이미지 설명: ${board.imgDescription || '설명 없음'}
+                                </p>
+                                <p style="margin: 5px 0 0 0; font-size: 10px; color: #999;">
+                                    이미지 URL: ${board.imgUrl}
+                                </p>
+                            </div>
+                        `;
+                    };
+
+                    testImg.onerror = function() {
+                        console.error('Image failed to load from imgUrl:', board.imgUrl);
+                        previewDiv.innerHTML = `
+                            <div style="border: 1px solid #f8d7da; padding: 10px; border-radius: 5px; background-color: #f8d7da; color: #721c24;">
+                                <p style="margin: 0;"><strong>이미지 로드 실패</strong></p>
+                                <p style="margin: 5px 0 0 0; font-size: 12px;">
+                                    URL: ${board.imgUrl}
+                                </p>
+                                <p style="margin: 5px 0 0 0; font-size: 12px;">
+                                    이미지를 찾을 수 없습니다. 새 이미지를 업로드해주세요.
+                                </p>
+                            </div>
+                        `;
+                    };
+
+                    testImg.src = board.imgUrl;
+
+                    // 이미지 설명 필드에 기존 값 설정
+                    document.getElementById("editImgDescription").value = board.imgDescription || '';
+                } else {
+                    console.log('No imgUrl found');
+                    previewDiv.innerHTML = `
+                        <div style="border: 1px solid #d1ecf1; padding: 10px; border-radius: 5px; background-color: #d1ecf1; color: #0c5460;">
+                            <p style="margin: 0;">등록된 이미지가 없습니다.</p>
+                            <p style="margin: 5px 0 0 0; font-size: 12px;">새 이미지를 업로드할 수 있습니다.</p>
+                        </div>
+                    `;
+                    document.getElementById("editImgDescription").value = '';
+                }
+
+                // 실제 게시글의 카테고리를 hidden 필드에 설정
+                const boardTypeInput = document.querySelector("input[name='boardType']");
+                if (boardTypeInput) {
+                    boardTypeInput.value = board.boardType || '';
+                }
+
+                modal.classList.add("show");
+            })
+            .catch(error => {
+                console.error('Error fetching board data:', error);
+                alert('게시글 정보를 불러올 수 없습니다: ' + error.message);
+            });
+    }
+
+    // 모달 닫기
+    if (closeBtn) {
+        closeBtn.onclick = () => modal.classList.remove("show");
+    }
+
+    window.onclick = (e) => {
+        if (e.target == modal) modal.classList.remove("show");
+    };
+
+    // 이미지 파일 선택 시 미리보기
+    document.getElementById("editImageFile").addEventListener("change", function(e) {
+        const file = e.target.files[0];
+        const previewDiv = document.getElementById("currentImagePreview");
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewDiv.innerHTML = `
+                    <div style="border: 1px solid #28a745; padding: 10px; border-radius: 5px; background-color: #d4edda; color: #155724;">
+                        <p style="margin: 0 0 10px 0; font-weight: bold;">새로 선택된 이미지:</p>
+                        <img src="${e.target.result}"
+                             alt="새 이미지 미리보기"
+                             style="max-width: 200px; max-height: 150px; object-fit: contain; border: 1px solid #ccc; border-radius: 3px; display: block;">
+                        <p style="margin: 5px 0 0 0; font-size: 12px;">
+                            파일명: ${file.name}
+                        </p>
+                    </div>
+                `;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // 수정 완료 처리
+    const editForm = document.getElementById("editForm");
+    if (editForm) {
+        editForm.addEventListener("submit", async e => {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('id', document.getElementById("editBoardId").value);
+            formData.append('title', document.getElementById("editTitle").value);
+            formData.append('content', document.getElementById("editContent").value);
+            formData.append('page', document.querySelector("input[name='page']").value || '0');
+            formData.append('boardType', document.querySelector("input[name='boardType']").value || '전체');
+
+            // 이미지 파일이 선택된 경우 추가
+            const imageFile = document.getElementById("editImageFile").files[0];
+            if (imageFile) {
+                formData.append('imageFile', imageFile);
+            }
+
+            // 이미지 설명 추가
+            const imgDescription = document.getElementById("editImgDescription").value;
+            if (imgDescription) {
+                formData.append('imgDescription', imgDescription);
+            }
+
+            try {
+                const response = await fetch("/admin/board/edit", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (response.ok) {
+                    modal.classList.remove("show");
+                    alert('게시글이 수정되었습니다.');
+                    window.location.href = `/admin/board`;
+                } else {
+                    const errorText = await response.text();
+                    alert("수정에 실패했습니다: " + errorText);
+                }
+            } catch (error) {
+                alert("수정 중 오류가 발생했습니다: " + error.message);
+                console.error(error);
+            }
+        });
+    }
+</script>
+</script>
+</body>
+</html>

@@ -245,7 +245,7 @@ header>ul li a.active {
 #container {
     margin: auto;
     padding: 20px;
-    width: 60%;
+    width: 50%;
     display: flex;
     justify-content: center;
     align-items: center;

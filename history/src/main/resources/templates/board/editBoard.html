@@ -8,7 +8,7 @@
 <h1>글 수정</h1>
 
 <!-- 에러 메시지 표시 -->
-<div th:if="${errorMessage}" style="color:red;">
+<div th:if="${errorMessage}" class="error-message">
     <p th:text="${errorMessage}"></p>
 </div>
 
@@ -19,38 +19,77 @@
     <!-- boardType도 hidden으로 유지 -->
     <input type="hidden" th:field="*{boardType}" />
 
-    <div>
-        <label>제목</label><br/>
-        <input type="text" th:field="*{title}" placeholder="제목을 입력하세요"/>
+    <!-- 기존 이미지 URL을 hidden으로 유지 (변경하지 않을 때 사용) -->
+    <input type="hidden" th:field="*{imgUrl}" />
+
+    <div class="form-group">
+        <label for="title">제목</label>
+        <input type="text" id="title" th:field="*{title}" placeholder="제목을 입력하세요" required/>
     </div>
 
-    <div>
-        <label>내용</label><br/>
-        <textarea th:field="*{content}" rows="10" cols="50" placeholder="내용을 입력하세요"></textarea>
+    <div class="form-group">
+        <label for="content">내용</label>
+        <textarea id="content" th:field="*{content}" rows="15" placeholder="내용을 입력하세요" required></textarea>
     </div>
 
     <!-- 현재 이미지 표시 -->
-    <div th:if="${board.imgUrl != null}">
-        <label>현재 이미지</label><br/>
-        <img th:src="${board.imgUrl}" th:alt="${board.imgDescription}"
-             style="max-width: 300px; height: auto; border: 1px solid #ddd;"/>
-        <p th:if="${board.imgDescription != null}" th:text="${board.imgDescription}">이미지 설명</p>
+    <div th:if="${board.imgUrl != null and board.imgUrl != ''}" class="form-group">
+        <label>현재 등록된 이미지</label>
+        <div class="current-image">
+            <img th:src="${board.imgUrl}" th:alt="${board.imgDescription ?: '게시글 이미지'}"/>
+            <p th:if="${board.imgDescription != null and board.imgDescription != ''}"
+               class="image-description" th:text="'설명: ' + ${board.imgDescription}">이미지 설명</p>
+            <p th:unless="${board.imgDescription != null and board.imgDescription != ''}"
+               class="image-description">설명 없음</p>
+        </div>
     </div>
 
-    <div>
-        <label>이미지 변경</label><br/>
-        <input type="file" name="imageFile" accept="image/*"/>
+    <div class="form-group">
+        <label for="imageFile">이미지 변경 (선택사항)</label>
+        <input type="file" id="imageFile" name="imageFile" accept="image/*"/>
     </div>
 
-    <div>
-        <label>이미지 설명</label><br/>
-        <input type="text" th:field="*{imgDescription}" placeholder="이미지 설명 (선택사항)"/>
+    <div class="form-group">
+        <label for="imgDescription">이미지 설명</label>
+        <input type="text" id="imgDescription" th:field="*{imgDescription}" placeholder="이미지 설명 (선택사항)"/>
     </div>
 
-    <div>
+    <div class="button-group">
         <button type="submit">수정하기</button>
-        <a th:href="@{/board/list(boardType=${board.boardType})}">취소</a>
+        <a th:href="@{/board/list(boardType=${board.boardType})}" class="cancel-link">취소</a>
     </div>
 </form>
+
+<script>
+    // 파일 선택 시 미리보기 기능
+    document.getElementById('imageFile').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // 기존 현재 이미지 영역이 있으면 업데이트, 없으면 새로 생성
+                let currentImageDiv = document.querySelector('.current-image');
+                if (!currentImageDiv) {
+                    const formGroup = document.createElement('div');
+                    formGroup.className = 'form-group';
+                    formGroup.innerHTML = '<label>새로 선택한 이미지 미리보기</label>';
+
+                    currentImageDiv = document.createElement('div');
+                    currentImageDiv.className = 'current-image';
+                    formGroup.appendChild(currentImageDiv);
+
+                    // 이미지 파일 입력 필드 앞에 삽입
+                    const imageFileGroup = document.getElementById('imageFile').closest('.form-group');
+                    imageFileGroup.parentNode.insertBefore(formGroup, imageFileGroup);
+                }
+
+                currentImageDiv.innerHTML = `
+                    <img src="${e.target.result}" alt="새 이미지 미리보기" style="max-width: 100%; max-height: 300px; object-fit: contain; border: 1px solid #ddd; border-radius: 4px;"/>
+                `;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
 </body>
 </html>

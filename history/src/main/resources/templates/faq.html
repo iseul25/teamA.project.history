@@ -15,11 +15,11 @@
         <img src="/img/mainLg2.png" alt="메인 로고">
     </a>
     <ul>
-        <li><a href="/board/topic">학습하기</a></li>
+        <li><a href="">학습하기</a></li>
         <li><a href="">퀴즈풀기</a></li>
-        <li><a href="/attend">출석하기</a></li>
-        <li><a href="/pointShop">포인트 상점</a></li>
-        <li><a href="/faq" class="active">FAQ</a></li>
+        <li><a href="/user/attend">출석하기</a></li>
+        <li><a href="">포인트 상점</a></li>
+        <li><a href="/user/faq" class="active">FAQ</a></li>
         <li><a href="">공지사항</a></li>
     </ul>
     <div id="user" style="display: none;"> <!-- 로그인 했을 시에만 보이게 -->
@@ -112,7 +112,7 @@
 
             if (data.isLoggedIn) {
                 usernameLink.textContent = data.name;
-                usernameLink.href = "/myPage";
+                usernameLink.href = "/mypage.html";
                 userDiv.style.display = "block";
             } else {
                 userDiv.style.display = "none";  // 그냥 안 보이게만 처리

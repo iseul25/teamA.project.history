@@ -1,219 +1,126 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+package com.lms.history.users.controller;
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원가입</title>
-    <link rel="stylesheet" href="/css/signUp.css">
-</head>
+import com.lms.history.users.entity.User;
+import com.lms.history.users.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-<body>
-<header>
-    <a href="/home">
-        <img src="/img/mainLg2.png" alt="메인 로고">
-    </a>
-    <ul>
-        <li><a href="">학습하기</a></li>
-        <li><a href="">퀴즈풀기</a></li>
-        <li><a href="/attend">출석하기</a></li>
-        <li><a href="">포인트 상점</a></li>
-        <li><a href="/faq">FAQ</a></li>
-        <li><a href="">공지사항</a></li>
-    </ul>
-</header>
+import java.util.Map;
+import java.util.Optional;
 
-<div id="container">
-    <div id="signUpBox">
-        <h1>회 원 가 입</h1>
+@Controller
+@RequestMapping("/user")
+public class UserController {
 
-        <!-- Thymeleaf 폼과 객체 바인딩 -->
-        <form th:action="@{/user/add}" th:object="${user}" method="post">
-            <div id="userDataBox">
-                <p>ID</p>
-                <div id="input-wrapper">
-                    <input type="text" id="email" th:field="*{email}" placeholder="abc123@gmail.com">
-                    <button type="button" id="checkBtn" onclick="checkEmail()">중복확인</button>
-                </div>
-                <div id="emailMsg" class="msg"></div>
+private final UserService userService;
 
-                <p>PASSWORD</p>
-                <div id="pw-wrapper">
-                    <input type="password" id="pw" th:field="*{password}" placeholder="*******">
-                    <button type="button" id="togglePw" onclick="togglePassword()">👁</button>
-                </div>
-                <div id="pwMsg" class="msg"></div>
+public UserController(UserService userService) {
+this.userService = userService;
+}
 
-                <p>NAME</p>
-                <input type="text" id="name" th:field="*{name}" placeholder="홍길동">
-                <div id="nameMsg" class="msg"></div>
-            </div>
+// ---------------- 회원 등록 ----------------
+@GetMapping("/add")
+public String addForm(Model model) {
+model.addAttribute("user", new User());
+return "users/addUser";
+}
 
-            <div id="suBtnBox">
-                <button id="suBtn" type="submit" onclick="return validateForm()">가입하기</button>
-            </div>
-        </form>
-    </div>
-</div>
+@PostMapping("/add")
+public String addUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
+try {
+userService.join(user);
+return "redirect:/";
+} catch (IllegalArgumentException e) {
+redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+return "redirect:/user/add";
+}
+}
 
-<!-- Thymeleaf 에러 메시지 출력 -->
-<div th:if="${errorMessage}" th:text="${errorMessage}" class="error-message"></div>
+// ---------------- 로그인 / 로그아웃 ----------------
+@PostMapping("/login")
+public String login(@RequestParam String email,
+@RequestParam String password,
+HttpServletRequest request,
+RedirectAttributes redirectAttributes) {
+Optional<User> loginResult = userService.login(email, password);
 
-<div id="footer">
-    <ul>
-        <li>대표전화: 042-222-2402</li>
-        <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
-        <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
-        <li>© 2025 역사 한 걸음. All rights reserved.</li>
-    </ul>
-</div>
-
-<script>
-    let emailChecked = false;
-
-    // 비밀번호 표시/숨기기 토글
-    function togglePassword() {
-        const pwInput = document.getElementById("pw");
-        const toggleBtn = document.getElementById("togglePw");
-
-        if (pwInput.type === "password") {
-            pwInput.type = "text";
-            toggleBtn.textContent = "🙈";
-        } else {
-            pwInput.type = "password";
-            toggleBtn.textContent = "👁";
-        }
+    if (loginResult.isPresent()) {
+    HttpSession session = request.getSession();
+    session.setAttribute("loginUser", loginResult.get());
+    return "redirect:/";
+    } else {
+    redirectAttributes.addFlashAttribute("loginError", "아이디 또는 비밀번호를 확인해주세요.");
+    return "redirect:/";
+    }
     }
 
-    // 이메일 중복 확인
-    async function checkEmail() {
-        const emailInput = document.getElementById("email");
-        const emailMsg = document.getElementById("emailMsg");
-        const email = emailInput.value.trim();
-
-        if (!email) {
-            emailMsg.textContent = "이메일을 입력해주세요.";
-            emailMsg.className = "msg error";
-            emailInput.classList.add("error-text");
-            emailChecked = false; // 필수: 유효성 검사 실패 시 false 설정
-            return;
-        }
-
-        // 이메일 형식 검증
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            emailMsg.textContent = "올바른 이메일 형식이 아닙니다.";
-            emailMsg.className = "msg error";
-            emailInput.classList.add("error-text");
-            emailChecked = false; // 필수: 유효성 검사 실패 시 false 설정
-            return;
-        }
-
-        try {
-            // 이메일 중복 확인 API 요청
-            const res = await fetch(`/user/check-email?email=${encodeURIComponent(email)}`);
-            const data = await res.json();
-
-            if (data.available) {
-                emailMsg.textContent = "사용 가능한 이메일입니다.";
-                emailMsg.className = "msg success";
-                emailInput.classList.remove("error-text");
-                emailChecked = true; // 필수: 사용 가능할 때 true로 설정
-            } else {
-                emailMsg.textContent = "이미 사용 중인 이메일입니다.";
-                emailMsg.className = "msg error";
-                emailInput.classList.add("error-text");
-                emailChecked = false; // 필수: 사용 중일 때 false로 설정
-            }
-        } catch (err) {
-            console.error("이메일 중복 확인 중 서버 오류 발생:", err);
-            emailMsg.textContent = "서버 오류가 발생했습니다. 다시 시도해 주세요.";
-            emailMsg.className = "msg error";
-            emailInput.classList.add("error-text");
-            emailChecked = false; // 필수: 오류 발생 시 false로 설정
-        }
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request) {
+    HttpSession session = request.getSession(false);
+    if (session != null) session.invalidate();
+    return "redirect:/";
     }
 
-    // 이메일 입력값 변경 시 중복확인 상태 초기화
-    document.getElementById("email").addEventListener("input", function() {
-        const emailMsg = document.getElementById("emailMsg");
-        emailMsg.textContent = "";
-        emailMsg.className = "msg";
-        this.classList.remove("error-text");
-        emailChecked = false; // 입력값이 변경되면 상태를 false로 초기화
-    });
+    // ---------------- 마이페이지 ----------------
+    @GetMapping("/myPage")
+    public String myPage(HttpSession session, Model model) {
+    User loginUser = (User) session.getAttribute("loginUser");
+    if (loginUser == null) return "redirect:/user/login";
 
-    // 폼 유효성 검사
-    function validateForm() {
-        const email = document.getElementById("email").value.trim();
-        const pw = document.getElementById("pw").value.trim();
-        const name = document.getElementById("name").value.trim();
+    // 세션 유저 최신 정보 조회
+    User user = userService.findByEmail(loginUser.getEmail()).orElse(loginUser);
+    model.addAttribute("user", user);
 
-        const emailMsg = document.getElementById("emailMsg");
-        const pwMsg = document.getElementById("pwMsg");
-        const nameMsg = document.getElementById("nameMsg");
+    // Attend 엔티티 기준 출석 상태 조회
+    String attendanceStatus = userService.getAttendanceStatus(user.getUserId());
+    model.addAttribute("attendanceStatus", attendanceStatus);
 
-        // 메시지 초기화
-        emailMsg.textContent = "";
-        pwMsg.textContent = "";
-        nameMsg.textContent = "";
-
-        let isValid = true;
-
-        // 이메일 체크
-        if (email === "") {
-            emailMsg.textContent = "이메일을 입력하세요.";
-            emailMsg.className = "msg error";
-            isValid = false;
-        } else if (!emailChecked) {
-            emailMsg.textContent = "이메일 중복확인을 해주세요.";
-            emailMsg.className = "msg error";
-            isValid = false;
-        }
-
-        // 비밀번호 체크
-        if (pw === "") {
-            pwMsg.textContent = "비밀번호를 입력하세요.";
-            pwMsg.className = "msg error";
-            isValid = false;
-        } else if (pw.length < 6) {
-            pwMsg.textContent = "비밀번호는 6자 이상이어야 합니다.";
-            pwMsg.className = "msg error";
-            isValid = false;
-        }
-
-        // 이름 체크
-        if (name === "") {
-            nameMsg.textContent = "이름을 입력하세요.";
-            nameMsg.className = "msg error";
-            isValid = false;
-        }
-
-        return isValid;
+    return "users/myPage";
     }
 
-    // 실시간 유효성 검사 (선택적)
-    document.getElementById("pw").addEventListener("input", function() {
-        const pwMsg = document.getElementById("pwMsg");
-        if (this.value.length > 0 && this.value.length < 6) {
-            pwMsg.textContent = "비밀번호는 6자 이상이어야 합니다.";
-            pwMsg.className = "msg error";
-        } else {
-            pwMsg.textContent = "";
-            pwMsg.className = "msg";
-        }
-    });
+    // ---------------- 마이페이지 회원 정보 수정 ----------------
+    @PostMapping("/myPage/update")
+    public String updateMyPage(@ModelAttribute User updatedUser, HttpSession session, RedirectAttributes redirectAttributes) {
+    User loginUser = (User) session.getAttribute("loginUser");
+    if (loginUser == null) return "redirect:/user/login";
 
-    document.getElementById("name").addEventListener("input", function() {
-        const nameMsg = document.getElementById("nameMsg");
-        if (this.value.trim() === "") {
-            nameMsg.textContent = "이름을 입력하세요.";
-            nameMsg.className = "msg error";
-        } else {
-            nameMsg.textContent = "";
-            nameMsg.className = "msg";
-        }
-    });
-</script>
-</body>
-</html>
+    try {
+    userService.updateUser(loginUser.getEmail(), updatedUser);
+    session.setAttribute("loginUser", updatedUser);
+    redirectAttributes.addFlashAttribute("message", "회원 정보가 성공적으로 수정되었습니다.");
+    } catch (IllegalArgumentException e) {
+    redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+    return "redirect:/user/myPage?edit=true";
+    }
+
+    return "redirect:/user/myPage";
+    }
+
+    // ---------------- 이메일 중복 확인 ----------------
+    @GetMapping("/check-email")
+    @ResponseBody
+    public Map<String, Boolean> checkEmail(@RequestParam String email) {
+    return Map.of("available", !userService.existsByEmail(email));
+    }
+
+    // ---------------- 회원 정보 수정 폼 ----------------
+    @GetMapping("/edit/{email}")
+    public String userEditForm(@PathVariable String email, Model model, HttpSession session) {
+    User loginUser = (User) session.getAttribute("loginUser");
+    if (loginUser == null) return "redirect:/user/login";
+
+    User userToEdit = userService.findByEmail(email)
+    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+    if (!"A".equals(loginUser.getUserType()) && !loginUser.getEmail().equals(userToEdit.getEmail())) {
+    return "redirect:/user/myPage";
+    }
+
+    model.addAttribute("user", userToEdit);
+    return "users/editUser";
+    }
+    }

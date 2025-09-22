@@ -1,29 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>공지사항</title>
     <link rel="stylesheet" href="/css/notice.css">
-
 </head>
 
 <body>
 <header>
-    <a href="/home">
+    <a href="/">
         <img src="/img/mainLg2.png" alt="메인 로고">
     </a>
     <ul>
-        <li><a href="/board/topic">학습하기</a></li>
+        <li><a href="">학습하기</a></li>
         <li><a href="">퀴즈풀기</a></li>
         <li><a href="/attend">출석하기</a></li>
-        <li><a href="/pointShop">포인트 상점</a></li>
+        <li><a href="">포인트 상점</a></li>
         <li><a href="/faq">FAQ</a></li>
         <li><a href="/notice" class="active">공지사항</a></li>
     </ul>
-    <div id="user" style="display: none;"> <!-- 로그인 했을 시에만 보이게 -->
-        <a href="/myPage" id="userName-link"> 님</a>
+    <div id="user" th:if="${loginUser != null}" style="display: block;">
+        <a href="/myPage" id="userName-link" th:text="${loginUser.name != null ? loginUser.name + ' 님' : '사용자 님'}">님</a>
     </div>
 </header>
 
@@ -35,6 +34,7 @@
             <p>/</p>
             <a href="/notice">공지사항</a>
         </div>
+
         <!-- 공지사항 테이블 -->
         <table class="notice-table">
             <thead>
@@ -45,18 +45,34 @@
                 <th>작성일자</th>
             </tr>
             </thead>
-            <tbody id="notice-body">
-            <!-- JS에서 데이터 채움 -->
+            <tbody>
+            <!-- Thymeleaf로 서버 데이터 렌더링 -->
+            <tr th:each="board, iterStat : ${boards}">
+                <td th:text="${iterStat.count}"></td>
+                <td>
+                    <!-- 핵심: /board/detail로 링크 수정 -->
+                    <a th:href="@{/board/detail(boardId=${board.boardId})}" th:text="${board.title}"></a>
+                </td>
+                <td th:text="${board.name}"></td>
+                <td th:text="${#dates.format(board.created, 'yyyy-MM-dd')}"></td>
+            </tr>
             </tbody>
         </table>
 
         <!-- 관리자만 보이는 등록 버튼 -->
-        <div id="admin-actions" style="text-align:right; margin-top:15px; display:none;">
-            <button onclick="location.href='noticeWrite.html'">공지사항 등록</button>
+        <div th:if="${loginUser != null and loginUser.userType == '관리자'}" style="text-align:right; margin-top:15px;">
+            <!-- 방법 2: 직접 링크로 변경 -->
+            <a th:href="@{/board/create(boardType=공지사항)}" style="text-decoration: none;">
+                <button>공지사항 등록</button>
+            </a>
         </div>
 
-        <!-- 페이징 영역 -->
-        <div id="pagination" class="pagination"></div>
+        <!-- 페이징 영역 (기본 구조만, 실제 페이징은 Controller에서 처리) -->
+        <div class="pagination">
+            <button disabled>◀</button>
+            <button class="active">1</button>
+            <button disabled>▶</button>
+        </div>
     </div>
 </div>
 
@@ -68,130 +84,6 @@
         <li>© 2025 역사 한 걸음. All rights reserved.</li>
     </ul>
 </div>
+
 </body>
-<script>
-    async function checkLogin() {
-        try {
-            const response = await fetch("/api/check-login", {
-                credentials: "include"
-            });
-            const data = await response.json();
-
-            const userDiv = document.getElementById("user");
-            const usernameLink = document.getElementById("userName-link");
-
-            if (data.isLoggedIn) {
-                usernameLink.textContent = data.username;
-                usernameLink.href = "/mypage.html";
-                userDiv.style.display = "block";
-            } else {
-                userDiv.style.display = "none";  // 그냥 안 보이게만 처리
-            }
-        } catch (err) {
-            console.error("로그인 체크 에러:", err);
-        }
-    }
-
-    // 관리자 페이지와 연결
-    let notices = JSON.parse(localStorage.getItem("notices")) || [];
-
-    if (notices.length === 0) {
-        notices = Array.from({ length: 30 }, (_, i) => ({
-            id: i + 1,
-            title: `공지사항 제목 ${i + 1}`,
-            content: `공지사항 내용 ${i + 1}`,   // 상세 페이지용
-            writer: "관리자",
-            createdAt: `2025-09-${String((i % 30) + 1).padStart(2, "0")}`
-        }));
-        localStorage.setItem("notices", JSON.stringify(notices));
-    }
-
-    // 공지사항
-    const rowsPerPage = 10;
-    let currentPage = 1;
-
-    function renderTable(page) {
-        const tbody = document.getElementById("notice-body");
-        tbody.innerHTML = "";
-
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-        const pageData = notices.slice(start, end);
-
-        pageData.forEach((n) => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-          <td>${n.id}</td>
-          <td><a href="noticeDetail.html?id=${n.id}">${n.title}</a></td>
-          <td>${n.writer}</td>
-          <td>${n.createdAt}</td>
-        `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function renderPagination() {
-        const totalPages = Math.ceil(notices.length / rowsPerPage);
-        const pagination = document.getElementById("pagination");
-        pagination.innerHTML = "";
-
-        // ◀ 이전 버튼
-        const prevBtn = document.createElement("button");
-        prevBtn.textContent = "◀";
-        prevBtn.disabled = currentPage === 1;
-        prevBtn.addEventListener("click", () => {
-            if (currentPage > 1) {
-                currentPage--;
-                renderTable(currentPage);
-                renderPagination();
-            }
-        });
-        pagination.appendChild(prevBtn);
-
-        // 페이지 번호 버튼
-        for (let i = 1; i <= totalPages; i++) {
-            const btn = document.createElement("button");
-            btn.textContent = i;
-            btn.classList.toggle("active", i === currentPage);
-            btn.addEventListener("click", () => {
-                currentPage = i;
-                renderTable(currentPage);
-                renderPagination();
-            });
-            pagination.appendChild(btn);
-        }
-
-        // ▶ 다음 버튼
-        const nextBtn = document.createElement("button");
-        nextBtn.textContent = "▶";
-        nextBtn.disabled = currentPage === totalPages;
-        nextBtn.addEventListener("click", () => {
-            if (currentPage < totalPages) {
-                currentPage++;
-                renderTable(currentPage);
-                renderPagination();
-            }
-        });
-        pagination.appendChild(nextBtn);
-    }
-
-    // 초기 실행
-    renderTable(currentPage);
-    renderPagination();
-
-    // 관리자 권한 확인 → 등록 버튼 보이기
-    async function checkAdmin() {
-        try {
-            const res = await fetch("/api/check-role", { credentials: "include" });
-            const data = await res.json();
-
-            if (data.role === "admin") {
-                document.getElementById("admin-actions").style.display = "block";
-            }
-        } catch (err) {
-            console.error("권한 확인 실패:", err);
-        }
-    }
-
-</script>
 </html>

@@ -60,11 +60,6 @@ header> ul li a.active {
 
 #user > a {
     color: #222;
-    text-decoration: none;
-}
-
-#user a:hover {
-    text-decoration: underline;
 }
 
 /* FAQ */
@@ -89,26 +84,9 @@ header> ul li a.active {
 
 .faq-title {
     text-align: center;
-    font-size: 40px;
+    font-size: 24px;
     font-weight: bold;
     margin-bottom: 20px;
-}
-
-.page-nav {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 6px;
-}
-
-.page-nav > a {
-    font-size: 19px;
-    color: #333;
-    text-decoration: none;
-}
-
-.page-nav > a:hover {
-    text-decoration: underline;
 }
 
 .faq-item {

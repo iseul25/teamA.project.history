@@ -15,19 +15,12 @@
             // 입력값 검증
             const email = document.getElementById('id').value;
             const password = document.getElementById('pw').value;
-            const validationError = document.getElementById('validationError');
 
             if (!email || !password) {
-                // 기존 서버 오류 메시지 숨기기
-                hideServerErrorMessages();
-
-                // JavaScript validation 메시지 표시
-                validationError.style.display = 'block';
+                // 경고창 대신 커스텀 메시지 박스 사용 권장
+                alert('아이디와 비밀번호를 모두 입력해주세요.');
                 return;
             }
-
-            // 입력이 완료되면 validation 오류 메시지 숨기기
-            validationError.style.display = 'none';
 
             // 보이는 input 값을 숨겨진 form으로 복사
             document.getElementById('hiddenEmail').value = email;
@@ -37,41 +30,10 @@
             document.getElementById('hiddenLoginForm').submit();
         }
 
-        function hideServerErrorMessages() {
-            // 서버에서 온 오류 메시지들만 숨기기
-            const serverErrors = document.querySelectorAll('.error-message-box p:not(#validationError)');
-            serverErrors.forEach(error => {
-                error.style.display = 'none';
-            });
-        }
-
         // Enter 키 이벤트 처리
         function handleKeyPress(event) {
             if (event.key === 'Enter') {
                 submitHiddenForm();
-            }
-        }
-
-        // 입력 필드에 값이 입력되기 시작하면 validation 오류 메시지 숨기기
-        function clearValidationError() {
-            const validationError = document.getElementById('validationError');
-            if (validationError) {
-                validationError.style.display = 'none';
-            }
-        }
-
-        // 로그인 상태 확인 후 출석하기 페이지 이동
-        function checkLoginAndAttend() {
-            // 로그인 상태 확인 - DOM에서 로그인 상태를 체크
-            const loginStatus = document.querySelector('#loginStatus li');
-            const isLoggedIn = !loginStatus.querySelector('h3'); // Login 제목이 없으면 로그인 상태
-
-            if (isLoggedIn) {
-                // 로그인 상태면 출석 페이지로 이동
-                window.location.href = '/attend';
-            } else {
-                // 비로그인 상태면 팝업 표시
-                alert('로그인 해주세요.');
             }
         }
     </script>
@@ -124,18 +86,18 @@
         <div id="buttons-container">
             <div id="box1">
                 <div id="studyBox">
-                    <a href="/board/topic " style="color: #333;">학습하기</a>
+                    <a href="/board/topic" style="color: #333;">학습하기</a>
                 </div>
                 <div id="quizBox">
                     <a href="" style="color: #333;">퀴즈풀기</a>
                 </div>
                 <div id="attendBox">
-                    <a href="javascript:void(0);" onclick="checkLoginAndAttend()" style="color: #333;">출석하기</a>
+                    <a href="/attend" style="color: #333;">출석하기</a>
                 </div>
             </div>
             <div id="box2">
                 <div id="pointBox">
-                    <a href="/pointShop" style="color: #333;">포인트 상점</a>
+                    <a href="" style="color: #333;">포인트 상점</a>
                 </div>
                 <div id="faqBox">
                     <a href="/faq" style="color: #333;">FAQ</a>
@@ -154,7 +116,6 @@
                         <h3>Login</h3>
                         <div id="inputRow">
                             <div id="inputBox">
-
                                 <input type="text" name="email" id="id" placeholder="아이디를 입력해 주세요."
                                        onkeypress="handleKeyPress(event)">
                                 <input type="password" name="password" id="pw" placeholder="비밀번호를 입력해 주세요."
@@ -172,9 +133,6 @@
                             <p th:if="${loginError == 'notFound'}" style="margin: 0;">존재하지 않는 아이디입니다.<br> 가입하시겠습니까?
                             </p>
                             <p th:if="${loginError == 'invalidPassword'}" style="margin: 0;">비밀번호가 틀렸습니다.</p>
-                            <p id="validationError" style="margin: 0; color: red; display: none;">
-                                아이디와 비밀번호를 모두 입력해주세요.
-                            </p>
                         </div>
                     </li>
                     <!-- 로그인 상태 -->
