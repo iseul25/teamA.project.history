@@ -32,9 +32,9 @@ CREATE TABLE IF NOT EXISTS `board` (
   PRIMARY KEY (`boardId`) USING BTREE,
   KEY `FK_board_user` (`userId`) USING BTREE,
   CONSTRAINT `FK_board_user` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='게시글(학습내용 포함)';
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='게시글(학습내용 포함)';
 
--- 테이블 데이터 history.board:~5 rows (대략적) 내보내기
+-- 테이블 데이터 history.board:~6 rows (대략적) 내보내기
 
 
 -- 테이블 history.board_comment 구조 내보내기
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `board_comment` (
   KEY `FK_post_comment_post` (`boardId`) USING BTREE,
   CONSTRAINT `FK_board_comment_board` FOREIGN KEY (`boardId`) REFERENCES `board` (`boardId`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_board_comment_user` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='댓글 항목';
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='댓글 항목';
 
 -- 테이블 데이터 history.board_comment:~1 rows (대략적) 내보내기
 
@@ -62,14 +62,13 @@ CREATE TABLE IF NOT EXISTS `comment_reply` (
   `reply` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `date` date DEFAULT (now()),
   PRIMARY KEY (`replyId`),
-  KEY `FK_board_reply_users` (`userId`),
   KEY `FK_board_reply_board_comment` (`commentId`),
-  CONSTRAINT `FK_board_reply_board_comment` FOREIGN KEY (`commentId`) REFERENCES `board_comment` (`commentId`),
-  CONSTRAINT `FK_board_reply_users` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`)
+  KEY `FK_board_reply_users` (`userId`),
+  CONSTRAINT `FK_board_reply_board_comment` FOREIGN KEY (`commentId`) REFERENCES `board_comment` (`commentId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_board_reply_users` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='답글에 대한 항목';
 
 -- 테이블 데이터 history.comment_reply:~2 rows (대략적) 내보내기
-
 
 -- 테이블 history.points 구조 내보내기
 CREATE TABLE IF NOT EXISTS `points` (
@@ -89,9 +88,10 @@ CREATE TABLE IF NOT EXISTS `points` (
   CONSTRAINT `FK_points_quiz_score` FOREIGN KEY (`scoreId`) REFERENCES `quiz_score` (`scoreId`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_points_user` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_points_user_attendance` FOREIGN KEY (`attendanceId`) REFERENCES `user_attendance` (`attendanceId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='포인트 내역 기술';
+) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='포인트 내역 기술';
 
 -- 테이블 데이터 history.points:~5 rows (대략적) 내보내기
+
 
 -- 테이블 history.point_shop 구조 내보내기
 CREATE TABLE IF NOT EXISTS `point_shop` (
@@ -121,10 +121,9 @@ CREATE TABLE IF NOT EXISTS `quiz` (
   PRIMARY KEY (`quizId`) USING BTREE,
   KEY `FK_quiz_quiz_category` (`quizCategoryId`),
   CONSTRAINT `FK_quiz_quiz_category` FOREIGN KEY (`quizCategoryId`) REFERENCES `quiz_category` (`quizCategoryId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='퀴즈 각 문항에 대한 항목';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='퀴즈 각 문항에 대한 항목';
 
--- 테이블 데이터 history.quiz:~11 rows (대략적) 내보내기
-
+-- 테이블 데이터 history.quiz:~0 rows (대략적) 내보내기
 
 -- 테이블 history.quiz_attempt 구조 내보내기
 CREATE TABLE IF NOT EXISTS `quiz_attempt` (
@@ -139,13 +138,12 @@ CREATE TABLE IF NOT EXISTS `quiz_attempt` (
   KEY `FK_quiz_attempt_quiz_question` (`quizId`),
   KEY `FK_quiz_attempt_users` (`userId`),
   KEY `FK_quiz_attempt_quiz_category` (`quizCategoryId`),
-  CONSTRAINT `FK_quiz_attempt_quiz_category` FOREIGN KEY (`quizCategoryId`) REFERENCES `quiz_category` (`quizCategoryId`),
+  CONSTRAINT `FK_quiz_attempt_quiz_category` FOREIGN KEY (`quizCategoryId`) REFERENCES `quiz_category` (`quizCategoryId`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_quiz_attempt_quiz_question` FOREIGN KEY (`quizId`) REFERENCES `quiz` (`quizId`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_quiz_attempt_users` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='퀴즈 응시에 대한 항목';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='퀴즈 응시에 대한 항목';
 
--- 테이블 데이터 history.quiz_attempt:~10 rows (대략적) 내보내기
-
+-- 테이블 데이터 history.quiz_attempt:~0 rows (대략적) 내보내기
 
 -- 테이블 history.quiz_category 구조 내보내기
 CREATE TABLE IF NOT EXISTS `quiz_category` (
@@ -157,10 +155,9 @@ CREATE TABLE IF NOT EXISTS `quiz_category` (
   PRIMARY KEY (`quizCategoryId`),
   KEY `FK_quiz_category_users` (`userId`),
   CONSTRAINT `FK_quiz_category_users` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='퀴즈 카테고리 분류에 관한 항목';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='퀴즈 카테고리 분류에 관한 항목';
 
--- 테이블 데이터 history.quiz_category:~1 rows (대략적) 내보내기
-
+-- 테이블 데이터 history.quiz_category:~0 rows (대략적) 내보내기
 
 -- 테이블 history.quiz_score 구조 내보내기
 CREATE TABLE IF NOT EXISTS `quiz_score` (
@@ -170,14 +167,13 @@ CREATE TABLE IF NOT EXISTS `quiz_score` (
   `totalScore` int DEFAULT NULL,
   `earnedPoint` int DEFAULT NULL,
   PRIMARY KEY (`scoreId`),
-  KEY `FK_quiz_score_users` (`userId`),
   KEY `FK_quiz_score_quiz` (`quizCategoryId`) USING BTREE,
-  CONSTRAINT `FK_quiz_score_quiz_category` FOREIGN KEY (`quizCategoryId`) REFERENCES `quiz_category` (`quizCategoryId`),
-  CONSTRAINT `FK_quiz_score_users` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='퀴즈 채점 및 포인트 환산에 관한 항목';
+  KEY `FK_quiz_score_users` (`userId`),
+  CONSTRAINT `FK_quiz_score_quiz_category` FOREIGN KEY (`quizCategoryId`) REFERENCES `quiz_category` (`quizCategoryId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_quiz_score_users` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='퀴즈 채점 및 포인트 환산에 관한 항목';
 
--- 테이블 데이터 history.quiz_score:~1 rows (대략적) 내보내기
-
+-- 테이블 데이터 history.quiz_score:~0 rows (대략적) 내보내기
 
 -- 테이블 history.users 구조 내보내기
 CREATE TABLE IF NOT EXISTS `users` (
@@ -190,7 +186,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='관리자/일반유저';
 
--- 테이블 데이터 history.users:~4 rows (대략적) 내보내기
+-- 테이블 데이터 history.users:~5 rows (대략적) 내보내기
 
 
 -- 테이블 history.user_attendance 구조 내보내기
@@ -202,10 +198,91 @@ CREATE TABLE IF NOT EXISTS `user_attendance` (
   PRIMARY KEY (`attendanceId`) USING BTREE,
   KEY `FK_attendance_user` (`userId`) USING BTREE,
   CONSTRAINT `FK_user_attendance_user` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=969 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='출석기록';
+) ENGINE=InnoDB AUTO_INCREMENT=971 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='출석기록';
 
--- 테이블 데이터 history.user_attendance:~3 rows (대략적) 내보내기
+-- 테이블 데이터 history.user_attendance:~6 rows (대략적) 내보내기
 
+
+-- 트리거 history.quiz_attempt_before_insert 구조 내보내기
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+DELIMITER //
+CREATE TRIGGER `quiz_attempt_before_insert` BEFORE INSERT ON `quiz_attempt` FOR EACH ROW BEGIN
+    DECLARE quiz_answer INT;
+    DECLARE quiz_score_value INT;
+    
+    -- quiz 테이블에서 해당 quizId의 answer와 quizScore를 조회
+    SELECT answer, quizScore 
+    INTO quiz_answer, quiz_score_value
+    FROM quiz 
+    WHERE quizId = NEW.quizId;
+    
+    -- selected와 answer가 같으면 quizScore를, 다르면 0을 earnedScore에 설정
+    IF NEW.selected = quiz_answer THEN
+        SET NEW.earnedScore = quiz_score_value;
+    ELSE
+        SET NEW.earnedScore = 0;
+    END IF;
+END//
+DELIMITER ;
+SET SQL_MODE=@OLDTMP_SQL_MODE;
+
+-- 트리거 history.tr_cleanup_quiz_score_after_attempt_delete 구조 내보내기
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+DELIMITER //
+CREATE TRIGGER `tr_cleanup_quiz_score_after_attempt_delete` AFTER DELETE ON `quiz_attempt` FOR EACH ROW BEGIN
+    -- 삭제된 quiz_attempt와 같은 userId, quizCategoryId를 가진 다른 시도가 있는지 확인
+    DECLARE attempt_count INT DEFAULT 0;
+    
+    SELECT COUNT(*) INTO attempt_count
+    FROM quiz_attempt 
+    WHERE userId = OLD.userId 
+      AND quizCategoryId = OLD.quizCategoryId;
+    
+    -- 해당 사용자의 해당 퀴즈 카테고리에 대한 시도가 더 이상 없다면 quiz_score도 삭제
+    IF attempt_count = 0 THEN
+        DELETE FROM quiz_score 
+        WHERE userId = OLD.userId 
+          AND quizCategoryId = OLD.quizCategoryId;
+    END IF;
+END//
+DELIMITER ;
+SET SQL_MODE=@OLDTMP_SQL_MODE;
+
+-- 트리거 history.tr_quiz_score_management 구조 내보내기
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+DELIMITER //
+CREATE TRIGGER `tr_quiz_score_management` AFTER INSERT ON `quiz_attempt` FOR EACH ROW BEGIN
+    DECLARE total_score INT DEFAULT 0;
+    DECLARE earned_point INT DEFAULT 0;
+    DECLARE score_exists INT DEFAULT 0;
+    
+    -- 해당 사용자와 퀴즈 카테고리의 총점 계산
+    SELECT COALESCE(SUM(earnedScore), 0) INTO total_score
+    FROM quiz_attempt
+    WHERE userId = NEW.userId AND quizCategoryId = NEW.quizCategoryId;
+    
+    -- 획득 포인트 계산 (총점의 1배)
+    SET earned_point = total_score * 1;
+    
+    -- quiz_score 테이블에 해당 레코드가 있는지 확인
+    SELECT COUNT(*) INTO score_exists
+    FROM quiz_score
+    WHERE userId = NEW.userId AND quizCategoryId = NEW.quizCategoryId;
+    
+    -- 레코드가 존재하면 업데이트, 없으면 삽입
+    IF score_exists > 0 THEN
+        UPDATE quiz_score 
+        SET totalScore = total_score, 
+            earnedPoint = earned_point
+        WHERE userId = NEW.userId AND quizCategoryId = NEW.quizCategoryId;
+    ELSE
+        INSERT INTO quiz_score (quizCategoryId, userId, totalScore, earnedPoint)
+        VALUES (NEW.quizCategoryId, NEW.userId, total_score, earned_point);
+    END IF;
+    
+END//
+DELIMITER ;
+SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
