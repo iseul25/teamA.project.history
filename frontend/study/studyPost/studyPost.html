@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학습 게시물</title>
+    <link rel="stylesheet" href="css/studyPost.css">
+</head>
+
+<body>
+    <header>
+        <a href="http://127.0.0.1:5501/endResult.addver/home.html">
+            <img src="img/mainLg2.png" alt="메인 로고">
+        </a>
+        <ul>
+            <li><a href="http://127.0.0.1:5501/study/studyHome.html" class="active">학습하기</a></li>
+            <li><a href="http://127.0.0.1:5501/quiz/quizHome.html">퀴즈풀기</a></li>
+            <li><a href="http://127.0.0.1:5501/attend/attend.html">출석하기</a></li>
+            <li><a href="http://127.0.0.1:5501/pointStore/pointStore.html">포인트 상점</a></li>
+            <li><a href="http://127.0.0.1:5501/faq/faq.html">FAQ</a></li>
+            <li><a href="http://127.0.0.1:5501/notice/notice.html">공지사항</a></li>
+        </ul>
+        <div id="user" style="display: none;"> <!-- 로그인 했을 시에만 보이게 -->
+            <a href="http://127.0.0.1:5501/mypage/mypage.html" id="userName-link"> 님</a>
+        </div>
+    </header>
+    <div id="sidebar">
+        <div class="sideBox">
+            <ul>
+                <li class="submenuBox">
+                    <span class="mainMenu">
+                        선사시대
+                        <span class="arrow">&#9660;</span>
+                    </span>
+                    <ul class="submenu">
+                        <li><a href="#" class="study-link" data-category="선사시대-학습">학습하기</a></li>
+                        <li><a href="#" class="quiz-link" data-category="선사시대-퀴즈">퀴즈풀기</a></li>
+                    </ul>
+                </li>
+                <li class="submenuBox">
+                    <span class="mainMenu">
+                        고조선과 여러 나라
+                        <span class="arrow">&#9660;</span>
+                    </span>
+                    <ul class="submenu">
+                        <li><a href="#" class="study-link" data-category="고조선과 여러 나라-학습">학습하기</a></li>
+                        <li><a href="#" class="quiz-link" data-category="고조선과 여러 나라-퀴즈">퀴즈풀기</a></li>
+                    </ul>
+                </li>
+                <li class="submenuBox">
+                    <span class="mainMenu">
+                        삼국과 가야
+                        <span class="arrow">&#9660;</span>
+                    </span>
+                    <ul class="submenu">
+                        <li><a href="#" class="study-link" data-category="삼국과 가야-학습">학습하기</a></li>
+                        <li><a href="#" class="quiz-link" data-category="삼국과 가야-퀴즈">퀴즈풀기</a></li>
+                    </ul>
+                </li>
+                <li class="submenuBox">
+                    <span class="mainMenu">
+                        남북극시대
+                        <span class="arrow">&#9660;</span>
+                    </span>
+                    <ul class="submenu">
+                        <li><a href="#" class="study-link" data-category="남북극시대-학습">학습하기</a></li>
+                        <li><a href="#" class="quiz-link" data-category="남북극시대-퀴즈">퀴즈풀기</a></li>
+                    </ul>
+                </li>
+                <li class="submenuBox">
+                    <span class="mainMenu">
+                        고려시대
+                        <span class="arrow">&#9660;</span>
+                    </span>
+                    <ul class="submenu">
+                        <li><a href="#" class="study-link" data-category="고려시대-학습">학습하기</a></li>
+                        <li><a href="#" class="quiz-link" data-category="고려시대-퀴즈">퀴즈풀기</a></li>
+                    </ul>
+                </li>
+                <li class="submenuBox">
+                    <span class="mainMenu">
+                        조선시대
+                        <span class="arrow">&#9660;</span>
+                    </span>
+                    <ul class="submenu">
+                        <li><a href="#" class="study-link" data-category="조선시대-학습">학습하기</a></li>
+                        <li><a href="#" class="quiz-link" data-category="조선시대-퀴즈">퀴즈풀기</a></li>
+                    </ul>
+                </li>
+                <li class="submenuBox">
+                    <span class="mainMenu">
+                        근대
+                        <span class="arrow">&#9660;</span>
+                    </span>
+                    <ul class="submenu">
+                        <li><a href="#" class="study-link" data-category="근대-학습">학습하기</a></li>
+                        <li><a href="#" class="quiz-link" data-category="근대-퀴즈">퀴즈풀기</a></li>
+                    </ul>
+                </li>
+                <li class="submenuBox">
+                    <span class="mainMenu">
+                        현대
+                        <span class="arrow">&#9660;</span>
+                    </span>
+                    <ul class="submenu lastUl">
+                        <li><a href="#" class="study-link" data-category="현대-학습">학습하기</a></li>
+                        <li><a href="#" class="quiz-link" data-category="현대-퀴즈">퀴즈풀기</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="container">
+        <div id="post-box">
+            <!-- 카테고리명 -->
+            <h2 class="post-category"></h2>
+
+            <!-- 제목 -->
+            <div class="post-title">
+                <h3>게시글 제목</h3>
+                <p class="post-meta">작성자 | 작성일</p>
+            </div>
+
+            <!-- 본문 -->
+            <div class="post-content">
+                <!-- 이미지가 있으면 위에 표시 -->
+                <div class="post-image">
+                    <img src="img/taegeuk1.png" alt="게시글 이미지">
+                </div>
+                <p>
+                    여기 본문 내용이 들어갑니다. <br>
+                    나중에 JS에서 불러온 데이터를 채워넣을 예정.
+                </p>
+            </div>
+
+            <!-- 게시글 수정/삭제 버튼 -->
+            <div class="post-actions">
+                <button id="edit-post-btn">수정</button>
+                <button id="delete-post-btn">삭제</button>
+            </div>
+
+            <!-- 수정 모달 -->
+            <div id="editModal" class="modal">
+                <div class="modal-content">
+                    <span class="closeBtn">&times;</span>
+                    <h2>게시글 수정</h2>
+                    <form id="editForm">
+                        <input type="text" id="editTitle" placeholder="제목">
+                        <textarea id="editContent" placeholder="내용"></textarea>
+
+                        <div id="editImagePreview" class="image-preview">
+                            <!-- 선택한 이미지 미리보기 -->
+                            <img src="" alt="미리보기" style="max-width: 150px; display: none;">
+                        </div>
+                        <label for="editImage">이미지 파일 첨부:</label>
+                        <input type="file" id="editImage" accept="image/*">
+
+                        <button type="submit">수정 완료</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 댓글 영역 -->
+            <div class="comment-section">
+                <h4>댓글</h4>
+                <ul id="comment-list">
+                    <!-- 댓글 1 -->
+                    <li class="comment">
+                        <div class="comment-content">
+                            <p><strong>사용자1</strong> | 2025-09-22</p>
+                            <p>좋은 글이네요!</p>
+                            <button class="reply-btn" data-id="1">답글 달기</button>
+                        </div>
+
+                        <!-- 대댓글 -->
+                        <ul class="replies">
+                            <li class="comment">
+                                <div class="comment-content">
+                                    <p><strong>작성자</strong> | 2025-09-22</p>
+                                    <p>읽어주셔서 감사합니다!</p>
+                                </div>
+                            </li>
+                            <li class="comment">
+                                <div class="comment-content">
+                                    <p><strong>사용자2</strong> | 2025-09-22</p>
+                                    <p>저도 공감합니다.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- 댓글 2 -->
+                    <li class="comment">
+                        <div class="comment-content">
+                            <p><strong>사용자3</strong> | 2025-09-22</p>
+                            <p>많이 배워갑니다.</p>
+                            <button class="reply-btn" data-id="2">답글 달기</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 댓글 작성 -->
+            <div class="comment-form">
+                <textarea id="comment-input" placeholder="댓글을 입력하세요"></textarea>
+                <button id="comment-submit">댓글 등록</button>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+        <ul>
+            <li>대표전화: 042-222-2402</li>
+            <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+            <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+            <li>© 2025 역사 한 걸음. All rights reserved.</li>
+        </ul>
+    </div>
+</body>
+<script src="js/studyPost.js"></script>
+
+</html>
