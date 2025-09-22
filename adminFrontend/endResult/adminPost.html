@@ -651,10 +651,19 @@
         // 밑에 post.title은 게시글 제목이고 클릭 시 실제 게시글로 넘어갑니다.
         // 실제 게시글 화면은 우진님이 만드신 파일로 연결하시면 돼요. 아래 링크는 임시 링크입니다.
         // 파일 연결 예시 postDetail.html 같이 업로드 하겠습니다. 참고해 주세요.
-        pagePosts.forEach(post => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-      <td>${post.id}</td>
+        pagePosts.forEach((post, index) => {
+    const tr = document.createElement("tr");
+
+    // 번호 계산
+    let displayNumber;
+    if (currentCategory === "전체") {
+      displayNumber = post.id; // 전체 보기일 때는 원래 id 그대로
+    } else {
+      displayNumber = (page - 1) * pageSize + (index + 1); // 카테고리별은 1번부터
+    }
+
+    tr.innerHTML = `
+      <td>${displayNumber}</td>
       <td>${post.category}</td>
       <td>
         <a href="postDetail.html?id=${post.id}" class="post-link">
