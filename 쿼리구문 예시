@@ -36,7 +36,7 @@ END
 WHERE qa.userId = 41;
 
 
--- (2번 트리거로 대체함)41번 유저가 선사시대 제1회 퀴즈문항에서 맞은 총점 및 환산 포인트 생성
+-- (2번 트리거로 대체함)41번 유저가 선사시대 제1회 퀴즈문항에서 맞은 총점 및 환산 포인트 항목 새로 생성하여 기입
 INSERT INTO quiz_score (quizCategoryId, userId, totalScore,earnedPoint)
 VALUES (
     1, 41,
