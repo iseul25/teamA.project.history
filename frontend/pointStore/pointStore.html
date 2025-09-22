@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>포인트 상점</title>
+    <link rel="stylesheet" href="css/pointStore.css">
+</head>
+
+<body>
+    <header>
+        <a href="http://127.0.0.1:5501/endResult.addver/home.html">
+            <img src="img/mainLg2.png" alt="메인 로고">
+        </a>
+        <ul>
+            <li><a href="">학습하기</a></li>
+            <li><a href="http://127.0.0.1:5501/quiz/quizHome.html">퀴즈풀기</a></li>
+            <li><a href="http://127.0.0.1:5501/attend/attend.html">출석하기</a></li>
+            <li><a href="http://127.0.0.1:5501/pointStore/pointStore.html" class="active">포인트 상점</a></li>
+            <li><a href="http://127.0.0.1:5501/faq/faq.html">FAQ</a></li>
+            <li><a href="http://127.0.0.1:5501/notice/notice.html">공지사항</a></li>
+        </ul>
+
+        <div id="user" style="display: none;"> <!-- 로그인 했을 시에만 보이게 -->
+            <a href="http://127.0.0.1:5501/mypage/mypage.html" id="userName-link">홍길동 님</a>
+            <span id="userPoint">| 10000 P</span>
+        </div>
+    </header>
+    <div id="sidebar">
+        <div class="side-box">
+            <ul>
+                <li class="main-box">
+                    <span class="main-menu">
+                        <a href="#" class="category-link" data-category="drink">&#129380; 음료</a>
+                    </span>
+                </li>
+                <li class="main-box">
+                    <span class="main-menu">
+                        <a href="#" class="category-link" data-category="C-store">&#127978; 편의점</a>
+                    </span>
+                </li>
+                <li class="main-box">
+                    <span class="main-menu">
+                        <a href="#" class="category-link" data-category="movie">&#127916; 영화</a>
+                    </span>
+                </li>
+                <li class="main-box">
+                    <span class="main-menu">
+                        <a href="#" class="category-link" data-category="gift-card">&#127873; 상품권</a>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="container">
+        <div id="product-box" data-category="drink">
+            <!-- 상품 타이틀 -->
+            <div class="product-title" data-category="drink">
+            </div>
+            <!-- 상품 내용 -->
+            <div class="product-content">
+                <div class="product-list">
+                </div>
+            </div>
+            <div class="pagination-box">
+            <div id="pagination" class="pagination"></div>
+            </div>
+        </div>
+    </div>
+    <div id="footer">
+        <ul>
+            <li>대표전화: 042-222-2402</li>
+            <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+            <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+            <li>© 2025 역사 한 걸음. All rights reserved.</li>
+        </ul>
+    </div>
+</body>
+<script src="js/pointStore.js"></script>
+
+</html>
