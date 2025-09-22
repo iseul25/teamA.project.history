@@ -1,33 +1,33 @@
 // 관리자 로그인
 async function checkLogin() {
-    try {
-        const response = await fetch("/api/check-login", {
-            credentials: "include"
-        });
-        const data = await response.json();
+  try {
+    const response = await fetch("/api/check-login", {
+      credentials: "include"
+    });
+    const data = await response.json();
 
-        const userDiv = document.getElementById("user");
-        const usernameLink = document.getElementById("userName-link");
-        // id 수정됨
+    const userDiv = document.getElementById("user");
+    const usernameLink = document.getElementById("userName-link");
+    // id 수정됨
 
-        if (data.isLoggedIn) {
-            // 관리자인지 확인
-            if (data.role === "admin") {
-                usernameLink.textContent = data.username + "관리자";
-                usernameLink.href = "/admin/dashboard.html";
-                // 관리자 페이지
-            } else {
-                usernameLink.textContent = data.username;
-                usernameLink.href = "/mypage/mypage.html";
-                // 일반 유저 페이지
-            }
-            userDiv.style.display = "block";
-        } else {
-            userDiv.style.display = "none";
-        }
-    } catch (err) {
-        console.error("로그인 체크 에러:", err);
+    if (data.isLoggedIn) {
+      // 관리자인지 확인
+      if (data.role === "admin") {
+        usernameLink.textContent = data.username + "관리자";
+        usernameLink.href = "/admin/dashboard.html";
+        // 관리자 페이지
+      } else {
+        usernameLink.textContent = data.username;
+        usernameLink.href = "/mypage/mypage.html";
+        // 일반 유저 페이지
+      }
+      userDiv.style.display = "block";
+    } else {
+      userDiv.style.display = "none";
     }
+  } catch (err) {
+    console.error("로그인 체크 에러:", err);
+  }
 }
 
 // 페이지 로드 시 로그인 체크
@@ -126,10 +126,19 @@ function renderPage(page) {
   // 밑에 post.title은 게시글 제목이고 클릭 시 실제 게시글로 넘어갑니다.
   // 실제 게시글 화면은 우진님이 만드신 파일로 연결하시면 돼요. 아래 링크는 임시 링크입니다.
   // 파일 연결 예시 postDetail.html 같이 업로드 하겠습니다. 참고해 주세요.
-  pagePosts.forEach(post => {
+  pagePosts.forEach((post, index) => {
     const tr = document.createElement("tr");
+
+    // 번호 계산
+    let displayNumber;
+    if (currentCategory === "전체") {
+      displayNumber = post.id; // 전체 보기일 때는 원래 id 그대로
+    } else {
+      displayNumber = (page - 1) * pageSize + (index + 1); // 카테고리별은 1번부터
+    }
+
     tr.innerHTML = `
-      <td>${post.id}</td>
+      <td>${displayNumber}</td>
       <td>${post.category}</td>
       <td>
         <a href="postDetail.html?id=${post.id}" class="post-link">
