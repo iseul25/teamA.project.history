@@ -1,45 +1,101 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>게시글 등록</title>
+    <link rel="stylesheet" th:href="@{/css/createBoard.css}">
 </head>
 <body>
-<h1>게시글 등록</h1>
+<header>
+    <a th:href="@{/}">
+        <img th:src="@{/img/mainLg2.png}" alt="메인 로고">
+    </a>
+    <ul>
+        <li><a th:href="@{/board/topic}" class="active">학습하기</a></li>
+        <li><a th:href="@{/quiz/topic}">퀴즈풀기</a></li>
+        <li><a th:href="@{/attend}">출석하기</a></li>
+        <li><a th:href="@{/pointStore}">포인트 상점</a></li>
+        <li><a th:href="@{/faq}">FAQ</a></li>
+        <li><a th:href="@{/notice}">공지사항</a></li>
+    </ul>
+    <div id="user" th:if="${session.loginUser != null}">
+        <!-- 관리자인 경우 -->
+        <a th:if="${session.loginUser.userType == '관리자'}"
+           th:href="@{/admin/users}"
+           class="userName-link"
+           th:text="${session.loginUser.name} + '님'"></a>
 
-<!-- 에러 메시지 표시 -->
-<div th:if="${errorMessage}" style="color:red;">
-    <p th:text="${errorMessage}"></p>
+        <!-- 일반 사용자인 경우 -->
+        <a th:unless="${session.loginUser.userType == '관리자'}"
+           th:href="@{/user/myPage}"
+           class="userName-link"
+           th:text="${session.loginUser.name} + '님'"></a>
+    </div>
+</header>
+
+<div id="container">
+    <div id="post-box">
+        <h2 class="post-header">게시글 등록</h2>
+
+        <!-- 에러 메시지 -->
+        <div th:if="${errorMessage}" style="color:red; margin-bottom: 10px;">
+            <p th:text="${errorMessage}"></p>
+        </div>
+
+        <form th:action="@{/board/create}" method="post" enctype="multipart/form-data">
+            <!-- boardType hidden -->
+            <input type="hidden" name="boardType" th:value="${board.boardType}">
+
+            <!-- 제목 -->
+            <div class="post-info">
+                <input type="text" name="title" placeholder="제목" required th:value="${board != null} ? ${board.title} : ''">
+            </div>
+
+            <!-- 내용 -->
+            <div class="post-content">
+                <textarea name="content" placeholder="본문" rows="12" required th:text="${board != null} ? ${board.content} : ''"></textarea>
+            </div>
+
+            <!-- 이미지 -->
+            <div class="post-image">
+                <label for="imageFile">이미지 파일 첨부</label>
+                <input type="file" id="imageFile" name="imageFile" accept="image/*">
+                <div class="image-preview" th:if="${board != null and board.imgUrl != null}">
+                    <img th:src="@{${board.imgUrl}}" th:alt="${board.imgDescription}">
+                </div>
+            </div>
+
+            <!-- 이미지 설명 -->
+            <div class="post-info">
+                <input type="text" name="imgDescription" placeholder="이미지 설명 (선택사항)" th:value="${board != null} ? ${board.imgDescription} : ''">
+            </div>
+
+            <!-- 버튼 -->
+            <div class="post-submit">
+                <!-- 등록 버튼: form 제출 -->
+                <button type="submit"
+                        th:text="'등록'">
+                    등록
+                </button>
+
+                <!-- 취소 버튼: 상세 페이지 이동 -->
+                <button type="button"
+                        th:onclick="'location.href=\'/board/detail?boardId=' + ${board.boardId} + '\';'">
+                    취소
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
-<form th:action="@{/board/create}" method="post" enctype="multipart/form-data">
-    <!-- boardType hidden 필드 추가 -->
-    <input type="hidden" name="boardType" th:value="${board.boardType}">
-
-    <div>
-        <label>제목</label><br/>
-        <input type="text" name="title" placeholder="제목" required>
-    </div>
-
-    <div>
-        <label>내용</label><br/>
-        <textarea name="content" rows="10" cols="50" placeholder="내용" required></textarea>
-    </div>
-
-    <div>
-        <label>이미지</label><br/>
-        <input type="file" name="imageFile" accept="image/*">
-    </div>
-
-    <div>
-        <label>이미지 설명</label><br/>
-        <input type="text" name="imgDescription" placeholder="이미지 설명 (선택사항)">
-    </div>
-
-    <div>
-        <button type="submit">등록</button>
-        <a th:href="@{/board/list(boardType=${board.boardType})}">취소</a>
-    </div>
-</form>
+<div id="footer">
+    <ul>
+        <li>대표전화: 042-222-2402</li>
+        <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+        <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+        <li>© 2025 역사 한 걸음. All rights reserved.</li>
+    </ul>
+</div>
 </body>
 </html>

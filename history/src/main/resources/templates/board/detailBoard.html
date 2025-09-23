@@ -3,131 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${board.title}">게시글 보기</title>
-    <link rel="stylesheet" th:href="@{/css/boardstyle.css}">
+    <title th:text="${board.title}">학습 게시물</title>
+    <link rel="stylesheet" th:href="@{/css/detailBoard.css}">
 </head>
+
 <body>
 <header>
     <a th:href="@{/}">
         <img th:src="@{/img/mainLg2.png}" alt="메인 로고">
     </a>
     <ul>
-        <li><a th:href="@{/board/topic}">학습하기</a></li>
-        <li><a href="#">퀴즈풀기</a></li>
-        <li><a href="#">출석하기</a></li>
-        <li><a th:href="@{/pointshop}">포인트 상점</a></li>
+        <li><a th:href="@{/board/topic}" class="active">학습하기</a></li>
+        <li><a th:href="@{/quiz/topic}">퀴즈풀기</a></li>
+        <li><a th:href="@{/attend}">출석하기</a></li>
+        <li><a th:href="@{/pointStore}">포인트 상점</a></li>
         <li><a th:href="@{/faq}">FAQ</a></li>
         <li><a th:href="@{/notice}">공지사항</a></li>
     </ul>
+    <div id="user" th:if="${session.loginUser != null}">
+        <!-- 관리자인 경우 -->
+        <a th:if="${session.loginUser.userType == '관리자'}"
+           th:href="@{/admin/users}"
+           class="userName-link"
+           th:text="${session.loginUser.name} + '님'"></a>
+
+        <!-- 일반 사용자인 경우 -->
+        <a th:unless="${session.loginUser.userType == '관리자'}"
+           th:href="@{/user/myPage}"
+           class="userName-link"
+           th:text="${session.loginUser.name} + '님'"></a>
+    </div>
 </header>
 
-<main>
-    <!-- 목록으로 돌아가기 버튼 -->
-    <a th:href="@{/board/list(boardType=${board.boardType})}" class="list-button">📋 게시글 목록</a>
+<div id="sidebar">
+    <div class="sideBox">
+        <ul>
+            <li class="submenuBox">
+    <span class="mainMenu">
+        선사시대
+        <span class="arrow">&#9660;</span>
+    </span>
+                <ul class="submenu">
+                    <li><a th:href="@{/board/list(boardType='선사시대')}" class="study-link">학습하기</a></li>
+                    <li><a th:href="@{/quiz/list(boardType='선사시대')}" class="quiz-link">퀴즈풀기</a></li>
+                </ul>
+            </li>
 
-    <!-- 게시글 제목 -->
-    <h2 id="post-title" th:text="${board.title}">게시글 제목</h2>
-    <hr />
+            <li class="submenuBox">
+    <span class="mainMenu">
+        고조선과 여러 나라
+        <span class="arrow">&#9660;</span>
+    </span>
+                <ul class="submenu">
+                    <li><a th:href="@{/board/list(boardType='고조선과 여러 나라')}" class="study-link">학습하기</a></li>
+                    <li><a th:href="@{/quiz/list(boardType='고조선과 여러 나라')}" class="quiz-link">퀴즈풀기</a></li>
+                </ul>
+            </li>
 
-    <!-- 게시글 내용 (HTML 허용으로 변경) -->
-    <div id="post-content" th:utext="${board.content}">게시글 내용</div>
+            <li class="submenuBox">
+    <span class="mainMenu">
+        삼국과 가야
+        <span class="arrow">&#9660;</span>
+    </span>
+                <ul class="submenu">
+                    <li><a th:href="@{/board/list(boardType='삼국과 가야')}" class="study-link">학습하기</a></li>
+                    <li><a th:href="@{/quiz/list(boardType='삼국과 가야')}" class="quiz-link">퀴즈풀기</a></li>
+                </ul>
+            </li>
 
-    <!-- 이미지를 내용에 추가하기 위한 숨겨진 데이터 -->
-    <script th:if="${board.imgUrl != null and board.imgUrl != ''}" th:inline="javascript">
-        window.boardImageUrl = /*[[${board.imgUrl}]]*/ '';
-        window.boardImageDesc = /*[[${board.imgDescription}]]*/ '';
-    </script>
+            <li class="submenuBox">
+    <span class="mainMenu">
+        남북극시대
+        <span class="arrow">&#9660;</span>
+    </span>
+                <ul class="submenu">
+                    <li><a th:href="@{/board/list(boardType='남북극시대')}" class="study-link">학습하기</a></li>
+                    <li><a th:href="@{/quiz/list(boardType='남북극시대')}" class="quiz-link">퀴즈풀기</a></li>
+                </ul>
+            </li>
 
-    <!-- 이미지는 JavaScript로 내용에 포함시킴 -->
+            <li class="submenuBox">
+    <span class="mainMenu">
+        고려시대
+        <span class="arrow">&#9660;</span>
+    </span>
+                <ul class="submenu">
+                    <li><a th:href="@{/board/list(boardType='고려시대')}" class="study-link">학습하기</a></li>
+                    <li><a th:href="@{/quiz/list(boardType='고려시대')}" class="quiz-link">퀴즈풀기</a></li>
+                </ul>
+            </li>
 
-    <!-- 수정/삭제 버튼 (관리자만 표시) -->
-    <div id="post-actions" class="post-actions"
-         th:if="${loginUser != null and loginUser.userType == '관리자'}">
-        <button id="edit-btn" th:onclick="|location.href='@{/board/edit(boardId=${board.boardId})}'|">수정</button>
+            <li class="submenuBox">
+    <span class="mainMenu">
+        조선시대
+        <span class="arrow">&#9660;</span>
+    </span>
+                <ul class="submenu">
+                    <li><a th:href="@{/board/list(boardType='조선시대')}" class="study-link">학습하기</a></li>
+                    <li><a th:href="@{/quiz/list(boardType='조선시대')}" class="quiz-link">퀴즈풀기</a></li>
+                </ul>
+            </li>
 
-        <!-- 삭제는 POST 방식으로 폼 사용 -->
-        <form th:action="@{/board/delete}" method="post" style="display: inline;">
-            <input type="hidden" name="boardId" th:value="${board.boardId}">
-            <button id="delete-btn" type="submit" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</button>
-        </form>
-    </div>
+            <li class="submenuBox">
+    <span class="mainMenu">
+        근대
+        <span class="arrow">&#9660;</span>
+    </span>
+                <ul class="submenu">
+                    <li><a th:href="@{/board/list(boardType='근대')}" class="study-link">학습하기</a></li>
+                    <li><a th:href="@{/quiz/list(boardType='근대')}" class="quiz-link">퀴즈풀기</a></li>
+                </ul>
+            </li>
 
-    <!-- 댓글 섹션 (공지사항이 아닌 경우에만 표시) -->
-    <div th:if="${board.boardType != '공지사항'}">
-        <h3>댓글</h3>
-        <ul id="comment-list">
-            <li th:each="comment : ${comments}" class="comment-item">
-                <div class="comment-content">
-                    <strong th:text="${comment.name}">작성자</strong>
-                    <div th:text="${comment.comment}">댓글 내용</div>
-                    <small th:text="${#temporals.format(comment.date, 'yyyy-MM-dd')}">작성일</small>
-
-                    <div class="comment-actions">
-                        <!-- 답글 버튼 -->
-                        <button th:if="${loginUser != null}"
-                                th:onclick="|toggleReplyForm(${comment.commentId})|"
-                                class="reply-btn">답글</button>
-
-                        <!-- 본인 댓글이거나 관리자인 경우 삭제 버튼 표시 -->
-                        <form th:if="${loginUser != null and (loginUser.userId == comment.userId or loginUser.userType == '관리자')}"
-                              th:action="@{/board/comment/delete}" method="post" style="display: inline;">
-                            <input type="hidden" name="commentId" th:value="${comment.commentId}">
-                            <input type="hidden" name="boardId" th:value="${board.boardId}">
-                            <button type="submit" onclick="return confirm('댓글을 삭제하시겠습니까?')">삭제</button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- 답글 목록 -->
-                <div th:if="${repliesMap[comment.commentId] != null and !repliesMap[comment.commentId].isEmpty()}"
-                     class="replies-list">
-                    <div th:each="reply : ${repliesMap[comment.commentId]}" class="reply-item">
-                        <strong th:text="${reply.name}">답글 작성자</strong>
-                        <div th:text="${reply.reply}">답글 내용</div>
-                        <small th:text="${#temporals.format(reply.date, 'yyyy-MM-dd')}">작성일</small>
-
-                        <!-- 답글 삭제 버튼 -->
-                        <form th:if="${loginUser != null and (loginUser.userId == reply.userId or loginUser.userType == '관리자')}"
-                              th:action="@{/board/reply/delete}" method="post" style="display: inline;">
-                            <input type="hidden" name="replyId" th:value="${reply.replyId}">
-                            <input type="hidden" name="boardId" th:value="${board.boardId}">
-                            <button type="submit" onclick="return confirm('답글을 삭제하시겠습니까?')">삭제</button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- 답글 작성 폼 -->
-                <div th:id="|reply-form-${comment.commentId}|" class="reply-form" style="display: none;">
-                    <form th:action="@{/board/reply}" method="post" th:if="${loginUser != null}">
-                        <input type="hidden" name="commentId" th:value="${comment.commentId}">
-                        <input type="hidden" name="boardId" th:value="${board.boardId}">
-                        <textarea name="content" placeholder="답글을 입력하세요" required></textarea>
-                        <div class="reply-form-buttons">
-                            <button type="submit">답글 등록</button>
-                            <button type="button" th:onclick="|toggleReplyForm(${comment.commentId})|">취소</button>
-                        </div>
-                    </form>
-                </div>
+            <li class="submenuBox">
+    <span class="mainMenu">
+        현대
+        <span class="arrow">&#9660;</span>
+    </span>
+                <ul class="submenu lastUl">
+                    <li><a th:href="@{/board/list(boardType='현대')}" class="study-link">학습하기</a></li>
+                    <li><a th:href="@{/quiz/list(boardType='현대')}" class="quiz-link">퀴즈풀기</a></li>
+                </ul>
             </li>
         </ul>
+    </div>
+</div>
 
-        <p id="editing-status" style="color: red; font-weight: bold; display: none;">✏️ 댓글 수정 중...</p>
+<div id="container">
+    <div id="post-box">
+        <!-- 카테고리명 -->
+        <h2 class="post-category" th:text="${board.boardType}">카테고리</h2>
 
-        <!-- 댓글 작성 폼 -->
-        <form id="comment-form" th:action="@{/board/detail}" method="post" th:if="${loginUser != null}">
-            <input type="hidden" name="boardId" th:value="${board.boardId}">
-            <textarea id="comment-content" name="content" placeholder="댓글 내용을 입력하세요" required></textarea>
-            <button type="submit">댓글 등록</button>
-        </form>
+        <!-- 제목과 관리 버튼 -->
+        <div class="post-header">
+            <h1 class="post-title" th:text="${board.title}">게시글 제목</h1>
+            <div class="post-actions" th:if="${loginUser != null and loginUser.userType == '관리자'}">
+                <a th:href="@{/board/edit(boardId=${board.boardId})}">
+                    <button type="button">수정</button>
+                </a>
+                <form th:action="@{/board/delete}" method="post" style="display: inline;">
+                    <input type="hidden" name="boardId" th:value="${board.boardId}">
+                    <button type="submit" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 메타 정보 -->
+        <div class="post-meta">
+            <span th:text="${board.name}">작성자</span>
+            <span th:if="${board.created}" th:text="${#dates.format(board.created, 'yyyy-MM-dd')}">작성일</span>
+        </div>
+
+        <!-- 본문 내용 -->
+        <div class="post-content">
+            <div th:utext="${board.content}">게시글 내용이 여기에 표시됩니다.</div>
+        </div>
+
+        <!-- 댓글 영역 -->
+        <div class="comment-section" th:if="${board.boardType != '공지사항'}">
+            <h4>댓글</h4>
+            <ul id="comment-list">
+                <li th:each="comment : ${comments}" class="comment">
+                    <div class="comment-content">
+                        <p>
+                            <strong th:text="${comment.name}">작성자</strong> |
+                            <span th:text="${#temporals.format(comment.date, 'yyyy-MM-dd')}">작성일</span>
+                        </p>
+                        <p th:text="${comment.comment}">댓글 내용</p>
+                        <div style="margin-top: 10px;">
+                            <button th:if="${loginUser != null}"
+                                    class="reply-btn"
+                                    th:onclick="|toggleReplyForm(${comment.commentId})|"
+                                    th:data-id="${comment.commentId}">답글</button>
+
+                            <form th:if="${loginUser != null and (loginUser.userId == comment.userId or loginUser.userType == '관리자')}"
+                                  th:action="@{/board/comment/delete}" method="post" style="display: inline;">
+                                <input type="hidden" name="commentId" th:value="${comment.commentId}">
+                                <input type="hidden" name="boardId" th:value="${board.boardId}">
+                                <button type="submit" onclick="return confirm('댓글을 삭제하시겠습니까?')">삭제</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <ul class="replies" th:if="${repliesMap[comment.commentId] != null and !repliesMap[comment.commentId].isEmpty()}">
+                        <li th:each="reply : ${repliesMap[comment.commentId]}" class="comment">
+                            <div class="comment-content">
+                                <p>
+                                    <strong th:text="${reply.name}">답글 작성자</strong> |
+                                    <span th:text="${#temporals.format(reply.date, 'yyyy-MM-dd')}">작성일</span>
+                                </p>
+                                <p th:text="${reply.reply}">답글 내용</p>
+                                <form th:if="${loginUser != null and (loginUser.userId == reply.userId or loginUser.userType == '관리자')}"
+                                      th:action="@{/board/reply/delete}" method="post" style="display: inline;">
+                                    <input type="hidden" name="replyId" th:value="${reply.replyId}">
+                                    <input type="hidden" name="boardId" th:value="${board.boardId}">
+                                    <button type="submit" onclick="return confirm('답글을 삭제하시겠습니까?')">삭제</button>
+                                </form>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div th:id="|reply-form-${comment.commentId}|" class="reply-form" style="display: none;">
+                        <form th:action="@{/board/reply}" method="post" th:if="${loginUser != null}">
+                            <input type="hidden" name="commentId" th:value="${comment.commentId}">
+                            <input type="hidden" name="boardId" th:value="${board.boardId}">
+                            <textarea name="content" class="reply-input" placeholder="답글을 입력하세요" required></textarea>
+                            <div style="text-align: right; margin-top: 10px;">
+                                <button type="submit">답글 등록</button>
+                                <button type="button" th:onclick="|toggleReplyForm(${comment.commentId})|" style="margin-left: 10px; background-color: #ddd; border: 1px solid #aaa; padding: 6px 14px; border-radius: 6px; cursor: pointer;">취소</button>
+                            </div>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 댓글 작성 -->
+        <div class="comment-form" th:if="${loginUser != null and board.boardType != '공지사항'}">
+            <form th:action="@{/board/detail}" method="post">
+                <input type="hidden" name="boardId" th:value="${board.boardId}">
+                <textarea id="comment-input" name="content" placeholder="댓글을 입력하세요" required></textarea>
+                <button id="comment-submit" type="submit">등록</button>
+            </form>
+        </div>
 
         <!-- 로그인 안 된 경우 메시지 -->
-        <div th:if="${loginUser == null}">
+        <div th:if="${loginUser == null and board.boardType != '공지사항'}" style="text-align: center; color: #777; font-style: italic; padding: 20px;">
             <p>댓글을 작성하려면 로그인이 필요합니다.</p>
         </div>
     </div>
-
-
-</main>
+</div>
 
 <div id="footer">
     <ul>
@@ -138,74 +243,33 @@
     </ul>
 </div>
 
-<script th:src="@{/js/board.js}"></script>
 <script>
-    function replyToComment(userName) {
-        const textarea = document.getElementById('comment-content');
-        // 로그인 체크
-        if (!textarea) return;
+    // 사이드바 메인메뉴 클릭 시 서브메뉴 토글
+    document.querySelectorAll(".mainMenu").forEach(menu => {
+        menu.addEventListener("click", () => {
+            const parent = menu.parentElement;
+            const submenu = parent.querySelector(".submenu");
 
-        // 이미 멘션이 있는지 확인하고 추가
-        const currentValue = textarea.value;
-        const mention = '@' + userName + ' ';
+            if (submenu.classList.contains("show")) {
+                submenu.style.maxHeight = submenu.scrollHeight + "px";
+                submenu.offsetHeight;
+                submenu.classList.remove("show");
+                submenu.style.maxHeight = "0px";
+                parent.classList.remove("open");
+            } else {
+                submenu.classList.add("show");
+                submenu.style.maxHeight = submenu.scrollHeight + "px";
+                parent.classList.add("open");
+            }
+        });
+    });
 
-        // 이미 같은 멘션이 있으면 추가하지 않음
-        if (!currentValue.includes(mention)) {
-            textarea.value = mention + currentValue;
-        }
-
-        // 커서를 텍스트 끝으로 이동하고 포커스
-        textarea.focus();
-        textarea.setSelectionRange(textarea.value.length, textarea.value.length);
-
-        // 텍스트 영역으로 스크롤
-        textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-
-    // 답글 폼 토글 함수
     function toggleReplyForm(commentId) {
         const replyForm = document.getElementById(`reply-form-${commentId}`);
-        if (replyForm.style.display === 'none' || replyForm.style.display === '') {
-            replyForm.style.display = 'block';
-            // 답글 textarea에 포커스
-            const textarea = replyForm.querySelector('textarea');
-            if (textarea) {
-                textarea.focus();
-            }
-        } else {
-            replyForm.style.display = 'none';
-        }
+        replyForm.style.display = (replyForm.style.display === 'none' || replyForm.style.display === '') ? 'block' : 'none';
+        const textarea = replyForm.querySelector('textarea');
+        if (textarea) textarea.focus();
     }
-
-    // 이미지를 내용의 제일 위쪽에 추가하는 스크립트
-    document.addEventListener('DOMContentLoaded', function() {
-        const content = document.getElementById('post-content');
-
-        // window 객체에서 이미지 정보 가져오기
-        const imgUrl = window.boardImageUrl;
-        const imgDesc = window.boardImageDesc;
-
-        console.log('이미지 URL:', imgUrl); // 디버깅용
-        console.log('이미지 설명:', imgDesc); // 디버깅용
-
-        // 이미지가 있으면 항상 내용 맨 위에 추가
-        if (imgUrl && imgUrl !== '' && imgUrl !== 'null') {
-            // 기존에 이미지가 있는지 확인
-            if (!content.innerHTML.includes(imgUrl)) {
-                const imgHtml = `<div style="text-align: center; margin: 0 0 15px 0;">
-                                    <img src="${imgUrl}" alt="${imgDesc || ''}"
-                                         style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px; display: inline-block;">
-                                    ${imgDesc && imgDesc !== '' && imgDesc !== 'null' ? `<p style="color: #666; font-style: italic; margin: 5px 0 0 0;">${imgDesc}</p>` : ''}
-                                 </div>`;
-
-                // 기존 내용의 제일 앞에 이미지 추가하고 텍스트는 왼쪽 정렬
-                content.innerHTML = imgHtml + '<div style="text-align: left;">' + content.innerHTML + '</div>';
-            }
-        } else {
-            // 이미지가 없어도 텍스트는 왼쪽 정렬
-            content.style.textAlign = 'left';
-        }
-    });
 </script>
 </body>
 </html>
