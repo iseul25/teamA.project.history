@@ -40,7 +40,10 @@ public class AdminBoardController {
 
         // 게시글 조회
         if ("전체".equals(boardType)) {
-            allBoards = boardService.findAll();
+            allBoards = boardService.findAll()
+                    .stream()
+                    .filter(board -> !"공지사항".equals(board.getBoardType()))
+                    .toList(); // Java 16 이상이면 .toList(), 그 이하라면 .collect(Collectors.toList())
         } else {
             allBoards = boardService.findByBoardType(boardType);
         }
