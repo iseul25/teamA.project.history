@@ -2,7 +2,6 @@ package com.lms.history.boards.service;
 
 import com.lms.history.boards.entity.Board;
 import com.lms.history.boards.repository.BoardRepository;
-import com.lms.history.users.entity.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +20,22 @@ public class BoardService {
 
     public List<Board> findByBoardType(String boardType) {
         return boardRepository.findByBoardType(boardType);
+    }
+
+    // JpaRepository가 없는 경우의 페이징 처리
+    public List<Board> findByBoardTypeWithPaging(String boardType, int page, int size) {
+        return boardRepository.findByBoardTypeWithPaging(boardType, page, size);
+    }
+
+    // 총 개수를 구하는 메서드
+    public long countByBoardType(String boardType) {
+        return boardRepository.countByBoardType(boardType);
+    }
+
+    // 페이징 정보를 계산하는 메서드
+    public int getTotalPages(String boardType, int size) {
+        long totalElements = countByBoardType(boardType);
+        return (int) Math.ceil((double) totalElements / size);
     }
 
     public Board create(Board board, int userId) {

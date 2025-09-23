@@ -40,10 +40,41 @@ public class BoardRepository {
             board.setCreated(rs.getTimestamp("date"));
             board.setUpdated(rs.getTimestamp("date"));
             board.setName(rs.getString("name"));
-            board.setImgUrl(rs.getString("imgUrl"));           // 추가
-            board.setImgDescription(rs.getString("imgDescription")); // 추가
+            board.setImgUrl(rs.getString("imgUrl"));
+            board.setImgDescription(rs.getString("imgDescription"));
             return board;
         }, boardType);
+    }
+
+    // 페이징 처리된 게시글 조회 (최신순)
+    public List<Board> findByBoardTypeWithPaging(String boardType, int page, int size) {
+        int offset = page * size;
+        String sql = "SELECT * FROM Board b JOIN users u ON b.userId = u.userId " +
+                "WHERE b.boardType = ? " +
+                "ORDER BY b.date DESC " +
+                "LIMIT ? OFFSET ?";
+
+        return jdbc.query(sql, (rs, rowNum) -> {
+            Board board = new Board();
+            board.setBoardId(rs.getInt("boardId"));
+            board.setUserId(rs.getInt("userId"));
+            board.setTitle(rs.getString("title"));
+            board.setContent(rs.getString("content"));
+            board.setBoardType(rs.getString("boardType"));
+            board.setCreated(rs.getTimestamp("date"));
+            board.setUpdated(rs.getTimestamp("date"));
+            board.setName(rs.getString("name"));
+            board.setImgUrl(rs.getString("imgUrl"));
+            board.setImgDescription(rs.getString("imgDescription"));
+            return board;
+        }, boardType, size, offset);
+    }
+
+    // 특정 타입의 총 게시글 수 조회
+    public long countByBoardType(String boardType) {
+        String sql = "SELECT COUNT(*) FROM Board WHERE boardType = ?";
+        Integer count = jdbc.queryForObject(sql, Integer.class, boardType);
+        return count != null ? count.longValue() : 0L;
     }
 
     private RowMapper<Board> boardRowMapper() {
@@ -53,8 +84,8 @@ public class BoardRepository {
             board.setTitle(rs.getString("title"));
             board.setCreated(rs.getTimestamp("date"));
             board.setBoardType(rs.getString("boardType"));
-            board.setImgUrl(rs.getString("imgUrl"));           // 추가
-            board.setImgDescription(rs.getString("imgDescription")); // 추가
+            board.setImgUrl(rs.getString("imgUrl"));
+            board.setImgDescription(rs.getString("imgDescription"));
             return board;
         };
     }
@@ -112,7 +143,7 @@ public class BoardRepository {
             }, boardId);
         } catch (EmptyResultDataAccessException e) {
             System.out.println("Board ID " + boardId + "를 찾을 수 없습니다.");
-            return null; // null 반환
+            return null;
         }
     }
 

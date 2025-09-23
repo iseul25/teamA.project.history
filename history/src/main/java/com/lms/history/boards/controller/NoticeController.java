@@ -7,10 +7,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -18,21 +15,29 @@ import java.util.List;
 public class NoticeController {
 
     private final BoardService boardService;
+    private static final int PAGE_SIZE = 10; // 페이지당 게시글 수
 
     public NoticeController(BoardService boardService) {
         this.boardService = boardService;
     }
 
     @GetMapping("/notice")
-    public String notice(@RequestParam(value = "page", defaultValue = "1") int page,
+    public String notice(@RequestParam(value = "page", defaultValue = "0") int page,
                          Model model, HttpSession session) {
         User loginUser = (User) session.getAttribute("loginUser");
         model.addAttribute("loginUser", loginUser);
 
-        List<Board> boards = boardService.findByBoardType("공지사항");
+        // 페이징 처리
+        List<Board> boards = boardService.findByBoardTypeWithPaging("공지사항", page, PAGE_SIZE);
+        long totalElements = boardService.countByBoardType("공지사항");
+        int totalPages = boardService.getTotalPages("공지사항", PAGE_SIZE);
+
+        // 페이징 정보를 모델에 추가
         model.addAttribute("boards", boards);
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", 1);
+        model.addAttribute("totalPages", totalPages > 0 ? totalPages : 1);
+        model.addAttribute("totalElements", totalElements);
+        model.addAttribute("pageSize", PAGE_SIZE);
 
         return "notice";
     }
