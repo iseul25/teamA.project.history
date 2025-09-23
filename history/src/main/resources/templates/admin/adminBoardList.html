@@ -10,14 +10,14 @@
 
 <body>
 <header>
-    <a th:href="@{/home}">
+    <a th:href="@{/}">
         <img th:src="@{/img/mainLg2.png}" alt="메인 로고">
     </a>
     <ul>
-        <li><a th:href="@{/study}">학습하기</a></li>
-        <li><a th:href="@{/quiz}">퀴즈풀기</a></li>
+        <li><a th:href="@{/board/topic}" class="active">학습하기</a></li>
+        <li><a th:href="@{/quiz/topic}">퀴즈풀기</a></li>
         <li><a th:href="@{/attend}">출석하기</a></li>
-        <li><a th:href="@{/shop}">포인트 상점</a></li>
+        <li><a th:href="@{/pointStore}">포인트 상점</a></li>
         <li><a th:href="@{/faq}">FAQ</a></li>
         <li><a th:href="@{/notice}">공지사항</a></li>
     </ul>
@@ -94,9 +94,9 @@
                 <td th:text="${(currentPage != null ? currentPage : 0) * 10 + stat.count}">1</td>
                 <td th:text="${board.boardType}">학습</td>
                 <td>
-                    <a th:href="@{/board/detail(boardId=${board.boardId})}"
-                       class="board-link"
-                       th:text="${board.title}">게시글 제목</a>
+                    <span class="board-link" th:text="${board.title}"
+                          th:onclick="'viewBoard(' + ${board.boardId} + ')'"
+                          style="cursor: pointer; color: #007bff; text-decoration: underline;">게시글 제목</span>
                 </td>
                 <td th:text="${#dates.format(board.created, 'yyyy-MM-dd')}">2025-01-01</td>
                 <td>
@@ -105,14 +105,17 @@
                 </td>
             </tr>
 
-            <!-- 부족한 만큼 빈 행 추가 -->
-            <tr th:each="i : ${#numbers.sequence(1, 10 - #lists.size(boards))}">
-                <td>&nbsp;</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
+            <!-- 부족한 만큼 빈 행 추가 (10개 미만일 때만) -->
+            <th:block th:if="${boards != null and #lists.size(boards) < 10}">
+                <tr th:each="i : ${#numbers.sequence(1, 10 - #lists.size(boards))}">
+                    <td>&nbsp;</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </th:block>
+
 
             <!-- 게시글이 아예 없는 경우 -->
             <tr th:if="${#lists.isEmpty(boards)}">
@@ -143,6 +146,29 @@
                     </div>
                     <button type="submit" id="editBoard-btn">수정 완료</button>
                 </form>
+            </div>
+        </div>
+
+        <!-- 게시물 상세보기 모달 -->
+        <div id="viewModal" class="modal">
+            <div class="modal-content">
+                <span class="closeViewBtn">&times;</span>
+                <h2>게시글 상세보기</h2>
+                <div class="view-form">
+                    <div class="form-group">
+                        <label>제목:</label>
+                        <div id="viewTitle" class="view-field"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>내용:</label>
+                        <div id="viewContent" class="view-content"></div>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" onclick="closeViewModal()">닫기</button>
+                    <button type="button" id="editFromViewBtn" onclick="editFromView()">수정하기</button>
+                </div>
             </div>
         </div>
 
@@ -228,70 +254,26 @@
     const modal = document.getElementById("editModal");
     const closeBtn = document.querySelector(".closeBtn");
 
-    // HTML 태그를 제거하는 함수 (이미지 태그는 보존)
+    // HTML 태그를 완전히 제거하는 함수 (더 강화된 버전)
     function stripHtmlTags(html) {
         if (!html) return '';
 
+        let content = html;
+
+        // 1. uploads 이미지 태그 제거
+        content = content.replace(/<img[^>]*src\s*=\s*['"][^'"]*uploads[^'"]*['"][^>]*\/?>/gi, '');
+
+        // 2. 이미지 설명 p 태그 제거
+        content = content.replace(/<p[^>]*style[^>]*color:[^>]*>[^<]*<\/p>/gi, '');
+
+        // 3. br 태그 제거
+        content = content.replace(/(<br\s*\/?>)+/gi, '\n');
+
+        // 4. 나머지 HTML 태그 제거
         const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = html;
+        tempDiv.innerHTML = content;
 
-        // 이미지 태그를 제거하고 텍스트만 추출
-        const images = tempDiv.querySelectorAll('img');
-        images.forEach(img => img.remove());
-
-        return tempDiv.textContent || tempDiv.innerText || '';
-    }
-
-    // 이미지 태그에서 이미지 정보를 추출하는 함수 (개선된 버전)
-    function extractImageInfo(html) {
-        if (!html) {
-            console.log('No HTML content provided');
-            return null;
-        }
-
-        console.log('Extracting image from HTML:', html);
-
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = html;
-        const imgTag = tempDiv.querySelector('img');
-
-        if (imgTag) {
-            let src = imgTag.src;
-
-            // src 속성이 없으면 다른 속성들도 확인
-            if (!src) {
-                src = imgTag.getAttribute('src') || imgTag.getAttribute('data-src');
-            }
-
-            // 상대 경로인 경우 절대 경로로 변환
-            if (src && !src.startsWith('http') && !src.startsWith('/')) {
-                src = '/' + src;
-            }
-
-            console.log('Found img tag:', imgTag);
-            console.log('Original image src:', imgTag.src);
-            console.log('Processed image src:', src);
-
-            return {
-                src: src,
-                alt: imgTag.alt || imgTag.getAttribute('alt') || '',
-                originalSrc: imgTag.src // 디버깅용
-            };
-        } else {
-            console.log('No img tag found in HTML');
-            // HTML에 img 태그가 없어도 이미지 URL이 직접 포함되어 있는지 확인
-            const imageUrlPattern = /(https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp|svg))/i;
-            const match = html.match(imageUrlPattern);
-            if (match) {
-                console.log('Found image URL in text:', match[1]);
-                return {
-                    src: match[1],
-                    alt: '',
-                    originalSrc: match[1]
-                };
-            }
-        }
-        return null;
+        return (tempDiv.textContent || tempDiv.innerText || '').trim();
     }
 
     function editBoard(boardId) {
@@ -306,77 +288,59 @@
             })
             .then(board => {
                 console.log('Board data received:', board);
-                console.log('imgUrl:', board.imgUrl);
-                console.log('imgDescription:', board.imgDescription);
 
+                // 기본 정보 설정
                 document.getElementById("editBoardId").value = board.boardId;
                 document.getElementById("editTitle").value = board.title || '';
 
-                // HTML 태그를 제거한 순수 텍스트만 표시
+                // 백엔드에서 이미 정리된 content를 받지만, 추가로 한번 더 정리
                 const cleanContent = stripHtmlTags(board.content);
                 document.getElementById("editContent").value = cleanContent;
 
-                // 이미지 표시 처리
+                // 이미지 표시 처리 (imgUrl 필드 기준)
                 const previewDiv = document.getElementById("currentImagePreview");
 
-                if (board.imgUrl) {
+                if (board.imgUrl && board.imgUrl.trim() !== '') {
                     console.log('Found image URL:', board.imgUrl);
 
-                    // 이미지 로드 테스트
-                    const testImg = new Image();
-                    testImg.onload = function() {
-                        console.log('Image loaded successfully from imgUrl');
-                        previewDiv.innerHTML = `
-                            <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9;">
-                                <p style="margin: 0 0 10px 0; font-weight: bold; color: #333;">현재 등록된 이미지:</p>
-                                <img src="${board.imgUrl}"
-                                     alt="${board.imgDescription || ''}"
-                                     style="max-width: 200px; max-height: 150px; object-fit: contain; border: 1px solid #ccc; border-radius: 3px; display: block;">
-                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
-                                    이미지 설명: ${board.imgDescription || '설명 없음'}
-                                </p>
-                                <p style="margin: 5px 0 0 0; font-size: 10px; color: #999;">
-                                    이미지 URL: ${board.imgUrl}
-                                </p>
-                            </div>
-                        `;
-                    };
-
-                    testImg.onerror = function() {
-                        console.error('Image failed to load from imgUrl:', board.imgUrl);
-                        previewDiv.innerHTML = `
-                            <div style="border: 1px solid #f8d7da; padding: 10px; border-radius: 5px; background-color: #f8d7da; color: #721c24;">
-                                <p style="margin: 0;"><strong>이미지 로드 실패</strong></p>
-                                <p style="margin: 5px 0 0 0; font-size: 12px;">
-                                    URL: ${board.imgUrl}
-                                </p>
-                                <p style="margin: 5px 0 0 0; font-size: 12px;">
-                                    이미지를 찾을 수 없습니다. 새 이미지를 업로드해주세요.
-                                </p>
-                            </div>
-                        `;
-                    };
-
-                    testImg.src = board.imgUrl;
+                    // 이미지 미리보기 표시
+                    previewDiv.innerHTML = `
+                    <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9;">
+                        <p style="margin: 0 0 10px 0; font-weight: bold; color: #333;">현재 등록된 이미지:</p>
+                        <img src="${board.imgUrl}"
+                             alt="${board.imgDescription || ''}"
+                             style="max-width: 200px; max-height: 150px; object-fit: contain; border: 1px solid #ccc; border-radius: 3px; display: block;"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <div style="display: none; color: #dc3545; font-size: 12px; margin-top: 5px;">
+                            이미지를 불러올 수 없습니다. 경로: ${board.imgUrl}
+                        </div>
+                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
+                            ${board.imgDescription ? '설명: ' + board.imgDescription : '설명 없음'}
+                        </p>
+                    </div>
+                `;
 
                     // 이미지 설명 필드에 기존 값 설정
                     document.getElementById("editImgDescription").value = board.imgDescription || '';
                 } else {
-                    console.log('No imgUrl found');
+                    console.log('No image found');
                     previewDiv.innerHTML = `
-                        <div style="border: 1px solid #d1ecf1; padding: 10px; border-radius: 5px; background-color: #d1ecf1; color: #0c5460;">
-                            <p style="margin: 0;">등록된 이미지가 없습니다.</p>
-                            <p style="margin: 5px 0 0 0; font-size: 12px;">새 이미지를 업로드할 수 있습니다.</p>
-                        </div>
-                    `;
+                    <div style="border: 1px solid #d1ecf1; padding: 10px; border-radius: 5px; background-color: #d1ecf1; color: #0c5460;">
+                        <p style="margin: 0;">등록된 이미지가 없습니다.</p>
+                        <p style="margin: 5px 0 0 0; font-size: 12px;">새 이미지를 업로드할 수 있습니다.</p>
+                    </div>
+                `;
                     document.getElementById("editImgDescription").value = '';
                 }
 
-                // 실제 게시글의 카테고리를 hidden 필드에 설정
+                // boardType 설정
                 const boardTypeInput = document.querySelector("input[name='boardType']");
                 if (boardTypeInput) {
                     boardTypeInput.value = board.boardType || '';
                 }
+
+                // 파일 입력 필드 초기화
+                document.getElementById("editImageFile").value = '';
 
                 modal.classList.add("show");
             })
@@ -464,6 +428,72 @@
             }
         });
     }
+
+    // ============== 상세보기 모달 관련 코드 ==============
+
+    // 상세보기 모달 관련 변수
+    const viewModal = document.getElementById("viewModal");
+    const closeViewBtn = document.querySelector(".closeViewBtn");
+    let currentBoardData = null;
+
+    // 게시글 상세보기 함수
+    function viewBoard(boardId) {
+        console.log('Opening view modal for board:', boardId);
+
+        fetch(`/admin/board/api/${boardId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(board => {
+                console.log('Board data received for view:', board);
+
+                currentBoardData = board;
+
+                document.getElementById("viewTitle").textContent = board.title || '';
+
+                const viewContentDiv = document.getElementById("viewContent");
+                if (board.content) {
+                    viewContentDiv.innerHTML = board.content;
+                } else {
+                    viewContentDiv.textContent = '내용이 없습니다.';
+                }
+
+                viewModal.classList.add("show");
+            })
+            .catch(error => {
+                console.error('Error fetching board data for view:', error);
+                alert('게시글 정보를 불러올 수 없습니다: ' + error.message);
+            });
+    }
+
+    // 상세보기 모달 닫기
+    function closeViewModal() {
+        viewModal.classList.remove("show");
+        currentBoardData = null;
+    }
+
+    // 상세보기에서 수정 모달로 전환
+    function editFromView() {
+        if (currentBoardData) {
+            closeViewModal();
+            editBoard(currentBoardData.boardId);
+        }
+    }
+
+    // 상세보기 모달 닫기 버튼 이벤트
+    if (closeViewBtn) {
+        closeViewBtn.onclick = closeViewModal;
+    }
+
+    // 상세보기 모달 바깥 클릭 시 닫기 (기존 window.onclick과 충돌 방지)
+    window.addEventListener('click', (e) => {
+        if (e.target === viewModal) {
+            closeViewModal();
+        }
+    });
 </script>
 </body>
 </html>

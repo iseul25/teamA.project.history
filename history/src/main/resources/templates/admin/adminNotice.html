@@ -4,26 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>공지사항 게시글 관리</title>
+    <title>공지사항 관리</title>
     <link rel="stylesheet" th:href="@{/css/adminBoardList.css}">
 </head>
 
 <body>
 <header>
-    <a th:href="@{/home}">
+    <a th:href="@{/}">
         <img th:src="@{/img/mainLg2.png}" alt="메인 로고">
     </a>
     <ul>
-        <li><a th:href="@{/study}">학습하기</a></li>
-        <li><a th:href="@{/quiz}">퀴즈풀기</a></li>
+        <li><a th:href="@{/board/topic}" class="active">학습하기</a></li>
+        <li><a th:href="@{/quiz/topic}">퀴즈풀기</a></li>
         <li><a th:href="@{/attend}">출석하기</a></li>
-        <li><a th:href="@{/shop}">포인트 상점</a></li>
+        <li><a th:href="@{/pointStore}">포인트 상점</a></li>
         <li><a th:href="@{/faq}">FAQ</a></li>
         <li><a th:href="@{/notice}">공지사항</a></li>
     </ul>
     <!-- Thymeleaf로 로그인 상태 처리 -->
     <div id="user" th:if="${session.loginUser != null}">
-        <a th:href="@{/admin/board}" th:if="${session.loginUser.userType == 'admin'}"
+        <a th:href="@{/admin/notice}" th:if="${session.loginUser.userType == 'admin'}"
            id="userName-link" class="active"
            th:text="${session.loginUser.name} + '관리자님'">
         </a>
@@ -44,19 +44,19 @@
         <li class="submenuBox">
             <a th:href="@{/admin/board}" class="active">게시글관리</a>
             <ul class="submenu">
-                <li><a th:href="@{/admin/board}">학습 게시글</a></li>
-                <li><a th:href="@{/admin/quiz}">퀴즈 게시글</a></li>
-                <li><a th:href="@{/admin/board(boardType='공지사항', page=0)}" class="active">공지사항 게시글</a></li>
+                <li><a th:href="@{/admin/board}">학습하기</a></li>
+                <li><a th:href="@{/admin/quiz}">퀴즈풀기</a></li>
+                <li><a th:href="@{/admin/notice}" class="active">공지사항</a></li>
             </ul>
         </li>
         <li><a th:href="@{/admin/comment}">댓글관리</a></li>
-        <li><a th:href="@{/admin/shop}">상점관리</a></li>
+        <li><a th:href="@{/admin/pointStore}">상점관리</a></li>
     </ul>
 </div>
 
 <div id="container">
     <div class="boardBox">
-        <div class="board-title">공지사항 게시글</div>
+        <div class="board-title">공지사항</div>
 
         <!-- URL 파라미터 메시지 표시 (Thymeleaf로 처리) -->
         <div th:if="${param.success}" class="alert success" th:text="${param.success[0]}"></div>
@@ -68,7 +68,6 @@
             <tr>
                 <th style="width: 100px;">번호</th>
                 <th>제목</th>
-                <th style="width: 150px;">작성자</th>
                 <th style="width: 150px;">등록 일자</th>
                 <th style="width: 80px;">작업</th>
             </tr>
@@ -79,44 +78,43 @@
             <tr th:each="board, stat : ${boards}">
                 <td th:text="${(currentPage != null ? currentPage : 0) * 10 + stat.count}">1</td>
                 <td>
-                    <a th:href="@{/board/detail(boardId=${board.boardId})}"
-                       class="board-link"
-                       th:text="${board.title}">게시글 제목</a>
+                    <span class="board-link" th:text="${board.title}"
+                          th:onclick="'viewNotice(' + ${board.boardId} + ')'"
+                          style="cursor: pointer; color: #007bff; text-decoration: underline;">공지사항 제목</span>
                 </td>
-                <td th:text="${board.name}">관리자</td>
                 <td th:text="${#dates.format(board.created, 'yyyy-MM-dd')}">2025-01-01</td>
                 <td>
-                    <button th:onclick="'editBoard(' + ${board.boardId} + ')'" class="editBtn">수정</button>
-                    <button th:onclick="'deleteBoard(' + ${board.boardId} + ')'" class="deleteBtn">삭제</button>
+                    <button th:onclick="'editNotice(' + ${board.boardId} + ')'" class="editBtn">수정</button>
+                    <button th:onclick="'deleteNotice(' + ${board.boardId} + ')'" class="deleteBtn">삭제</button>
                 </td>
             </tr>
 
             <!-- 부족한 만큼 빈 행 추가 -->
-            <tr th:each="i : ${#numbers.sequence(1, 10 - #lists.size(boards))}">
-                <td>&nbsp;</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
+            <th:block th:if="${boards != null and #lists.size(boards) < 10}">
+                <tr th:each="i : ${#numbers.sequence(1, 10 - #lists.size(boards))}">
+                    <td>&nbsp;</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </th:block>
 
             <!-- 게시글이 아예 없는 경우 -->
-            <tr th:if="${#lists.isEmpty(boards)}">
-                <td colspan="5" style="text-align: center; padding: 50px;">등록된 공지사항이 없습니다.</td>
+            <tr th:if="${boards == null or #lists.isEmpty(boards)}">
+                <td colspan="4" style="text-align: center; padding: 50px;">등록된 공지사항이 없습니다.</td>
             </tr>
             </tbody>
 
         </table>
 
-        <!-- 게시물 수정 모달 -->
+        <!-- 공지사항 수정 모달 -->
         <div id="editModal" class="modal">
             <div class="modal-content">
                 <span class="closeBtn">&times;</span>
                 <h2>공지사항 수정</h2>
-                <form id="editForm" th:action="@{/admin/board/edit}" method="post">
-                    <input type="hidden" id="editBoardId" name="id" />
+                <form id="editForm" th:action="@{/admin/notice/edit}" method="post">
+                    <input type="hidden" id="editNoticeId" name="id" />
                     <input type="hidden" name="page" th:value="${currentPage}" />
-                    <input type="hidden" name="boardType" value="공지사항" />
                     <input type="text" id="editTitle" name="title" placeholder="제목" required>
                     <textarea id="editContent" name="content" placeholder="내용" required></textarea>
                     <button type="submit" id="editBoard-btn">수정 완료</button>
@@ -124,18 +122,40 @@
             </div>
         </div>
 
+        <!-- 공지사항 상세보기 모달 -->
+        <div id="viewModal" class="modal">
+            <div class="modal-content">
+                <span class="closeViewBtn">&times;</span>
+                <h2>공지사항 상세보기</h2>
+                <div class="view-form">
+                    <div class="form-group">
+                        <label>제목:</label>
+                        <div id="viewTitle" class="view-field"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>내용:</label>
+                        <div id="viewContent" class="view-content"></div>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" onclick="closeViewModal()">닫기</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Thymeleaf로 페이징 처리 -->
         <div id="pagination" class="pagination" th:if="${totalPages > 0}">
             <!-- 이전 페이지 -->
             <a th:if="${currentPage > 0}"
-               th:href="@{/admin/board(page=${currentPage - 1}, boardType='공지사항')}"
+               th:href="@{/admin/notice(page=${currentPage - 1})}"
                class="page-btn">◀</a>
             <span th:unless="${currentPage > 0}" class="page-btn disabled">◀</span>
 
             <!-- 페이지 번호들 -->
             <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
                 <a th:unless="${i == currentPage}"
-                   th:href="@{/admin/board(page=${i}, boardType='공지사항')}"
+                   th:href="@{/admin/notice(page=${i})}"
                    th:text="${i + 1}"
                    class="page-btn"></a>
                 <span th:if="${i == currentPage}"
@@ -145,7 +165,7 @@
 
             <!-- 다음 페이지 -->
             <a th:if="${currentPage < totalPages - 1}"
-               th:href="@{/admin/board(page=${currentPage + 1}, boardType='공지사항')}"
+               th:href="@{/admin/notice(page=${currentPage + 1})}"
                class="page-btn">▶</a>
             <span th:unless="${currentPage < totalPages - 1}" class="page-btn disabled">▶</span>
         </div>
@@ -162,12 +182,12 @@
 </div>
 
 <script>
-    // 게시글 삭제
-    async function deleteBoard(boardId) {
-        if (!confirm(`${boardId}번 공지사항을 삭제하시겠습니까?`)) return;
+    // 공지사항 삭제
+    async function deleteNotice(noticeId) {
+        if (!confirm(`${noticeId}번 공지사항을 삭제하시겠습니까?`)) return;
 
         try {
-            const response = await fetch(`/admin/board/delete/${boardId}`, {
+            const response = await fetch(`/admin/notice/delete/${noticeId}`, {
                 method: 'DELETE'
             });
 
@@ -183,7 +203,7 @@
         }
     }
 
-    // 게시글 수정 모달 열기
+    // 수정 모달 관련 변수
     const modal = document.getElementById("editModal");
     const closeBtn = document.querySelector(".closeBtn");
 
@@ -201,35 +221,36 @@
         return tempDiv.textContent || tempDiv.innerText || '';
     }
 
-    function editBoard(boardId) {
-        console.log('Opening edit modal for board:', boardId);
+    // 공지사항 수정 모달 열기
+    function editNotice(noticeId) {
+        console.log('Opening edit modal for notice:', noticeId);
 
-        fetch(`/admin/board/api/${boardId}`)
+        fetch(`/admin/notice/api/${noticeId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 return response.json();
             })
-            .then(board => {
-                console.log('Board data received:', board);
+            .then(notice => {
+                console.log('Notice data received:', notice);
 
-                document.getElementById("editBoardId").value = board.boardId;
-                document.getElementById("editTitle").value = board.title || '';
+                document.getElementById("editNoticeId").value = notice.boardId;
+                document.getElementById("editTitle").value = notice.title || '';
 
                 // HTML 태그를 제거한 순수 텍스트만 표시
-                const cleanContent = stripHtmlTags(board.content);
+                const cleanContent = stripHtmlTags(notice.content);
                 document.getElementById("editContent").value = cleanContent;
 
                 modal.classList.add("show");
             })
             .catch(error => {
-                console.error('Error fetching board data:', error);
-                alert('게시글 정보를 불러올 수 없습니다: ' + error.message);
+                console.error('Error fetching notice data:', error);
+                alert('공지사항 정보를 불러올 수 없습니다: ' + error.message);
             });
     }
 
-    // 모달 닫기
+    // 수정 모달 닫기
     if (closeBtn) {
         closeBtn.onclick = () => modal.classList.remove("show");
     }
@@ -238,6 +259,8 @@
         if (e.target == modal) modal.classList.remove("show");
     };
 
+    // 이미지 파일 선택 시 미리보기 (공지사항은 이미지 없으므로 제거됨)
+
     // 수정 완료 처리
     const editForm = document.getElementById("editForm");
     if (editForm) {
@@ -245,14 +268,13 @@
             e.preventDefault();
 
             const formData = new FormData();
-            formData.append('id', document.getElementById("editBoardId").value);
+            formData.append('id', document.getElementById("editNoticeId").value);
             formData.append('title', document.getElementById("editTitle").value);
             formData.append('content', document.getElementById("editContent").value);
             formData.append('page', document.querySelector("input[name='page']").value || '0');
-            formData.append('boardType', '공지사항');
 
             try {
-                const response = await fetch("/admin/board/edit", {
+                const response = await fetch("/admin/notice/edit", {
                     method: "POST",
                     body: formData
                 });
@@ -260,8 +282,7 @@
                 if (response.ok) {
                     modal.classList.remove("show");
                     alert('공지사항이 수정되었습니다.');
-                    // 현재 페이지 새로고침 (수정된 컨트롤러가 자동으로 올바른 페이지로 리다이렉트)
-                    location.reload();
+                    window.location.href = `/admin/notice`;
                 } else {
                     const errorText = await response.text();
                     alert("수정에 실패했습니다: " + errorText);
@@ -272,6 +293,72 @@
             }
         });
     }
+
+    // ============== 상세보기 모달 관련 코드 ==============
+
+    // 상세보기 모달 관련 변수
+    const viewModal = document.getElementById("viewModal");
+    const closeViewBtn = document.querySelector(".closeViewBtn");
+    let currentNoticeData = null;
+
+    // 공지사항 상세보기 함수
+    function viewNotice(noticeId) {
+        console.log('Opening view modal for notice:', noticeId);
+
+        fetch(`/admin/notice/api/${noticeId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(notice => {
+                console.log('Notice data received for view:', notice);
+
+                currentNoticeData = notice;
+
+                document.getElementById("viewTitle").textContent = notice.title || '';
+
+                const viewContentDiv = document.getElementById("viewContent");
+                if (notice.content) {
+                    viewContentDiv.innerHTML = notice.content;
+                } else {
+                    viewContentDiv.textContent = '내용이 없습니다.';
+                }
+
+                viewModal.classList.add("show");
+            })
+            .catch(error => {
+                console.error('Error fetching notice data for view:', error);
+                alert('공지사항 정보를 불러올 수 없습니다: ' + error.message);
+            });
+    }
+
+    // 상세보기 모달 닫기
+    function closeViewModal() {
+        viewModal.classList.remove("show");
+        currentNoticeData = null;
+    }
+
+    // 상세보기에서 수정 모달로 전환
+    function editFromView() {
+        if (currentNoticeData) {
+            closeViewModal();
+            editNotice(currentNoticeData.boardId);
+        }
+    }
+
+    // 상세보기 모달 닫기 버튼 이벤트
+    if (closeViewBtn) {
+        closeViewBtn.onclick = closeViewModal;
+    }
+
+    // 상세보기 모달 바깥 클릭 시 닫기
+    window.addEventListener('click', (e) => {
+        if (e.target === viewModal) {
+            closeViewModal();
+        }
+    });
 </script>
 </body>
 </html>
