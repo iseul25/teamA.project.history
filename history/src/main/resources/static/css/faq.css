@@ -89,6 +89,24 @@ header> ul li a.active {
     margin-bottom: 20px;
 }
 
+.page-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 20px;
+}
+
+.page-nav>a {
+    font-size: 19px;
+    color: #333;
+    text-decoration: none;
+}
+
+.page-nav>a:hover {
+    text-decoration: underline;
+}
+
 .faq-item {
     border-bottom: 1px solid #ddd;
 }

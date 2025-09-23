@@ -147,6 +147,118 @@ header>ul li a.active {
     transition: transform 0.2s ease, font-size 0.2s ease;
 }
 
+/* 상세보기 모달 스타일 (기존 CSS 파일에 추가) */
+
+/* 상세보기 폼 레이아웃 */
+.view-form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.view-form .form-group {
+    margin-bottom: 15px;
+}
+
+.view-form label {
+    display: block;
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+/* 상세보기 필드 스타일 */
+.view-field {
+    width: 90%;
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #c9c9c9;
+    border-radius: 5px;
+    font-size: 16px;
+    line-height: 1.5;
+    box-shadow: 0 1.5px 1.5px #d1d1d1;
+    color: #333;
+    margin: 0 auto;
+}
+
+/* 상세보기 내용 영역 */
+.view-content {
+    width: 90%;
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #c9c9c9;
+    border-radius: 5px;
+    min-height: 400px;
+    max-height: 500px;
+    overflow-y: auto;
+    line-height: 1.6;
+    font-size: 16px;
+    box-shadow: 0 1.5px 1.5px #d1d1d1;
+    margin: 0 auto;
+}
+
+/* 상세보기 내용 안의 이미지 스타일 */
+.view-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+
+/* 모달 버튼 영역 */
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #dee2e6;
+}
+
+.modal-buttons button {
+    padding: 8px 16px;
+    border: 1px solid;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+/* 닫기 버튼 (회색) */
+.modal-buttons button:first-child {
+    background-color: #ddd;
+    border-color: #aaa;
+    color: #222;
+}
+
+.modal-buttons button:first-child:hover {
+    background-color: #aaa;
+}
+
+/* 수정하기 버튼 (파란색) */
+.modal-buttons button:last-child {
+    background-color: #bdd8fc;
+    border-color: #82b7fc;
+    color: #222;
+}
+
+.modal-buttons button:last-child:hover {
+    background-color: #82b7fc;
+}
+
+/* 상세보기 모달 닫기 버튼 */
+.closeViewBtn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #333;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+}
+
 /* 게시글 수정 모델 */
 .modal {
     display: none;
@@ -172,6 +284,9 @@ header>ul li a.active {
     border-radius: 10px;
     width: 60%;
     height: 85%;
+    overflow-y: auto; /* 모달 전체에 스크롤 추가 */
+    display: flex;
+    flex-direction: column;
 }
 
 .closeBtn {
@@ -196,6 +311,7 @@ header>ul li a.active {
     align-items: center;
     /* 가로축 가운데 정렬 */
     height: 100%;
+    overflow-y: auto;
 }
 
 #editForm input,
@@ -208,6 +324,7 @@ header>ul li a.active {
     border-radius: 5px;
     font-size: 16px;
     box-shadow: 0 1.5px 1.5px #d1d1d1;
+    overflow-y: auto;
 }
 
 #editForm textarea {

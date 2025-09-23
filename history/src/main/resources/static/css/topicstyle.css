@@ -1,161 +1,217 @@
-html,
-body {
-    height: 100%;
+* {
     margin: 0;
     padding: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #faf0d8;
+    box-sizing: border-box;
 }
 
-.wrapper {
-    min-height: 100%;
+body {
+    /* background-image: url(../img/mainBg1.png); */
+    background-color: #F7F4EA;
+    height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-    box-sizing: border-box;
-}
-
+/* header */
 header {
-    background-color: #fcf4e1;
-    box-shadow: 0 2px 20px #e9e4d7;
-}
-
-header .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
+    background-color: #fcf4e1;
+    padding: 0 100px;
+    box-shadow: 0 2px 20px #e9e4d7;
 }
 
 header img {
-    width: 150px;
+    width: 16%;
+    padding-top: 5px;
 }
 
-header ul {
+header>ul {
     display: flex;
-    list-style: none;
-    padding: 0;
+    /* justify-content: flex-end; */
+    list-style-type: none;
     margin: 0;
-    align-items: center;
+    padding: 0;
+    overflow: hidden;
 }
 
-header ul li a {
-    display: flex;
-    align-items: center;
-    padding: 14px 16px;
-    text-decoration: none;
+header>ul li a {
+    display: block;
     color: #222;
-    font-size: 18px;
-    transition: 0.2s;
-    height: 100%;
-
-}
-
-header ul li a:hover {
-    font-weight: bold;
-    transform: scale(1.1);
-}
-
-main {
-    padding: 100px 0 40px;
-    flex: 1;
-}
-
-main h1 {
     text-align: center;
-    font-size: 28px;
-    margin-top: 0;
-    margin-bottom: 20px;
-    color: #333;
+    justify-content: center;
+    padding: 14px 16px;
+    font-size: 18px;
+    text-decoration: none;
+    transition: transform 0.2s ease, font-size 0.2s ease;
+    /* 애니메이션 효과 */
 }
 
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    /* 4열 */
-    grid-template-rows: repeat(2, 1fr);
-    /* 2행 */
-    gap: 50px 100px;
-    /* 세로15px, 가로10px 간격 */
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-    margin-top: 100px;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-.grid-container button {
-    width: 140%;
-    height: 160px;
-    font-size: 1.8rem;
+header>ul li a:hover {
+    transform: scale(1.2);
+    /* 글자 전체 커짐 */
+    color: #000;
     font-weight: bold;
-    color: #fff;
-    background-color: rgb(22, 185, 104);
-    border: none;
-    border-radius: 10px;
+}
+
+header>ul li a.active {
+    font-weight: bold;
+    font-size: 1.3em;
+    /* 글자 크기 키우기 */
+    text-decoration: underline;
+    /* 밑줄 표시 */
+    color: #000;
+}
+
+#user {
+    font-size: 16px;
+}
+
+#user>a {
+    color: #222;
+    text-decoration: none;
+}
+
+#user a:hover {
+    text-decoration: underline;
+}
+
+/* 무궁화 */
+.flower {
+    position: absolute;
+    width: 550px; /* 크기 조절 */
+    opacity: 0; /* 처음엔 안 보이게 */
+    animation: fadeIn 3s ease forwards; /* 3초간 서서히 나타남 */
+    z-index: -1;
+}
+
+.flower-left {
+    margin-top: 20px;
+    top: 0;
+    left: 0;
+    animation-delay: 0.5s; /* 약간 늦게 등장 */
+}
+
+.flower-right {
+    bottom: 0;
+    right: 0;
+    animation-delay: 1s; /* 더 늦게 등장 */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8); /* 조금 작게 시작 */
+    }
+    to {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+}
+
+/* 태극 문양 */
+.taegeuk {
+    position: absolute;
+    top: 50%;   /* 세로 중앙 */
+    left: 50%;  /* 가로 중앙 */
+    transform: translate(-50%, -50%); /* 정확히 가운데 정렬 */
+    width: 700px;  /* 크기 조절 */
+    opacity: 0;    /* 처음에는 안 보이게 */
+    animation: fadeInTaegeuk 3s ease forwards;
+    animation-delay: 1.5s; /* 무궁화 다 나타난 뒤에 등장 */
+    z-index: -1;   /* 배경으로 */
+}
+
+/* 태극 문양 애니메이션 */
+@keyframes fadeInTaegeuk {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5); /* 작게 시작 */
+    }
+    to {
+        opacity: 0.3; /* 은은하게 보이도록 */
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* title */
+#title {
+    margin: 150px auto;
+    text-align: center;
+    font-size: 25px;
+    /* background-color: rgba(230, 230, 230, 0.5); */
+    /* border-radius: 10px; */
+    width: 35%;
+}
+
+/* container */
+#container {
+    margin: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    margin-top: 10px;
+}
+
+.choiceBox1,
+.choiceBox2 {
+    display: flex;
+    justify-content: center;
+    gap: 35px;
+}
+
+.choice {
+    width: 250px;
+    height: 85px;
+    padding: 10px 20px;
+    background-color: #ecf3fc;
+    border: 1px solid #82b7fc;
+    border-radius: 8px;
+    box-shadow: 0 2px 2px;
     cursor: pointer;
     transition: background-color 0.2s ease;
-}
-
-.grid-container button:hover {
-    background-color: #005fa3;
-}
-
-@media (max-width: 768px) {
-    .grid-container {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(4, 1fr);
-    }
-
-    .grid-container button {
-        height: 100px;
-        font-size: 1.4rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .grid-container {
-        grid-template-columns: 1fr;
-        grid-template-rows: repeat(8, 1fr);
-    }
-
-    .grid-container button {
-        height: 80px;
-        font-size: 1.2rem;
-    }
-}
-
-
-
-
-#footer {
-    background-color: #EEE7DA;
-    padding: 20px 0;
-    margin-top: auto;
-}
-
-#footer .container {
+    font-size: 25px;
+    font-weight: 600;
     display: flex;
     justify-content: center;
     align-items: center;
+    text-align: center;
 }
 
-#footer ul {
+.choice:hover {
+    background-color: #aacefd;
+    box-shadow: 0 2px 2px;
+}
+
+/* 하단 부분 */
+#footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
     display: flex;
-    list-style: none;
-    flex-wrap: wrap;
-    gap: 15px;
-    padding: 0;
-    margin: 0;
+    justify-content: center;
+    align-items: center;
+    background-color: #EEE7DA;
+    padding: 10px 0;
+    z-index: 100;
 }
 
-#footer ul li {
-    font-size: 14px;
+#footer>ul {
+    display: flex;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#footer>ul li {
+    display: block;
     color: #333;
+    text-align: center;
+    padding: 5px 8px;
+    text-decoration: none;
 }
