@@ -59,7 +59,8 @@
             <tbody>
             <!-- Thymeleaf로 서버 데이터 렌더링 -->
             <tr th:each="board, iterStat : ${boards}">
-                <td th:text="${(currentPage != null ? currentPage : 0) * 10 + iterStat.count}"></td>
+                <!-- 전체 게시글에서 역순으로 번호 매기기 -->
+                <td th:text="${totalElements - (currentPage * 10) - iterStat.index}"></td>
                 <td>
                     <a th:href="@{/board/detail(boardId=${board.boardId})}" th:text="${board.title}"></a>
                 </td>
@@ -89,37 +90,40 @@
             </a>
         </div>
 
-        <!-- 페이징 영역 -->
+        <!-- 페이징 영역 - button 스타일 사용 -->
         <div class="pagination" th:if="${totalPages > 0}">
             <!-- 이전 페이지 -->
-            <a th:if="${currentPage > 0}"
-               th:href="@{/notice(page=${currentPage - 1})}"
-               class="page-btn">◀</a>
-            <span th:unless="${currentPage > 0}" class="page-btn disabled">◀</span>
+            <button th:if="${currentPage > 0}"
+                    th:onclick="|location.href='/notice?page=${currentPage - 1}'|">◀</button>
+            <button th:unless="${currentPage > 0}" disabled>◀</button>
 
             <!-- 페이지 번호들 -->
             <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
-                <a th:unless="${i == currentPage}"
-                   th:href="@{/notice(page=${i})}"
-                   th:text="${i + 1}"
-                   class="page-btn"></a>
-                <span th:if="${i == currentPage}"
-                      th:text="${i + 1}"
-                      class="page-btn active"></span>
+                <button th:unless="${i == currentPage}"
+                        th:onclick="|location.href='/notice?page=${i}'|"
+                        th:text="${i + 1}"></button>
+                <button th:if="${i == currentPage}"
+                        th:text="${i + 1}"
+                        class="active"
+                        disabled></button>
             </th:block>
 
             <!-- 다음 페이지 -->
-            <a th:if="${currentPage < totalPages - 1}"
-               th:href="@{/notice(page=${currentPage + 1})}"
-               class="page-btn">▶</a>
-            <span th:unless="${currentPage < totalPages - 1}" class="page-btn disabled">▶</span>
+            <button th:if="${currentPage < totalPages - 1}"
+                    th:onclick="|location.href='/notice?page=${currentPage + 1}'|">▶</button>
+            <button th:unless="${currentPage < totalPages - 1}" disabled>▶</button>
         </div>
 
         <!-- 페이징이 없는 경우 기본 표시 -->
         <div class="pagination" th:unless="${totalPages > 0}">
             <button disabled>◀</button>
-            <button class="active">1</button>
+            <button class="active" disabled>1</button>
             <button disabled>▶</button>
+        </div>
+
+        <!-- 페이지 정보 표시 -->
+        <div th:if="${totalElements > 0}"
+             style="text-align: center; margin-top: 10px; color: #666; font-size: 14px;">
         </div>
     </div>
 </div>
