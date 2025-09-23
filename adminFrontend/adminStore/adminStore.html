@@ -14,10 +14,10 @@
             <img src="img/mainLg2.png" alt="메인 로고">
         </a>
         <ul>
-            <li><a href="">학습하기</a></li>
-            <li><a href="">퀴즈풀기</a></li>
+            <li><a href="http://127.0.0.1:5501/study/studyHome.html">학습하기</a></li>
+            <li><a href="http://127.0.0.1:5501/quiz/quizHome.html">퀴즈풀기</a></li>
             <li><a href="http://127.0.0.1:5501/attend/attend.html">출석하기</a></li>
-            <li><a href="">포인트 상점</a></li>
+            <li><a href="http://127.0.0.1:5501/pointStore/pointStore.html">포인트 상점</a></li>
             <li><a href="http://127.0.0.1:5501/faq/faq.html">FAQ</a></li>
             <li><a href="http://127.0.0.1:5501/notice/notice.html">공지사항</a></li>
         </ul>
@@ -25,7 +25,7 @@
             <a href="http://127.0.0.1:5501/mypage/mypage.html" id="userName-link" class="active"> 님</a>
         </div>
     </header>
-    <div id="sideber">
+    <div id="sidebar">
         <ul>
             <li><a href="http://127.0.0.1:5501/adminUser/adminUser.html">회원관리</a></li>
             <li class="submenuBox">
@@ -43,19 +43,29 @@
     <div id="container">
         <!-- 상품 목록 테이블 -->
         <div id="productBox">
+            <div class="title-box">
             <div class="product-title">상품목록</div>
+
+            <!-- 상품 추가 -->
+            <div class="add-product">
+                <button class="add-product-btn">상품추가</button>
+            </div>
+            </div>
             <table class="product-table">
                 <thead>
                     <tr>
-                        <th style="width: 120px;">번호</th>
+                        <th>번호</th>
                         <th>상품명</th>
-                        <th style="width: 230px;">상품 가격</th>
-                        <th style="width: 230px;">작업</th>
+                        <th>카테고리</th>
+                        <th>브랜드명</th>
+                        <th>상품 가격</th>
+                        <th>작업</th>
                     </tr>
                 </thead>
                 <tbody id="product-body">
                 </tbody>
             </table>
+
             <!-- 상품 수정 모달 -->
             <div id="editProductModal" class="modal">
                 <div class="modal-content">
@@ -64,17 +74,55 @@
                     <form id="editProductForm">
                         <label for="editProductName">상품명</label>
                         <input type="text" id="editProductName" placeholder="상품명을 입력하세요">
-    
+
                         <label for="editProductImage">상품 이미지</label>
                         <input type="file" id="editProductImage" accept="image/*">
-    
-                        <label for="editProductPrice">상품 가격 (포인트)</label>
+
+                        <label for="editProductPrice">상품 가격</label>
                         <input type="number" id="editProductPrice" placeholder="가격 입력">
-    
+
                         <button type="submit" id="editProductBtn">수정 완료</button>
                     </form>
                 </div>
             </div>
+
+            <!-- 상품 추가 모달 -->
+            <div id="addProductModal" class="modal">
+                <div class="modal-content">
+                    <span class="closeBtn">&times;</span>
+                    <h2>상품 추가</h2>
+                    <form id="addProductForm">
+                        <div id="category-box">
+                        <label for="addProductCategory">카테고리</label>
+                        <select id="addProductCategory" required>
+                            <option value="">-- 카테고리 선택 --</option>
+                            <option value="음료">음료</option>
+                            <option value="편의점">편의점</option>
+                            <option value="영화">영화</option>
+                            <option value="상품권">상품권</option>
+                        </select>
+
+                        <label for="addProductBrand">브랜드명</label>
+                        <select id="addProductBrand" required>
+                            <option value="">-- 브랜드 선택 --</option>
+                            <!-- JS에서 카테고리에 맞게 동적으로 채워짐 -->
+                        </select>
+                        </div>
+
+                        <label for="addProductName">상품명</label>
+                        <input type="text" id="addProductName" placeholder="상품명을 입력하세요" required>
+
+                        <label for="addProductImage">상품 이미지</label>
+                        <input type="file" id="addProductImage" accept="image/*">
+
+                        <label for="addProductPrice">상품 가격</label>
+                        <input type="number" id="addProductPrice" placeholder="가격 입력" required>
+
+                        <button type="submit" id="addProductBtn">추가하기</button>
+                    </form>
+                </div>
+            </div>
+
             <!-- 페이징 영역 -->
             <div id="pagination" class="pagination"></div>
         </div>
