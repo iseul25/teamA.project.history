@@ -41,13 +41,13 @@ window.onload = () => {
 // 상품 관리 -----------------
 // 상품 더미 데이터 (DB 연동 전 테스트용)
 let products = [
-    { id: 1, name: "투썸플레이스 쿠폰", price: 50, image: "coffee.png" },
-    { id: 2, name: "문화상품권 100", price: 100, image: "culture100.png" },
-    { id: 3, name: "문화상품권 300", price: 300, image: "culture300.png" },
-    { id: 4, name: "문화상품권 500", price: 500, image: "culture500.png" },
-    { id: 5, name: "스타벅스 쿠폰", price: 50, image: "starbucks.png" },
-    { id: 6, name: "이디야 쿠폰", price: 50, image: "ediya.png" },
-    { id: 7, name: "CGV 영화관람권", price: 500, image: "cgv.png" }
+    { id: 1, name: "투썸플레이스 쿠폰", category: "음료", brand: "투썸플레이스", price: 50, image: "coffee.png" },
+    { id: 2, name: "문화상품권 100", category: "상품권", brand: "컬쳐랜드", price: 100, image: "culture100.png" },
+    { id: 3, name: "문화상품권 300", category: "상품권", brand: "컬쳐랜드", price: 300, image: "culture300.png" },
+    { id: 4, name: "문화상품권 500", category: "상품권", brand: "컬쳐랜드", price: 500, image: "culture500.png" },
+    { id: 5, name: "스타벅스 쿠폰", category: "음료", brand: "스타벅스", price: 50, image: "starbucks.png" },
+    { id: 6, name: "이디야 쿠폰", category: "음료", brand: "이디야", price: 50, image: "ediya.png" },
+    { id: 7, name: "CGV 영화관람권", category: "영화", brand: "CGV", price: 500, image: "cgv.png" }
 ];
 
 // 한 페이지당 5개
@@ -70,6 +70,8 @@ function renderProducts(page = 1) {
         tr.innerHTML = `
       <td>${product.id}</td>
       <td>${product.name}</td>
+      <td>${product.category}</td>
+      <td>${product.brand}</td>
       <td>${product.price} 점</td>
       <td>
         <button class="editBtn" data-id="${product.id}">수정</button>
@@ -85,6 +87,8 @@ function renderProducts(page = 1) {
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>&nbsp;</td>
+          <td></td>
+          <td></td>
           <td></td>
           <td></td>
           <td></td>
@@ -198,6 +202,58 @@ function renderPagination(totalItems, currentPage) {
     nextBtn.addEventListener("click", () => renderProducts(currentPage + 1));
     paginationDiv.appendChild(nextBtn);
 }
+
+// 상품 추가 모달
+// 카테고리별 브랜드 목록 데이터
+const brandOptions = {
+    "음료": ["컴포즈", "메가커피", "스타벅스", "이디야", "투썸플레이스"],
+    "편의점": ["CU", "GS25", "세븐일레븐", "이마트24"],
+    "영화": ["CGV", "메가박스", "롯데시네마"],
+    "상품권": ["교보문고", "컬쳐랜드", "북앤라이프"]
+};
+
+// 요소 가져오기
+const categorySelect = document.getElementById("addProductCategory");
+const brandSelect = document.getElementById("addProductBrand");
+
+// 카테고리 선택 시 브랜드 옵션 채우기
+categorySelect.addEventListener("change", function () {
+    const selectedCategory = this.value;
+
+    // 브랜드 초기화
+    brandSelect.innerHTML = `<option value="">-- 브랜드 선택 --</option>`;
+
+    if (selectedCategory && brandOptions[selectedCategory]) {
+        brandOptions[selectedCategory].forEach(brand => {
+            const option = document.createElement("option");
+            option.value = brand;
+            option.textContent = brand;
+            brandSelect.appendChild(option);
+        });
+    }
+});
+
+// 상품 추가 모달 열기/닫기 --------------------
+const addProductBtn = document.querySelector(".add-product-btn"); // 상단 "상품추가" 버튼
+const addProductModal = document.getElementById("addProductModal");
+const addCloseBtn = addProductModal.querySelector(".closeBtn");
+
+// 열기 버튼 클릭
+addProductBtn.addEventListener("click", () => {
+  addProductModal.classList.add("show");
+});
+
+// 닫기 버튼 클릭
+addCloseBtn.addEventListener("click", () => {
+  addProductModal.classList.remove("show");
+});
+
+// 모달 바깥 클릭 시 닫기
+window.addEventListener("click", (e) => {
+  if (e.target === addProductModal) {
+    addProductModal.classList.remove("show");
+  }
+});
 
 
 // 주문 관리 -----------------
