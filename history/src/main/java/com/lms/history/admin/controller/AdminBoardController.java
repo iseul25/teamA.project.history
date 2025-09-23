@@ -106,13 +106,41 @@ public class AdminBoardController {
             if (board != null) {
                 board.setTitle(title);
 
-                String cleanContent = removeImageHtmlFromContent(content);
-                board.setContent(cleanContent);
-
+                // 새 이미지가 업로드된 경우
                 if (imageFile != null && !imageFile.isEmpty()) {
                     String imageUrl = fileUploadService.saveFile(imageFile);
                     board.setImgUrl(imageUrl);
 
+                    if (imgDescription != null && !imgDescription.trim().isEmpty()) {
+                        board.setImgDescription(imgDescription.trim());
+                    }
+
+                    // 이미지를 내용 위에 추가 (BoardController와 동일한 로직)
+                    String imageHtml = String.format(
+                            "<img src='%s' alt='%s' style='max-width: 100%%; height: auto; margin: 15px 0; border: 1px solid #ddd; border-radius: 5px; display: block;'/>",
+                            imageUrl,
+                            board.getImgDescription() != null ? board.getImgDescription() : ""
+                    );
+
+                    // 이미지 설명 추가
+                    if (board.getImgDescription() != null && !board.getImgDescription().trim().isEmpty()) {
+                        imageHtml += String.format(
+                                "<p style='color: #666; font-style: italic; text-align: center; margin-top: 5px; margin-bottom: 15px;'>%s</p>",
+                                board.getImgDescription()
+                        );
+                    }
+
+                    // 기존 이미지 HTML 완전 제거
+                    String cleanContent = removeImageHtmlFromContent(content);
+
+                    // 새 이미지 HTML을 내용 앞에 추가
+                    board.setContent(imageHtml + "<br/>" + cleanContent);
+                } else {
+                    // 새 이미지가 없는 경우, 기존 이미지 HTML 제거 후 순수 텍스트만 저장
+                    String cleanContent = removeImageHtmlFromContent(content);
+                    board.setContent(cleanContent);
+
+                    // 이미지 설명만 업데이트
                     if (imgDescription != null && !imgDescription.trim().isEmpty()) {
                         board.setImgDescription(imgDescription.trim());
                     }
@@ -137,9 +165,22 @@ public class AdminBoardController {
     private String removeImageHtmlFromContent(String content) {
         if (content == null) return null;
 
-        // 이미지 HTML 태그 패턴 제거 (정규식 사용)
-        String pattern = "<img[^>]*>\\s*(<br/>|<br>)*";
-        return content.replaceAll(pattern, "").trim();
+        // 강화된 이미지 HTML 제거 로직
+        // 1. uploads 경로 포함 img 태그 제거
+        content = content.replaceAll("<img[^>]*src\\s*=\\s*['\"][^'\"]*uploads[^'\"]*['\"][^>]*>", "");
+        content = content.replaceAll("<img[^>]*src\\s*=\\s*['\"][^'\"]*uploads[^'\"]*['\"][^>]*/>", "");
+
+        // 2. 이미지 설명 p 태그 제거 (color 스타일 포함)
+        content = content.replaceAll("<p[^>]*style[^>]*color:[^>]*>[^<]*</p>", "");
+
+        // 3. 연속된 br 태그들 제거
+        content = content.replaceAll("^\\s*(<br\\s*/?>)+\\s*", "");
+        content = content.replaceAll("(<br\\s*/?>)+\\s*$", "");
+
+        // 4. 기타 정리
+        content = content.trim();
+
+        return content;
     }
 
     /**
