@@ -77,8 +77,8 @@ header>ul li a.active {
     text-decoration: underline;
 }
 
-/* sideber */
-#sideber {
+/* sidebar */
+#sidebar {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -93,11 +93,11 @@ header>ul li a.active {
     z-index: 50;
 }
 
-#sideber>ul {
+#sidebar>ul {
     padding-top: 55px;
 }
 
-#sideber>ul>li>a {
+#sidebar>ul>li>a {
     display: block;
     color: black;
     padding: 15px;
@@ -111,21 +111,21 @@ header>ul li a.active {
     transition: transform 0.2s ease, font-size 0.2s ease;
 }
 
-#sideber li a.active {
+#sidebar li a.active {
     font-weight: bold;
     font-size: 1.4em;
     text-decoration: underline;
     color: #000;
 }
 
-#sideber li a:not(.active):hover {
+#sidebar li a:not(.active):hover {
     transform: scale(1.2);
     color: #000;
     font-weight: bold;
 }
 
 /* 사이드바 서브메뉴 */
-#sideber .submenu {
+#sidebar .submenu {
     max-height: 0;
     overflow: hidden;
     opacity: 0;
@@ -136,18 +136,18 @@ header>ul li a.active {
     text-align: center;
 }
 
-#sideber .submenu li a.active {
+#sidebar .submenu li a.active {
     font-size: 1.2em;
 }
 
-#sideber .submenuBox:hover>.submenu {
+#sidebar .submenuBox:hover>.submenu {
     max-height: 500px;
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
 }
 
-#sideber .submenu li a {
+#sidebar .submenu li a {
     display: block;
     padding: 5px;
     font-size: 16px;
@@ -180,6 +180,11 @@ header>ul li a.active {
     box-shadow: 0 2px 2px #ddd;
     border: 1px solid #dfdfdf;
     border-radius: 15px
+}
+
+.title-box {
+    display: flex;
+    justify-content: space-between;
 }
 
 .product-title {
@@ -304,6 +309,87 @@ header>ul li a.active {
 }
 
 #editProductBtn:hover {
+    background-color: #7e7e7e;
+}
+
+/* 상품 추가 버튼 */
+.add-product {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.add-product-btn {
+    display: block;
+    padding: 6px 12px;
+    background-color: #ddd;
+    border: 1px solid #bdbdbd;
+    border-radius: 5px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.add-product-btn:hover {
+    background-color: #d1d1d1;
+}
+
+/* 상품 추가 모달 */
+#addProductForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+}
+
+#category-box {
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+#addProductCategory,
+#addProductBrand {
+    width: 30%;
+    padding: 3px;
+}
+
+#addProductForm input{
+    width: 90%;
+    padding: 15px;
+    margin: 10px 0;
+    border: 1px solid #c9c9c9;
+    border-radius: 5px;
+    font-size: 16px;
+    box-shadow: 0 1.5px 1.5px #d1d1d1;
+}
+
+#addProductForm > label {
+    align-self: flex-start;
+    text-align: left;
+    margin-left: 30px;
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+/* 상품 추가 모달 안 추가 버튼 */
+#addProductBtn {
+    display: block;
+    margin: 15px auto;
+    padding: 6px 12px;
+    background-color: #919191;
+    border: 1px solid #7e7e7e;
+    border-radius: 5px;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+#addProductBtn:hover {
     background-color: #7e7e7e;
 }
 
