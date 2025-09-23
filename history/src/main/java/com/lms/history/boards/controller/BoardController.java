@@ -242,6 +242,30 @@ public class BoardController {
     @GetMapping("/edit")
     public String editForm(@RequestParam("boardId") int boardId, Model model) {
         Board board = boardService.findById(boardId);
+
+        // 수정 폼에서 기존 이미지 HTML 완전 제거하여 순수한 텍스트만 표시
+        String content = board.getContent();
+        if (content != null) {
+            // 1. 모든 img 태그 제거 (uploads 관련)
+            content = content.replaceAll("<img[^>]*src\\s*=\\s*['\"][^'\"]*uploads[^'\"]*['\"][^>]*>", "");
+            content = content.replaceAll("<img[^>]*src\\s*=\\s*['\"][^'\"]*uploads[^'\"]*['\"][^>]*/>", "");
+
+            // 2. 이미지 설명 p 태그 제거 (color 스타일 포함)
+            content = content.replaceAll("<p[^>]*style[^>]*color:[^>]*>[^<]*</p>", "");
+
+            // 3. 연속된 br 태그들 제거
+            content = content.replaceAll("^\\s*(<br\\s*/?>)+\\s*", "");
+            content = content.replaceAll("(<br\\s*/?>)+\\s*$", "");
+
+            // 4. 기타 HTML 태그들 정리
+            content = content.trim();
+
+            // 5. 빈 줄들 정리
+            content = content.replaceAll("\\n\\s*\\n", "\n");
+
+            board.setContent(content);
+        }
+
         model.addAttribute("board", board);
         model.addAttribute("selectedBoardType", board.getBoardType());
         return "board/editBoard";
@@ -257,18 +281,60 @@ public class BoardController {
         try {
             // 새 이미지가 업로드된 경우
             if (imageFile != null && !imageFile.isEmpty()) {
-                String imageUrl = null;
-                try {
-                    imageUrl = fileUploadService.saveFile(imageFile);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                String imageUrl = fileUploadService.saveFile(imageFile);
                 board.setImgUrl(imageUrl);
-            }
 
-            // 이미지 설명 처리
-            if (imgDescription != null && !imgDescription.trim().isEmpty()) {
-                board.setImgDescription(imgDescription.trim());
+                if (imgDescription != null && !imgDescription.trim().isEmpty()) {
+                    board.setImgDescription(imgDescription.trim());
+                }
+
+                // 이미지를 내용 위에 추가 (등록과 동일한 로직)
+                String imageHtml = String.format(
+                        "<img src='%s' alt='%s' style='max-width: 100%%; height: auto; margin: 15px 0; border: 1px solid #ddd; border-radius: 5px; display: block;'/>",
+                        imageUrl,
+                        board.getImgDescription() != null ? board.getImgDescription() : ""
+                );
+
+                // 이미지 설명 추가
+                if (board.getImgDescription() != null && !board.getImgDescription().trim().isEmpty()) {
+                    imageHtml += String.format(
+                            "<p style='color: #666; font-style: italic; text-align: center; margin-top: 5px; margin-bottom: 15px;'>%s</p>",
+                            board.getImgDescription()
+                    );
+                }
+
+                // 기존 이미지 HTML 완전 제거
+                String content = board.getContent();
+
+                // 1단계: uploads가 포함된 img 태그를 찾아서 제거
+                while (content.contains("<img") && content.contains("/uploads/")) {
+                    int imgStart = content.indexOf("<img");
+                    int imgEnd = content.indexOf("/>", imgStart);
+                    if (imgStart >= 0 && imgEnd > imgStart) {
+                        String imgTag = content.substring(imgStart, imgEnd + 2);
+                        if (imgTag.contains("/uploads/")) {
+                            content = content.replace(imgTag, "");
+                        } else {
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+
+                // 2단계: 이미지 설명 p 태그 제거
+                content = content.replaceAll("<p[^>]*color:[^>]*>[^<]*</p>", "");
+
+                // 3단계: 앞쪽의 연속된 <br/> 태그들 제거
+                content = content.replaceAll("^(<br/>|<br>|\\s)+", "").trim();
+
+                // 새 이미지 HTML을 내용 앞에 추가
+                board.setContent(imageHtml + "<br/>" + content);
+            } else {
+                // 새 이미지가 없는 경우, 이미지 설명만 업데이트
+                if (imgDescription != null && !imgDescription.trim().isEmpty()) {
+                    board.setImgDescription(imgDescription.trim());
+                }
             }
 
             boardService.update(board);
@@ -280,8 +346,12 @@ public class BoardController {
             redirectAttributes.addAttribute("boardType", board.getBoardType());
             return "redirect:/board/list";
 
-        } catch (IllegalStateException e) {
+        } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("selectedBoardType", board.getBoardType());
+            return "board/editBoard";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "게시글 수정 중 오류가 발생했습니다.");
             model.addAttribute("selectedBoardType", board.getBoardType());
             return "board/editBoard";
         }
