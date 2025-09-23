@@ -11,24 +11,41 @@
 
 <body>
 <header>
-    <a href="/home">
-        <img src="/img/mainLg2.png" alt="메인 로고">
+    <a th:href="@{/}">
+        <img th:src="@{/img/mainLg2.png}" alt="메인 로고">
     </a>
     <ul>
-        <li><a href="">학습하기</a></li>
-        <li><a href="">퀴즈풀기</a></li>
-        <li><a href="/user/attend">출석하기</a></li>
-        <li><a href="">포인트 상점</a></li>
-        <li><a href="/user/faq" class="active">FAQ</a></li>
-        <li><a href="">공지사항</a></li>
+        <li><a th:href="@{/board/topic}" class="active">학습하기</a></li>
+        <li><a th:href="@{/quiz/topic}">퀴즈풀기</a></li>
+        <li><a th:href="@{/attend}">출석하기</a></li>
+        <li><a th:href="@{/pointStore}">포인트 상점</a></li>
+        <li><a th:href="@{/faq}">FAQ</a></li>
+        <li><a th:href="@{/notice}">공지사항</a></li>
     </ul>
-    <div id="user" style="display: none;"> <!-- 로그인 했을 시에만 보이게 -->
-        <a href="" id="userName-link"> 님</a>
+    <!-- Thymeleaf로 로그인 상태 처리 -->
+    <div id="user" th:if="${session.loginUser != null}">
+        <!-- 관리자인 경우 -->
+        <a th:if="${session.loginUser.userType == '관리자'}"
+           th:href="@{/admin/users}"
+           class="userName-link"
+           th:text="${session.loginUser.name} + '님'"></a>
+
+        <!-- 일반 사용자인 경우 -->
+        <a th:unless="${session.loginUser.userType == '관리자'}"
+           th:href="@{/user/myPage}"
+           class="userName-link"
+           th:text="${session.loginUser.name} + '님'"></a>
     </div>
 </header>
 <div id="container">
     <div class="faq-container">
         <div class="faq-title">FAQ</div>
+
+        <div class="page-nav">
+            <a href="/faq">FAQ</a>
+            <p>/</p>
+            <a href="/notice">공지사항</a>
+        </div>
 
         <div class="faq-item">
             <div class="faq-question">
