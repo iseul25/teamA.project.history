@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>퀴즈풀기</title>
+    <link rel="stylesheet" href="css/quizSolve.css">
+</head>
+
+<body>
+    <header>
+        <a href="http://127.0.0.1:5501/endResult.addver/home.html">
+            <img src="img/mainLg2.png" alt="메인 로고">
+        </a>
+        <ul>
+            <li><a href="http://127.0.0.1:5501/study/studyHome.html">학습하기</a></li>
+            <li><a href="http://127.0.0.1:5501/quiz/quizHome.html">퀴즈풀기</a></li>
+            <li><a href="http://127.0.0.1:5501/attend/attend.html">출석하기</a></li>
+            <li><a href="http://127.0.0.1:5501/pointStore/pointStore.html">포인트 상점</a></li>
+            <li><a href="http://127.0.0.1:5501/faq/faq.html">FAQ</a></li>
+            <li><a href="http://127.0.0.1:5501/notice/notice.html">공지사항</a></li>
+        </ul>
+        <div id="user" style="display: none;"> <!-- 로그인 했을 시에만 보이게 -->
+            <a href="http://127.0.0.1:5501/mypage/mypage.html" id="userName-link"> 님</a>
+        </div>
+    </header>
+    <div id="container">
+        <!-- 퀴즈 타이틀 -->
+
+        <div class="quiz-wrapper">
+
+            <div class="quiz-header">
+                <div class="title-box">
+                    <!-- 문제 타이틀 -->
+                    <div class="quiz-title"></div>
+
+                    <!-- 문제 제목 -->
+                    <div class="questions-title" id="question-title">문제</div>
+                </div>
+
+                <div class="quiz-number">
+                    <p>문제</p>
+                    <span id="current-question">1</span> /
+                    <span id="total-questions">10</span>
+
+                    <!--  진행률 바 -->
+                    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"
+                        id="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                        <div class="progress-text" id="progress-text"></div>
+                    </div>
+
+                    <!-- 제출 버튼 -->
+                    <div class="submit-btn-box">
+                        <button id="submit-btn">제출하기</button>
+                        <button id="back-list-btn" style="display:none;">목록보기</button>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="quizBox">
+
+                <div class="content-title">
+                    <!-- 문제 본문 -->
+                    <div class="questions-content">
+                        <p id="question-text">문제 설명이 들어갑니다.</p>
+                    </div>
+
+                    <!-- 문제 이미지 -->
+                    <div class="question-image" id="question-image" style="display:none;">
+                        <img src="" alt="문제 이미지">
+                    </div>
+                </div>
+
+                <!-- 객관식 보기 -->
+                <div class="questions-options" id="options-box">
+                    <label><input type="radio" name="answer" value="1"><span>보기 1</span></label><br>
+                    <label><input type="radio" name="answer" value="2"><span>보기 2</span></label><br>
+                    <label><input type="radio" name="answer" value="3"><span>보기 3</span></label><br>
+                    <label><input type="radio" name="answer" value="4"><span>보기 4</span></label><br>
+                </div>
+
+
+                <!-- 네비게이션 버튼 -->
+                <div class="quiz-nav">
+                    <button id="prev-btn">◀ 이전</button>
+                    <div id="pagination"></div>
+                    <button id="next-btn">다음 ▶</button>
+                </div>
+
+
+            </div>
+
+            <!-- 관리자 수정 버튼 -->
+            <button id="edit-question-btn" class="admin-edit-btn" style="display:none;">수정</button>
+
+            <!-- 수정 모달 -->
+            <div id="edit-modal" class="modal">
+                <div class="modal-content">
+                    <span class="closeBtn">&times;</span>
+                    <h2>퀴즈 문제 수정</h2>
+                    <form id="edit-form">
+                        <!-- 문제 지문 -->
+                        <label>문제 지문</label>
+                        <textarea id="edit-question-text"></textarea><br>
+
+                        <!-- 문제 이미지 -->
+                        <label>문제 이미지 업로드</label>
+                        <input type="file" id="edit-question-file" accept="image/*">
+
+                        <!-- 미리보기 -->
+                        <div id="edit-image-preview" style="margin-top:10px;">
+                            <img id="preview-img" src="" alt="미리보기" style="margin: 0 auto; max-width:30%; display:none;">
+                        </div>
+
+                        <!-- 보기 수정 -->
+                        <div id="edit-options">
+                            <label>보기 1 <input type="text" id="edit-option-1"></label><br>
+                            <label>보기 2 <input type="text" id="edit-option-2"></label><br>
+                            <label>보기 3 <input type="text" id="edit-option-3"></label><br>
+                            <label>보기 4 <input type="text" id="edit-option-4"></label><br>
+                        </div>
+
+                        <div id="answer-box">
+                            <!-- 정답 선택 -->
+                            <label>정답 번호</label>
+                            <select id="edit-answer">
+                                <option value="1">1번</option>
+                                <option value="2">2번</option>
+                                <option value="3">3번</option>
+                                <option value="4">4번</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="edit-submit-btn">저장하기</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- 결과 박스 -->
+        <div class="resultBox" id="result-box" style="display:none;">
+            <h2>퀴즈 결과</h2>
+
+            <div id="score-box">
+                <p>총점: <span id="total-score">0</span> 점</p>
+                <p>맞춘 개수: <span id="correct-count">0</span></p>
+                <p>획득 포인트: <span id="earned-points">0</span>P</p>
+            </div>
+
+            <div id="answer-review">
+                <h3>정답 확인</h3>
+                <ul id="review-list"></ul>
+            </div>
+
+            <div class="result-btn-box">
+                <button id="close-btn" class="close-btn">닫기</button>
+                <button id="detail-btn" class="quiz-detail-btn">상세보기</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer">
+        <ul>
+            <li>대표전화: 042-222-2402</li>
+            <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+            <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+            <li>© 2025 역사 한 걸음. All rights reserved.</li>
+        </ul>
+    </div>
+</body>
+<script src="js/quizSolve.js"></script>
+
+</html>
