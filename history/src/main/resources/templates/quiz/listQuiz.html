@@ -172,10 +172,14 @@
                     </td>
 
                     <!-- 일반 사용자 전용 -->
-                    <td th:if="${session.loginUser == null or session.loginUser.userType != '관리자'}"
-                        th:text="${category['totalScore']}">0</td>
-                    <td th:if="${session.loginUser == null or session.loginUser.userType != '관리자'}"
-                        th:text="${category['pass']} ? '수료' : '미수료'">미수료</td>
+                    <td th:if="${session.loginUser == null or session.loginUser.userType != '관리자'}">
+                        <span th:if="${session.loginUser != null}" th:text="${category['totalScore']}"></span>
+                        <span th:if="${session.loginUser == null}">&nbsp;</span>
+                    </td>
+                    <td th:if="${session.loginUser == null or session.loginUser.userType != '관리자'}">
+                        <span th:if="${session.loginUser != null}" th:text="${category['pass']} ? '수료' : '미수료'"></span>
+                        <span th:if="${session.loginUser == null}">&nbsp;</span>
+                    </td>
                 </tr>
 
                 <!-- 빈 줄 채우기 -->
@@ -360,17 +364,17 @@
                 const response = await fetch(`/quiz/status/${currentQuizCategoryId}?page=${currentPage}`);
                 const data = response.ok ? await response.json() : null;
 
-                if (data && data.scores) {
+                if (data && data.scores && data.scores.length > 0) {
                     renderStatusTable(data.scores);
                     renderPagination(data.currentPage, data.totalPages);
                 } else {
-                    renderEmptyTable();
-                    renderPagination(1, 1);
+                    renderStatusTable(null); // null을 전달하여 빈 메시지 표시
+                    hidePagination(); // 데이터 없으면 페이지네이션 숨김
                 }
             } catch (err) {
                 console.error(err);
-                renderEmptyTable();
-                renderPagination(1, 1);
+                renderStatusTable(null); // 에러시에도 null 전달
+                hidePagination(); // 에러시에도 페이지네이션 숨김
             }
         }
 
@@ -385,32 +389,36 @@
                 const pageStart = (currentPage - 1) * 10; // 페이지 크기 10
                 scores.forEach((score, idx) => {
                     statusBody.insertAdjacentHTML("beforeend", `
-                <tr>
-                    <td>${pageStart + idx + 1}</td>
-                    <td>${score.username}</td>
-                    <td>${score.score}</td>
-                    <td>${score.passed}</td>
-                </tr>
-            `);
+            <tr>
+                <td>${pageStart + idx + 1}</td>
+                <td>${score.username}</td>
+                <td>${score.score}</td>
+                <td>${score.passed}</td>
+            </tr>
+        `);
                 });
 
                 // 부족한 줄을 채워 10줄 고정
                 for (let i = scores.length; i < 10; i++) {
                     statusBody.insertAdjacentHTML("beforeend", `
-                <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-            `);
+            <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+        `);
                 }
             }
         }
 
+// 페이지네이션 숨기는 함수 추가
+        function hidePagination() {
+            statusPagination.style.display = 'none';
+        }
 
         function renderPagination(currentPageNum, totalPages) {
             statusPagination.innerHTML = "";
+            statusPagination.style.display = 'block'; // 데이터 있을 때는 표시
 
             const prevBtn = document.createElement("button");
             prevBtn.textContent = "◀";
             prevBtn.classList.add("page-btn");
-            // prevBtn.disabled = currentPageNum === 1;
             prevBtn.addEventListener("click", async () => {
                 if (currentPage > 1) {
                     currentPage--;
@@ -434,7 +442,6 @@
             const nextBtn = document.createElement("button");
             nextBtn.textContent = "▶";
             nextBtn.classList.add("page-btn");
-            // nextBtn.disabled = currentPageNum === totalPages;
             nextBtn.addEventListener("click", async () => {
                 if (currentPage < totalPages) {
                     currentPage++;
