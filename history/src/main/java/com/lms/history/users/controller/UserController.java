@@ -26,7 +26,7 @@ public class UserController {
     @GetMapping("/add")
     public String addForm(Model model) {
         model.addAttribute("user", new User());
-        return "/home";
+        return "/signUp";
     }
 
     @PostMapping("/add")
@@ -137,3 +137,4 @@ public class UserController {
         return "/home";
     }
 }
+
