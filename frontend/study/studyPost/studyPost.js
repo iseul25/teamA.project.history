@@ -9,26 +9,30 @@ async function checkLogin() {
         const userDiv = document.getElementById("user");
         const usernameLink = document.getElementById("userName-link");
 
+        // 추가
+        const postActions = document.getElementById("post-actions");
+
         if (data.isLoggedIn) {
             if (data.role === "admin") {
                 // 관리자
                 usernameLink.textContent = "관리자";
                 usernameLink.href = "/admin/dashboard.html";
 
-                // 관리자용 버튼 보이기
-                document.getElementById(".post-actions").style.display = "block";
+                // 관리자용 버튼 (수정, 삭제) 보이기
+                postActions.style.display = "block";
             } else {
                 // 일반 유저
                 usernameLink.textContent = data.username;
                 usernameLink.href = "/mypage/mypage.html";
 
                 // 게시글 수정, 삭제 버튼 숨기기
-                document.getElementById(".post-actions").style.display = "none";
+                postActions.style.display = "none";
             }
             userDiv.style.display = "block";
         } else {
+            // 비로그인일 때
             userDiv.style.display = "none";
-            document.getElementById(".post-actions").style.display = "none";
+            postActions.style.display = "none";
         }
     } catch (err) {
         console.error("로그인 체크 에러:", err);
@@ -41,7 +45,9 @@ window.onload = () => {
     //document.getElementById(".post-actions").style.display = "block";
 
     checkLogin();
-    loadPost()
+    loadPost();
+    // 학습 완료 모달 실행
+    setupDoneModal();
 }
 
 // 테스트용 더미 데이터 (학습목록과 동일하게 유지)
@@ -323,6 +329,50 @@ function setupReplyEvents(post) {
                 setupReplyEvents(post);
             });
         });
+    });
+}
+
+// 학습 완료 모달
+function setupDoneModal() {
+    const doneBtn = document.getElementById("done-btn");
+    const doneModal = document.getElementById("doneModal");
+    const doneCloseBtn = doneModal.querySelector(".done-closeBtn");
+    const yesBtn = document.getElementById("yes-quiz-btn");
+    const noBtn = document.getElementById("no-quiz-btn");
+
+    // 현재 카테고리 가져오기
+    function getCurrentCategory() {
+        const categoryElement = document.querySelector(".post-category");
+        return categoryElement ? categoryElement.textContent.trim() : "";
+    }
+
+    // 모달 열기
+    doneBtn.addEventListener("click", () => {
+        doneModal.style.display = "flex";
+    });
+
+    // 모달 닫기 (X 버튼)
+    doneCloseBtn.addEventListener("click", () => {
+        doneModal.style.display = "none";
+    });
+
+    // "예" 버튼 → 퀴즈 목록 이동
+    yesBtn.addEventListener("click", () => {
+        const category = getCurrentCategory();
+        window.location.href = `/quiz/quizList.html?category=${encodeURIComponent(category)}`;
+    });
+
+    // "아니오" 버튼 → 학습 목록 이동
+    noBtn.addEventListener("click", () => {
+        const category = getCurrentCategory();
+        window.location.href = `/study/studyList.html?category=${encodeURIComponent(category)}`;
+    });
+
+    // 모달 바깥 클릭 시 닫기
+    window.addEventListener("click", (e) => {
+        if (e.target === doneModal) {
+            doneModal.style.display = "none";
+        }
     });
 }
 
