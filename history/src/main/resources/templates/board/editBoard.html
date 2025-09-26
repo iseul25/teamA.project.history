@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>게시글 수정</title>
     <link rel="stylesheet" th:href="@{/css/createBoard.css}">
+    <!-- (선택) 유튜브/썸네일 도메인 프리커넥트 -->
+    <link rel="preconnect" href="https://www.youtube.com">
+    <link rel="preconnect" href="https://img.youtube.com">
 </head>
 <body>
 <header>
@@ -61,7 +64,6 @@
 
             <!-- 현재 이미지 표시 -->
             <div th:if="${board.imgUrl != null and board.imgUrl != ''}" class="post-image">
-
                 <div class="current-image">
                     <img th:src="@{${board.imgUrl}}" th:alt="${board.imgDescription ?: '게시글 이미지'}"/>
                     <p th:if="${board.imgDescription != null and board.imgDescription != ''}" th:text="'설명: ' + ${board.imgDescription}"></p>
@@ -78,6 +80,30 @@
             <!-- 이미지 설명 -->
             <div class="post-info">
                 <input type="text" th:field="*{imgDescription}" placeholder="이미지 설명 (선택사항)"/>
+            </div>
+
+            <!-- [추가] 유튜브 URL(썸네일 미리보기 → 클릭 시 iFrame 로드) -->
+            <div class="video-field" style="margin-top:12px;">
+                <label style="display:block;margin-bottom:6px;">유튜브 URL</label>
+                <!-- th:field를 쓰되, 서버에 embed가 저장돼 있으면 보기 좋게 share URL로 보여주기 위해 data-server-value로 전달 -->
+                <input type="url"
+                       th:field="*{videoUrl}"
+                       th:attr="data-server-value=${board.videoUrl}"
+                       placeholder="https://youtu.be/XXXXXXXXXXX 또는 https://www.youtube.com/watch?v=XXXXXXXXXXX"
+                       style="width:100%;box-sizing:border-box;">
+                <small style="color:#666;">유효한 주소를 입력하면 아래에 썸네일이 보이고, 클릭 시 재생합니다. 저장 시 서버에서 embed 링크로 정규화합니다.</small>
+
+                <div class="video-preview" style="margin-top:10px; display:none;">
+                    <button type="button" class="thumb-btn"
+                            style="padding:0;border:0;background:none;cursor:pointer;position:relative;">
+                        <img class="thumb" alt="video thumbnail"
+                             style="max-width:560px;max-height:315px;display:block;">
+                        <div style="position:absolute;bottom:10px;left:10px;font-size:16px;background:rgba(0,0,0,.6);color:#fff;padding:6px 10px;border-radius:6px;">
+                            ▶ 재생
+                        </div>
+                    </button>
+                    <div class="iframe-host" style="margin-top:8px;"></div>
+                </div>
             </div>
 
             <!-- 버튼 -->
@@ -99,12 +125,77 @@
 </div>
 
 <script>
-    // 파일 선택 시 미리보기 기능
+    // ====== 유튜브(가벼운) 바인딩: 썸네일만 먼저 → 클릭 시 iFrame 로드 (중복 바인딩 방지) ======
+    (function(){
+        const ID_RE = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/;
+        function ytExtractId(url){ const m = String(url||'').trim().match(ID_RE); return m ? m[1] : null; }
+        function ytThumb(id){ return `https://img.youtube.com/vi/${id}/hqdefault.jpg`; }
+        function ytEmbed(id){ return `https://www.youtube.com/embed/${id}`; }
+        function embedToShare(embedUrl){ const m = String(embedUrl||'').match(/embed\/([A-Za-z0-9_-]{11})/); return m ? `https://youtu.be/${m[1]}` : ''; }
+
+        function bindVideoField(root){
+            if (!root || root.dataset.bound === '1') return;
+            root.dataset.bound = '1';
+
+            const input = root.querySelector('input[name="videoUrl"]'); // th:field로 name이 videoUrl
+            const wrap  = root.querySelector('.video-preview');
+            const btn   = root.querySelector('.thumb-btn');
+            const img   = root.querySelector('.thumb');
+            const host  = root.querySelector('.iframe-host');
+            if (!input || !wrap || !btn || !img || !host) return;
+
+            // 서버에 embed가 저장돼 있으면 보기 좋게 share URL로 치환하여 표시
+            const serverValue = input.getAttribute('data-server-value');
+            if (serverValue && !input.value) {
+                input.value = embedToShare(serverValue);
+            }
+
+            let t;
+            input.addEventListener('input', function(){
+                clearTimeout(t);
+                t = setTimeout(function(){
+                    const id = ytExtractId(input.value);
+                    if (id){
+                        img.src = ytThumb(id);
+                        wrap.style.display = 'block';
+                        host.innerHTML = ''; // 기존 iFrame 제거
+                    } else {
+                        wrap.style.display = 'none';
+                        img.removeAttribute('src');
+                        host.innerHTML = '';
+                    }
+                }, 200);
+            }, { passive: true });
+
+            btn.addEventListener('click', function(){
+                const id = ytExtractId(input.value);
+                if (!id) return;
+                host.innerHTML = `<iframe width="560" height="315" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"
+                    src="${ytEmbed(id)}"></iframe>`;
+            }, { passive: true });
+
+            // 초기값 반영(수정 화면이므로 있을 수 있음) — iFrame은 생성하지 않고 썸네일만
+            const initId = ytExtractId(input.value);
+            if (initId){
+                img.src = ytThumb(initId);
+                wrap.style.display = 'block';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function(){
+            document.querySelectorAll('.video-field').forEach(bindVideoField);
+        });
+    })();
+    // =============================================================================================
+
+    // 파일 선택 시 이미지 미리보기
     document.getElementById('imageFile').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function(ev) {
                 let currentImageDiv = document.querySelector('.current-image');
                 if (!currentImageDiv) {
                     const formGroup = document.createElement('div');
@@ -116,7 +207,9 @@
                     const imageFileGroup = document.getElementById('imageFile').closest('.post-image');
                     imageFileGroup.parentNode.insertBefore(formGroup, imageFileGroup);
                 }
-                currentImageDiv.innerHTML = `<img src="${e.target.result}" alt="새 이미지 미리보기" style="max-width: 100%; height: auto; object-fit: contain; border: 1px solid #ddd; border-radius: 4px;"/>`;
+                currentImageDiv.innerHTML =
+                    `<img src="${ev.target.result}" alt="새 이미지 미리보기"
+                          style="max-width: 100%; height: auto; object-fit: contain; border: 1px solid #ddd; border-radius: 4px;"/>`;
             };
             reader.readAsDataURL(file);
         }
