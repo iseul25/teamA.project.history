@@ -26,7 +26,7 @@ public class UserController {
     @GetMapping("/add")
     public String addForm(Model model) {
         model.addAttribute("user", new User());
-        return "/users/signUp";
+        return "/home";
     }
 
     @PostMapping("/add")
@@ -79,7 +79,7 @@ public class UserController {
     }
 
     // ---------------- 마이페이지 ----------------
-    @GetMapping("/myPage")
+    @GetMapping("/user/myPage")
     public String myPage(HttpSession session, Model model) {
         User loginUser = (User) session.getAttribute("loginUser");
         if (loginUser == null) return "redirect:/user/login";
@@ -134,6 +134,6 @@ public class UserController {
         }
 
         model.addAttribute("user", userToEdit);
-        return "users/editUser";
+        return "/home";
     }
 }

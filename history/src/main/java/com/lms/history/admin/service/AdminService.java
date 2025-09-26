@@ -61,22 +61,4 @@ public class AdminService {
         adminRepository.resetAllAttendance();
         System.out.println("일일 출석 초기화 완료: 모든 유저의 출석 상태가 'N'으로 초기화되었습니다.");
     }
-
-    /**
-     * 유저의 출석 상태를 'Y'로 업데이트하고 포인트를 부여합니다.
-     * @param email 출석할 유저의 이메일
-     * @param point 출석으로 받을 포인트
-     */
-    @Transactional
-    public void markAttendance(String email, int point) {
-        Optional<User> userOptional = adminRepository.findByEmail(email);
-        userOptional.ifPresent(user -> {
-            if ("N".equals(user.getAttend())) { // 오늘 아직 출석하지 않았을 경우에만
-                user.setAttend("Y");
-                user.setPoint(user.getPoint() + point);
-                adminRepository.save(user);
-                System.out.println(user.getEmail() + " 출석 완료. 포인트 " + point + " 적립.");
-            }
-        });
-    }
 }

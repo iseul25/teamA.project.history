@@ -21,14 +21,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Points {
-    // Getter/Setter
     private Integer pointId;
     private Integer userId;
-    private Integer attendanceId;    // nullable
-    private Integer itemId;         // nullable
-    private Integer quizId;         // nullable
-    private Integer pointChange;    // 포인트 변화량
-    private Integer totalPoint;     // 총 포인트
+    private Integer attendanceId;
+    private Integer itemId;
+    private Integer scoreId;
+    private Integer pointChange;
+    private Integer totalPoint;
 
     // 출석 포인트용 생성자
     public Points(Integer userId, Integer attendanceId, Integer pointChange, Integer totalPoint) {

@@ -43,47 +43,31 @@ public class HomeController {
 
         return "home";
     }
-
-    @GetMapping("/faq")
-    public String showFaqPage() {
-        // "faq"라는 문자열을 반환하여 Spring이 templates/faq.html 파일을 찾도록 지시합니다.
-        return "faq";
-    }
-
     // 출석 화면으로 이동하는 메서드 추가
     @GetMapping("/user/attend")
     public String attendancePage() {
         return "attend";
     }
 
-    @GetMapping("/myPage")
+    @GetMapping("/user/myPage")
     public String myPage() {
         return "users/myPage";
     }
 
-//    @GetMapping("/notice")
+    @GetMapping("/pointStore")
+    public String pointShop() {
+        return "pointStore/pointStore";
+    }
+
+    //    @GetMapping("/notice")
 //    public String notice(){
 //        return "notice";
 //    }
 
-    @GetMapping("/adminNotice")
-    public String adminNotice(){
-        return "admin/adminNotice";
-    }
-
-    @GetMapping("/adminPost")
-    public String adminPost(){
-        return "admin/adminPost";
-    }
-
-    @GetMapping("/adminStore")
-    public String adminStore(){
+    @GetMapping("/admin/pointStore")
+    public String adminStore() {
         return "admin/adminStore";
     }
 
-    @GetMapping("/pointShop")
-    public String pointShop(){
-        return "pointShop/pointShop";
-    }
 
 }
