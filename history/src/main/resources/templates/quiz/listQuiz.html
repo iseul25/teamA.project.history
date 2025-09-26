@@ -258,20 +258,23 @@
         const paginationDiv = document.querySelector(".pagination-container .pagination");
         const categories = /*[[${categories}]]*/ null; // 목록 데이터
 
+        // 목록이 없으면 페이지네이션만 숨김
+        if (!categories || categories.length === 0) {
+            paginationDiv.style.display = 'none';
+            // 빈 공간 유지를 위해 invisible 요소 추가
+            paginationDiv.innerHTML = '<div style="visibility: hidden; height: 20px;"></div>';
+            return;
+        }
+
         paginationDiv.innerHTML = "";
-
-        // 목록이 없을 때도 기본 1페이지 보여주기
-        const pages = totalPages <= 0 ? 1 : totalPages;
-        const current = currentPage <= 0 ? 1 : currentPage;
-
-// 페이지네이션 항상 표시
         paginationDiv.style.display = 'block';
+
+        const pages = totalPages <= 0 ? 1 : totalPages;
 
         // ◀ 이전 버튼
         const prevBtn = document.createElement("button");
         prevBtn.textContent = "◀";
         prevBtn.classList.add("page-btn");
-        // prevBtn.disabled = currentPage === 1 || pages === 1;
         prevBtn.addEventListener("click", () => {
             if (pages > 1 && currentPage > 1) {
                 const prevPage = currentPage - 1;
@@ -298,7 +301,6 @@
         const nextBtn = document.createElement("button");
         nextBtn.textContent = "▶";
         nextBtn.classList.add("page-btn");
-        // nextBtn.disabled = currentPage === pages || pages === 1;
         nextBtn.addEventListener("click", () => {
             if (pages > 1 && currentPage < pages) {
                 const nextPage = currentPage + 1;
@@ -376,42 +378,31 @@
             statusBody.innerHTML = "";
 
             if (!scores || scores.length === 0) {
-                statusBody.innerHTML = `<tr><td colspan="4" style="text-align:center;">데이터가 없습니다.</td></tr>`;
+                // 데이터 없으면 메시지만 표시하고 빈 행은 생성하지 않음
+                statusBody.innerHTML = `<tr><td colspan="4" style="text-align:center; height: 400px; vertical-align: middle;">데이터가 없습니다.</td></tr>`;
             } else {
+                // 데이터가 있으면 표시하고 10줄 고정
+                const pageStart = (currentPage - 1) * 10; // 페이지 크기 10
                 scores.forEach((score, idx) => {
-                    const start = (currentPage - 1) * 10; // 페이지 크기는 10으로 고정
-
                     statusBody.insertAdjacentHTML("beforeend", `
-                    <tr>
-                        <td>${start + idx + 1}</td>
-                        <td>${score.username}</td>
-                        <td>${score.score}</td>
-                        <td>${score.passed}</td>
-                    </tr>
-                `);
+                <tr>
+                    <td>${pageStart + idx + 1}</td>
+                    <td>${score.username}</td>
+                    <td>${score.score}</td>
+                    <td>${score.passed}</td>
+                </tr>
+            `);
                 });
-            }
 
-            // 빈 행 채우기 (10개 행 유지)
-            const currentRows = scores ? scores.length : 0;
-            for (let i = currentRows; i < 10; i++) {
-                statusBody.insertAdjacentHTML("beforeend", `
+                // 부족한 줄을 채워 10줄 고정
+                for (let i = scores.length; i < 10; i++) {
+                    statusBody.insertAdjacentHTML("beforeend", `
                 <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
             `);
+                }
             }
         }
 
-        function renderEmptyTable() {
-            statusBody.innerHTML = "";
-            statusBody.innerHTML = `<tr><td colspan="4" style="text-align:center;">데이터가 없습니다.</td></tr>`;
-
-            // 빈 행 채우기
-            for (let i = 1; i < 10; i++) {
-                statusBody.insertAdjacentHTML("beforeend", `
-                <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-            `);
-            }
-        }
 
         function renderPagination(currentPageNum, totalPages) {
             statusPagination.innerHTML = "";
