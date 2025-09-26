@@ -153,6 +153,32 @@ main {
     background-color: #ffbaba;
 }
 
+/* 내역 보기 버튼 */
+.btn-history {
+    padding: 5px 12px;
+    color: #222;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 5px;
+    vertical-align: middle;
+    text-decoration: none;
+    background-color: #F5D2D2;
+    border: 1px solid #ffbaba;
+    cursor: pointer;
+}
+
+.btn-history:hover {
+    background-color: #ffbaba;
+}
+
+#attendanceDate,
+#totalPoint,
+#orderHistory {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 /* 수정, 탈퇴 버튼 */
 #btnBox {
     display: flex;
@@ -163,12 +189,13 @@ main {
 
 #editBtn, #withdrawBtn {
     display: inline-block;
-    padding: 5px 13px;
+    padding: 5px 12px;
     color: #222;
     font-size: 14px;
     font-weight: 500;
     border-radius: 5px;
     text-decoration: none;
+    cursor:pointer;
 }
 
 #editBtn {
@@ -189,15 +216,16 @@ main {
     background-color: #aaa;
 }
 
-/* 저장, 취소 버튼 */
+/* 회원 정보 저장, 취소 버튼 */
 #saveBtn, #cancelBtn {
     display: inline-block;
-    padding: 5px 13px;
+    padding: 5px 12px;
     color: #222;
     font-size: 14px;
     font-weight: 500;
     border-radius: 5px;
     text-decoration: none;
+    cursor:pointer;
 }
 
 #saveBtn {
@@ -216,6 +244,135 @@ main {
 
 #cancelBtn:hover {
     background-color: #aaa;
+}
+
+/* 사용, 환불, 취소 버튼 */
+.btn-use,
+.btn-refund,
+.btn-cancel {
+    display: inline-block;
+    padding: 5px 12px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-use {
+    background-color: #40b644;
+    border: 1px solid #5ec762;
+}
+
+.btn-use:hover {
+    background-color: #5ec762;
+}
+
+.btn-refund {
+    background-color: #ffa113;
+    border: 1px solid #ffb340;
+}
+
+.btn-refund:hover {
+    background-color: #ffb340;
+}
+
+.btn-cancel {
+    color: #222;
+    background-color: #d5d5d5;
+    border: 1px solid #aaa;
+}
+
+.btn-cancel:hover {
+    background-color: #aaa;
+}
+
+/* 주문 내역 모달 */
+.purchase-item {
+    display:flex;
+    align-items:center;
+    padding:15px 0;
+    border-bottom:1px solid #f0f0f0;
+}
+
+.purchase-item:last-child {
+    border-bottom:none;
+}
+
+.item-image {
+    width:75px;
+    object-fit:cover;
+    border-radius:4px;
+    margin-right:15px;
+}
+
+.item-details {
+    flex:1;
+}
+
+.item-name {
+    font-weight:bold;
+    margin-bottom:5px;
+    color:#333;
+    font-size: 16px;
+    text-align: left;
+}
+
+.item-status {
+    font-size: 14px;
+    font-weight:bold;
+    margin-top:5px;
+    text-align: left;
+}
+
+.item-cost {
+    font-weight:bold;
+    color:#d32f2f;
+    font-size:1.1em;
+}
+
+.item-actions {
+    display:flex;
+    gap:8px;
+    align-items:center;
+}
+
+.action-buttons {
+    display:flex;
+    gap:5px;
+    margin-top:5px;
+}
+
+/* 상품 사용 모달 */
+.use-item-image {
+    width:180px;
+    object-fit:cover;
+    border-radius:8px;
+    margin:20px auto;
+    display:block;
+}
+
+#useItemMessage {
+    text-align: center;
+}
+
+.warning-text {
+    color:#d32f2f;
+    font-size:.9em;
+    text-align:center;
+    margin:10px 0;
+}
+
+.modal-buttons {
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-top:20px;
+}
+
+.use-modal .modal-content {
+    max-width:400px;
 }
 
 /* footer */
