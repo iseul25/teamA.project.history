@@ -1,36 +1,67 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>마이페이지</title>
-    <link rel="stylesheet" href="/css/myPage.css">
-</head>
+    <link rel="stylesheet" href="/css/myPage.css"/>
+    <style>
+        .modal{position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.5)}
+        .modal-content{background:#fefefe;margin:10% auto;padding:0;border:none;border-radius:8px;width:80%;max-width:600px;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+        .modal-header{display:flex;justify-content:space-between;align-items:center;padding:20px 30px;border-bottom:1px solid #eee}
+        .modal-header h3{margin:0;color:#333}
+        .close{color:#aaa;font-size:28px;font-weight:bold;cursor:pointer;line-height:1}
+        .close:hover,.close:focus{color:#000}
+        .modal-body{padding:20px 30px;max-height:400px;overflow-y:auto}
 
+        .purchase-item{display:flex;align-items:center;padding:15px 0;border-bottom:1px solid #f0f0f0}
+        .purchase-item:last-child{border-bottom:none}
+        .item-image{width:50px;height:50px;object-fit:cover;border-radius:4px;margin-right:15px}
+        .item-details{flex:1}
+        .item-name{font-weight:bold;margin-bottom:5px;color:#333}
+        .item-status{font-size:.8em;padding:2px 6px;border-radius:3px;font-weight:bold;margin-top:5px}
+        .item-cost{font-weight:bold;color:#d32f2f;font-size:1.1em}
+        .item-actions{display:flex;gap:8px;align-items:center}
+        .action-buttons{display:flex;gap:5px;margin-top:5px}
+        .btn-history{padding:5px 10px;font-size:.9em;background:#f0f0f0;color:#333;border:1px solid #ddd}
+        .btn-history:hover{background:#e0e0e0}
+        .btn-use{background:#4caf50;color:#fff;padding:4px 8px;font-size:.8em;border:none;border-radius:3px;cursor:pointer}
+        .btn-refund{background:#ff9800;color:#fff;padding:4px 8px;font-size:.8em;border:none;border-radius:3px;cursor:pointer}
+        .btn-cancel{background:#9e9e9e;color:#fff;padding:4px 8px;font-size:.8em;border:none;border-radius:3px;cursor:pointer}
+        .action-completed{font-size:.8em;color:#666;font-style:italic}
+        .empty-history{text-align:center;padding:40px 20px;color:#666}
+
+        .use-item-image{width:150px;height:150px;object-fit:cover;border-radius:8px;margin:20px auto;display:block}
+        .warning-text{color:#d32f2f;font-size:.9em;text-align:center;margin:10px 0}
+        .modal-buttons{display:flex;justify-content:center;gap:10px;margin-top:20px}
+        .use-modal .modal-content{max-width:400px}
+
+        /* 버튼 비활성화 스타일 */
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
 <body>
 <header>
-    <a href="/home">
-        <img src="/img/mainLg2.png" alt="메인 로고">
-    </a>
+    <a href="/home"><img src="/img/mainLg2.png" alt="메인 로고"/></a>
     <ul>
-        <li><a href="">학습하기</a></li>
-        <li><a href="">퀴즈풀기</a></li>
+        <li><a href="/board/topic">학습하기</a></li>
+        <li><a href="/quiz/topic">퀴즈풀기</a></li>
         <li><a href="/attend">출석하기</a></li>
-        <li><a href="">포인트 상점</a></li>
+        <li><a href="/pointStore">포인트 상점</a></li>
         <li><a href="/faq">FAQ</a></li>
         <li><a href="/notice">공지사항</a></li>
     </ul>
     <div id="user">
-        <a href="/myPage" id="userName-link" class="active">사용자 님</a>
+        <a href="/user/myPage" id="userName-link" class="active">사용자 님</a>
     </div>
 </header>
 
 <main>
     <div id="container">
-        <div id="mypageInfo">
-            <p>마이페이지</p>
-        </div>
+        <div id="mypageInfo"><p>마이페이지</p></div>
         <div id="mypage">
             <table id="pageBox">
                 <tbody>
@@ -38,15 +69,15 @@
                     <td class="label">이름</td>
                     <td class="value">
                         <span id="userName">홍길동</span>
-                        <input type="text" id="userNameInput" class="edit-input" style="display: none;">
+                        <input type="text" id="userNameInput" class="edit-input" style="display:none;"/>
                     </td>
                 </tr>
                 <tr>
                     <td class="label">이메일</td>
                     <td class="value">
                         <span id="userEmail">user@example.com</span>
-                        <input type="text" id="userEmailInput" class="edit-input" style="display: none;">
-                        <button id="checkEmailBtn" class="btn btn-email-check" style="display: none;">중복확인</button>
+                        <input type="text" id="userEmailInput" class="edit-input" style="display:none;"/>
+                        <button id="checkEmailBtn" class="btn btn-email-check" style="display:none;">중복확인</button>
                         <div id="emailMessage"></div>
                     </td>
                 </tr>
@@ -61,16 +92,58 @@
                     <td class="label">포인트</td>
                     <td class="value" id="totalPoint">
                         <span id="userPoint">100점</span>
-                        <a href="" id="pointBtn">포인트 상점</a>
+                        <a href="/pointStore" id="pointBtn">포인트 상점</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">주문 내역</td>
+                    <td class="value">
+                        <span id="purchaseCount">0건</span>
+                        <button id="viewHistoryBtn" class="btn btn-history">내역 보기</button>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
+
+        <!-- 주문 내역 모달 -->
+        <div id="purchaseHistoryModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>주문 내역</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div id="purchaseList"><!-- 동적 렌더 --></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 상품 사용 모달 -->
+        <div id="useItemModal" class="modal" style="display:none;">
+            <div class="modal-content use-modal">
+                <div class="modal-header">
+                    <h3>상품 사용</h3>
+                    <span class="close-use">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div id="itemImageContainer">
+                        <img id="useItemImage" src="" alt="상품 이미지" class="use-item-image"/>
+                    </div>
+                    <p id="useItemMessage">이 상품을 사용하시겠습니까?</p>
+                    <p class="warning-text">사용 후에는 환불이 불가능합니다.</p>
+                    <div class="modal-buttons">
+                        <button id="confirmUseBtn" class="btn btn-use">사용</button>
+                        <button id="cancelUseBtn" class="btn btn-cancel">확인</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="btnBox">
             <button id="editBtn" class="btn btn-edit">수정</button>
-            <button id="saveBtn" class="btn btn-save" style="display: none;">저장</button>
-            <button id="cancelBtn" class="btn btn-cancel" style="display: none;">취소</button>
+            <button id="saveBtn" class="btn btn-save" style="display:none;">저장</button>
+            <button id="cancelBtn" class="btn btn-cancel" style="display:none;">취소</button>
             <button id="withdrawBtn" class="btn btn-withdraw">탈퇴</button>
         </div>
     </div>
@@ -86,12 +159,15 @@
 </div>
 
 <script>
-    let isEditMode = false;
-    let originalData = {};
-    let isEmailChecked = true; // 🚩 수정: 이메일 중복 확인 플래그를 true로 초기화
+    document.addEventListener("DOMContentLoaded", function () {
+        // 상태
+        let isEditMode = false;
+        let originalData = {};
+        let isEmailChecked = true;
+        let currentActionPointId = null; // 환불 등 pointId 기반 동작 시 사용
+        let currentActionItemId  = null; // ✅ 사용 API용 (itemId 기준)
 
-    document.addEventListener("DOMContentLoaded", function() {
-        // DOM 요소들
+        // DOM
         const editBtn = document.getElementById("editBtn");
         const saveBtn = document.getElementById("saveBtn");
         const cancelBtn = document.getElementById("cancelBtn");
@@ -102,231 +178,413 @@
         const userNameInput = document.getElementById("userNameInput");
         const userEmailInput = document.getElementById("userEmailInput");
         const emailMessage = document.getElementById("emailMessage");
+        const viewHistoryBtn = document.getElementById("viewHistoryBtn");
+        const modal = document.getElementById("purchaseHistoryModal");
+        const closeBtn = document.querySelector("#purchaseHistoryModal .close");
+        const useModal = document.getElementById("useItemModal");
+        const confirmUseBtn = document.getElementById("confirmUseBtn");
+        const cancelUseBtn = document.getElementById("cancelUseBtn");
+        const closeUseBtn = document.querySelector(".close-use");
 
-        // 초기 사용자 정보 로드
+        // 안전 JSON 파서
+        async function safeParseJson(res) {
+            const text = await res.text();
+            if (!text) return null;
+            try { return JSON.parse(text); }
+            catch { return { success:false, message:text.trim() || "알 수 없는 오류 발생" }; }
+        }
+
+        // 초기 로드
         loadUserInfo();
 
-        // 🚩 수정: 이메일 입력 필드에 입력 이벤트 리스너 추가 (중복 확인 상태 리셋)
-        userEmailInput.addEventListener("input", function() {
+        // 이벤트
+        editBtn.addEventListener("click", enterEditMode);
+        saveBtn.addEventListener("click", saveUserInfo);
+        cancelBtn.addEventListener("click", cancelEdit);
+        withdrawBtn.addEventListener("click", withdrawUser);
+        checkEmailBtn.addEventListener("click", checkEmailDuplicate);
+
+        if (viewHistoryBtn) viewHistoryBtn.addEventListener("click", () => { modal.style.display = "block"; loadPurchaseHistory(); });
+        if (closeBtn) closeBtn.addEventListener("click", () => modal.style.display = "none");
+
+        if (confirmUseBtn) confirmUseBtn.addEventListener("click", confirmUse);
+        if (cancelUseBtn)  cancelUseBtn.addEventListener("click", closeUseModal);
+        if (closeUseBtn)   closeUseBtn.addEventListener("click", closeUseModal);
+
+        window.addEventListener("click", (e) => {
+            if (e.target === modal) modal.style.display = "none";
+            if (e.target === useModal) closeUseModal();
+        });
+
+        userEmailInput.addEventListener("input", function () {
             isEmailChecked = false;
             emailMessage.style.display = "none";
         });
 
-        // 1. 수정 버튼 클릭
-        editBtn.addEventListener("click", function() {
-            enterEditMode();
-        });
-
-        // 2. 저장 버튼 클릭
-        saveBtn.addEventListener("click", function() {
-            saveUserInfo();
-        });
-
-        // 3. 취소 버튼 클릭
-        cancelBtn.addEventListener("click", function() {
-            cancelEdit();
-        });
-
-        // 4. 탈퇴 버튼 클릭
-        withdrawBtn.addEventListener("click", function() {
-            withdrawUser();
-        });
-
-        // 5. 이메일 중복확인 버튼 클릭
-        checkEmailBtn.addEventListener("click", function() {
-            checkEmailDuplicate();
-        });
-    });
-
-    // 사용자 정보 로드
-    function loadUserInfo() {
-        fetch('/api/users/myPage')
-            .then(res => {
-                if (!res.ok) throw new Error("사용자 정보를 불러올 수 없습니다.");
-                return res.json();
-            })
-            .then(data => {
-                originalData = { ...data
-                }; // 원본 데이터 저장
-
-                document.getElementById("userName").textContent = data.name;
-                document.getElementById("userEmail").textContent = data.email;
-                document.getElementById("attendanceStatus").textContent = data.attendance || "미출석";
-                document.getElementById("userPoint").textContent = (data.point || 0) + "점";
-                document.getElementById("userName-link").textContent = data.name + " 님";
-
-                document.getElementById("userNameInput").value = data.name;
-                document.getElementById("userEmailInput").value = data.email;
-            })
-            .catch(err => {
-                console.error("사용자 정보 로드 실패:", err);
-                alert("사용자 정보를 불러올 수 없습니다.");
-            });
-    }
-
-    // 수정 모드 진입
-    function enterEditMode() {
-        isEditMode = true;
-        isEmailChecked = true;
-
-        document.getElementById("userName").style.display = "none";
-        document.getElementById("userEmail").style.display = "none";
-        document.getElementById("userNameInput").style.display = "inline-block";
-        document.getElementById("userEmailInput").style.display = "inline-block";
-        document.getElementById("checkEmailBtn").style.display = "inline-block";
-
-        document.getElementById("editBtn").style.display = "none";
-        document.getElementById("withdrawBtn").style.display = "none";
-        document.getElementById("saveBtn").style.display = "inline-block";
-        document.getElementById("cancelBtn").style.display = "inline-block";
-    }
-
-    // 수정 취소
-    function cancelEdit() {
-        isEditMode = false;
-        isEmailChecked = true;
-
-        document.getElementById("userNameInput").value = originalData.name;
-        document.getElementById("userEmailInput").value = originalData.email;
-
-        document.getElementById("userName").style.display = "inline";
-        document.getElementById("userEmail").style.display = "inline";
-        document.getElementById("userNameInput").style.display = "none";
-        document.getElementById("userEmailInput").style.display = "none";
-        document.getElementById("checkEmailBtn").style.display = "none";
-
-        document.getElementById("editBtn").style.display = "inline-block";
-        document.getElementById("withdrawBtn").style.display = "inline-block";
-        document.getElementById("saveBtn").style.display = "none";
-        document.getElementById("cancelBtn").style.display = "none";
-
-        document.getElementById("emailMessage").style.display = "none";
-    }
-
-    // 사용자 정보 저장
-    function saveUserInfo() {
-        const newName = document.getElementById("userNameInput").value.trim();
-        const newEmail = document.getElementById("userEmailInput").value.trim();
-
-        if (!newName || !newEmail) {
-            alert("이름과 이메일을 모두 입력해주세요.");
-            return;
+        // 사용 모달 닫기 함수
+        function closeUseModal() {
+            if (confirmUseBtn) confirmUseBtn.style.display = "inline-block";
+            if (confirmUseBtn) confirmUseBtn.disabled = false; // 버튼 활성화
+            useModal.style.display = "none";
+            // 상태 초기화
+            currentActionPointId = null;
+            currentActionItemId = null;
         }
 
-        // 🚩 수정: 백엔드에서 이메일 중복 검증을 처리하도록 변경
-        // 프론트엔드에서는 변경된 이메일일 경우 중복확인 버튼을 눌렀는지 여부만 확인
-        if (newEmail !== originalData.email && !isEmailChecked) {
-            alert("이메일을 변경하셨습니다. 중복확인을 해주세요.");
-            return;
+        // ---- 로더 ----
+        function loadUserInfo() {
+            fetch('/api/users/myPage')
+                .then(res => res.json())
+                .then(data => {
+                    originalData = {...data};
+                    if (userNameSpan) userNameSpan.textContent = data.name || "이름 없음";
+                    if (userEmailSpan) userEmailSpan.textContent = data.email || "이메일 없음";
+                    document.getElementById("attendanceStatus").textContent = data.attendance || "미출석";
+                    document.getElementById("userPoint").textContent = (data.point || 0) + "점";
+                    document.getElementById("userName-link").textContent = (data.name || "사용자") + " 님";
+                    userNameInput.value = data.name || "";
+                    userEmailInput.value = data.email || "";
+                    loadPurchaseCount();
+                })
+                .catch(err => {
+                    console.error("사용자 정보 로드 실패:", err);
+                    alert("사용자 정보를 불러올 수 없습니다.");
+                });
         }
 
-        const updatedUser = {
-            name: newName,
-            email: newEmail
-        };
+        function loadUserPoint() {
+            fetch('/api/users/myPage?' + Date.now())
+                .then(res => res.json())
+                .then(data => { document.getElementById("userPoint").textContent = (data.point || 0) + "점"; })
+                .catch(err => console.error("포인트 갱신 실패:", err));
+        }
 
-        fetch('/api/users/profile', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedUser)
-        })
-            .then(res => {
-                if (!res.ok) {
-                    return res.json().then(data => {
-                        throw new Error(data.error || "저장 실패");
-                    });
-                }
-                return res.json();
+        function loadPurchaseCount() {
+            fetch('/api/users/purchase-history')
+                .then(res => res.json())
+                .then(data => { document.getElementById('purchaseCount').textContent = `${data.length}건`; })
+                .catch(err => {
+                    console.error('주문 내역 개수 로드 실패:', err);
+                    document.getElementById('purchaseCount').textContent = '로드 실패';
+                });
+        }
+
+        function loadPurchaseHistory() {
+            const purchaseList = document.getElementById('purchaseList');
+            purchaseList.innerHTML = '<div style="text-align:center; padding:20px;">로딩 중...</div>';
+
+            fetch('/api/users/purchase-history')
+                .then(res => res.json())
+                .then(data => {
+                    if (!Array.isArray(data) || data.length === 0) {
+                        purchaseList.innerHTML =
+                            `<div class="empty-history">
+               <p>구매 내역이 없습니다.</p>
+               <p style="font-size:.9em;color:#999;">포인트 상점에서 다양한 상품을 만나보세요!</p>
+             </div>`;
+                        return;
+                    }
+
+                    const html = data.map(item => `
+          <div class="purchase-item" id="purchase-item-${item.pointId}"
+               data-point-id="${item.pointId}" data-item-id="${item.itemId}"
+               data-img-url="${(item.imgUrl || '').replace(/"/g,'&quot;')}"
+               data-item-name="${(item.itemName || '').replace(/"/g,'&quot;')}">
+            ${item.imgUrl ? `<img src="${item.imgUrl}" alt="${item.itemName}" class="item-image">`
+                        : '<div class="item-image" style="background-color:#f0f0f0;"></div>'}
+            <div class="item-details">
+              <div class="item-name">${item.itemName}</div>
+              <div class="item-status">${
+                        item.purchaseStatus === 'REFUNDED'
+                            ? '환불완료'
+                            : (item.purchaseStatus === 'USED' ? '사용완료' : '구매완료')
+                    }</div>
+            </div>
+            <div class="item-actions">
+              <div class="item-cost">${Math.abs(item.pointChange)}P</div>
+              ${
+                        item.purchaseStatus === 'REFUNDED'
+                            ? `<div class="action-completed">환불 완료</div>`
+                            : (item.purchaseStatus === 'USED'
+                                    ? `<div class="action-buttons">
+                           <button class="btn btn-use"
+                             onclick="showImageOnly('${item.itemName.replace(/'/g, "\\'")}',
+                                                    '${(item.imgUrl || '').replace(/'/g, "\\'")}')">
+                             쿠폰 다시보기
+                           </button>
+                         </div>`
+                                    : `<div class="action-buttons">
+                           <button class="btn btn-use"
+                             onclick="showUseModal(${item.pointId},
+                                                   ${item.itemId},
+                                                   '${item.itemName.replace(/'/g, "\\'")}',
+                                                   '${(item.imgUrl || '').replace(/'/g, "\\'")}')">
+                             사용
+                           </button>
+                           <button class="btn btn-refund" onclick="refundItem(${item.pointId})">환불</button>
+                         </div>`
+                            )
+                    }
+            </div>
+          </div>
+        `).join('');
+
+                    purchaseList.innerHTML = html;
+                })
+                .catch(err => {
+                    console.error('주문 내역 로드 실패:', err);
+                    purchaseList.innerHTML =
+                        `<div class="empty-history">
+             <p>주문 내역을 불러올 수 없습니다.</p>
+             <p style="font-size:.9em;color:#999;">잠시 후 다시 시도해주세요.</p>
+           </div>`;
+                });
+        }
+
+        // ---- 사용/환불 ----
+        function showUseModal(pointId, itemId, itemName, imgUrl) {
+            currentActionPointId = pointId;
+            currentActionItemId  = itemId;
+
+            document.getElementById('useItemImage').src = imgUrl || '/img/default-item.png';
+            document.getElementById('useItemMessage').textContent = `"${itemName}"을(를) 사용하시겠습니까?`;
+
+            if (confirmUseBtn) {
+                confirmUseBtn.style.display = 'inline-block';
+                confirmUseBtn.disabled = false; // 버튼 활성화 확인
+            }
+            useModal.style.display = 'block';
+        }
+
+        function showImageOnly(itemName, imgUrl) {
+            // 상태 초기화
+            currentActionPointId = null;
+            currentActionItemId  = null;
+
+            document.getElementById('useItemImage').src = (imgUrl || '/img/default-item.png') + `?v=${Date.now()}`;
+
+            // 메시지만 빈 문자열로 설정 (사용 내역입니다 문구만 제거)
+            document.getElementById('useItemMessage').textContent = '';
+
+            // 경고 텍스트와 버튼들은 그대로 유지하되, 사용 버튼만 숨김
+            if (confirmUseBtn) confirmUseBtn.style.display = 'none';
+
+            useModal.style.display = 'block';
+        }
+
+        function confirmUse() {
+            if (!currentActionItemId || confirmUseBtn.disabled) return;
+
+            // 중복 클릭 방지
+            confirmUseBtn.disabled = true;
+            confirmUseBtn.textContent = '처리중...';
+
+            fetch(`/api/users/items/${currentActionItemId}/use`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
             })
-            .then(data => {
-                alert("회원 정보가 수정되었습니다.");
+                .then(async (res) => {
+                    const data = await safeParseJson(res);
+                    if (!res.ok) {
+                        const msg = (data && data.message)
+                            || (res.status === 401 ? '로그인이 필요합니다.'
+                                : res.status === 403 ? '권한이 없습니다.'
+                                    : '요청 처리에 실패했습니다.');
+                        throw new Error(msg);
+                    }
 
-                // 화면 업데이트
-                document.getElementById("userName").textContent = data.name;
-                document.getElementById("userEmail").textContent = data.email;
-                document.getElementById("userName-link").textContent = data.name + " 님";
+                    alert('상품이 사용되었습니다.');
 
-                // 원본 데이터 업데이트
-                originalData = { ...data };
-                isEmailChecked = true;
+                    // 응답에 매칭된 구매 pointId가 오면 해당 줄만 낙관 갱신
+                    if (data && data.matchedPointId) {
+                        updatePurchaseItemUI(data.matchedPointId, data);
+                    } else {
+                        // 폴백: 재조회
+                        loadPurchaseHistory();
+                    }
 
-                cancelEdit();
+                    // 포인트 갱신
+                    loadUserPoint();
+
+                    // 모달 닫기
+                    closeUseModal();
+                })
+                .catch((err) => {
+                    console.error('상품 사용 실패:', err);
+                    alert(err.message || '처리 중 오류가 발생했습니다.');
+                })
+                .finally(() => {
+                    // 버튼 원상복구
+                    confirmUseBtn.disabled = false;
+                    confirmUseBtn.textContent = '사용';
+                });
+        }
+
+        // UI 업데이트 함수 분리
+        function updatePurchaseItemUI(pointId, data) {
+            const row = document.getElementById(`purchase-item-${pointId}`);
+            if (!row) return;
+
+            const name = row.getAttribute('data-item-name') || '상품';
+            const prevImg = row.getAttribute('data-img-url') || '/img/default-item.png';
+            const img = (data.gifticonUrl || prevImg);
+
+            // 상태 텍스트 변경
+            const statusEl = row.querySelector('.item-status');
+            if (statusEl) statusEl.textContent = '사용완료';
+
+            // 버튼 영역 교체
+            const actions = row.querySelector('.item-actions');
+            if (actions) {
+                const costText = actions.querySelector('.item-cost')?.textContent || '';
+                actions.innerHTML = `
+                    <div class="item-cost">${costText}</div>
+                    <div class="action-buttons">
+                        <button class="btn btn-use"
+                            onclick="showImageOnly('${name.replace(/'/g,"\\'")}',
+                                                   '${img.replace(/'/g,"\\'")}')">
+                            쿠폰 다시보기
+                        </button>
+                    </div>`;
+            }
+        }
+
+        function refundItem(pointId) {
+            if (!confirm('정말로 환불하시겠습니까?')) return;
+
+            fetch(`/api/users/refund-item/${pointId}`, { method: 'POST' })
+                .then(async (res) => {
+                    const data = await safeParseJson(res);
+                    if (!res.ok) {
+                        const msg = (data && data.message)
+                            || (res.status === 401 ? '로그인이 필요합니다.'
+                                : res.status === 403 ? '권한이 없습니다.'
+                                    : '요청 처리에 실패했습니다.');
+                        throw new Error(msg);
+                    }
+
+                    if (data && data.success) {
+                        alert(`환불이 완료되었습니다. ${data.refundAmount}P가 적립되었습니다.`);
+                        loadPurchaseHistory();
+                        loadPurchaseCount();
+                        loadUserPoint();
+                    } else {
+                        alert((data && data.message) || '환불에 실패했습니다.');
+                    }
+                })
+                .catch((err) => {
+                    console.error('환불 실패:', err);
+                    alert(err.message || '처리 중 오류가 발생했습니다.');
+                });
+        }
+
+        // ---- 프로필 편집 ----
+        function enterEditMode() {
+            isEditMode = true; isEmailChecked = true;
+            userNameSpan.style.display = "none";
+            userEmailSpan.style.display = "none";
+            userNameInput.style.display = "inline-block";
+            userEmailInput.style.display = "inline-block";
+            checkEmailBtn.style.display = "inline-block";
+            editBtn.style.display = "none";
+            withdrawBtn.style.display = "none";
+            saveBtn.style.display = "inline-block";
+            cancelBtn.style.display = "inline-block";
+        }
+
+        function cancelEdit() {
+            isEditMode = false; isEmailChecked = true;
+            userNameInput.value = originalData.name || "";
+            userEmailInput.value = originalData.email || "";
+            userNameSpan.style.display = "inline";
+            userEmailSpan.style.display = "inline";
+            userNameInput.style.display = "none";
+            userEmailInput.style.display = "none";
+            checkEmailBtn.style.display = "none";
+            editBtn.style.display = "inline-block";
+            withdrawBtn.style.display = "inline-block";
+            saveBtn.style.display = "none";
+            cancelBtn.style.display = "none";
+            emailMessage.style.display = "none";
+        }
+
+        function saveUserInfo() {
+            const newName = userNameInput.value.trim();
+            const newEmail = userEmailInput.value.trim();
+            if (!newName || !newEmail) { alert("이름과 이메일을 모두 입력해주세요."); return; }
+            if (newEmail !== originalData.email && !isEmailChecked) { alert("이메일을 변경하셨습니다. 중복확인을 해주세요."); return; }
+
+            fetch('/api/users/profile', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: newName, email: newEmail })
             })
-            .catch(err => {
-                console.error("저장 실패:", err);
-                alert("회원 정보 수정 중 오류가 발생했습니다: " + err.message);
-            });
-    }
-
-    // 이메일 중복확인
-    function checkEmailDuplicate() {
-        const email = document.getElementById("userEmailInput").value.trim();
-        const emailMessage = document.getElementById("emailMessage");
-        const originalEmail = originalData.email;
-
-        // 현재 이메일과 동일하면 중복확인 불필요 (백엔드 로직에 이미 포함되어 있음)
-        if (email === originalEmail) {
-            emailMessage.textContent = "현재 사용 중인 이메일입니다.";
-            emailMessage.style.color = "blue";
-            emailMessage.style.display = "block";
-            isEmailChecked = true;
-            return;
-        }
-
-        if (!email) {
-            alert("이메일을 입력해주세요.");
-            return;
-        }
-
-        fetch(`/api/users/check-email?email=${encodeURIComponent(email)}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.exists) {
-                    emailMessage.textContent = "이미 사용 중인 이메일입니다.";
-                    emailMessage.style.color = "red";
-                    isEmailChecked = false;
-                } else {
-                    emailMessage.textContent = "사용 가능한 이메일입니다.";
-                    emailMessage.style.color = "green";
+                .then(res => res.ok ? res.json() : res.json().then(d => { throw new Error(d.error || "저장 실패"); }))
+                .then(data => {
+                    alert("회원 정보가 수정되었습니다.");
+                    userNameSpan.textContent = data.name;
+                    userEmailSpan.textContent = data.email;
+                    document.getElementById("userName-link").textContent = data.name + " 님";
+                    originalData = {...data};
                     isEmailChecked = true;
-                }
-                emailMessage.style.display = "block";
-            })
-            .catch(err => {
-                emailMessage.textContent = "중복 확인 중 오류가 발생했습니다.";
-                emailMessage.style.color = "red";
-                emailMessage.style.display = "block";
-                isEmailChecked = false;
-            });
-    }
-
-    // 회원 탈퇴
-    function withdrawUser() {
-        const point = document.getElementById("userPoint").textContent;
-        const pointNumber = point.match(/\d+/) ? point.match(/\d+/)[0] : 0;
-        const confirmMsg = `현재 보유하고 계신 포인트 ${pointNumber}점이 전부 소멸됩니다.\n정말 탈퇴하시겠습니까?`;
-
-        if (!confirm(confirmMsg)) {
-            return;
+                    cancelEdit();
+                })
+                .catch(err => {
+                    console.error("저장 실패:", err);
+                    alert("회원 정보 수정 중 오류가 발생했습니다: " + err.message);
+                });
         }
 
-        fetch('/api/users/withdraw', {
-            method: 'DELETE'
-        })
-            .then(res => {
-                if (!res.ok) {
-                    return res.text().then(text => {
-                        throw new Error(text || "탈퇴 실패");
-                    });
-                }
-                alert("탈퇴가 완료되었습니다.");
-                window.location.href = "/home";
-            })
-            .catch(err => {
-                console.error("탈퇴 실패:", err);
-                alert("탈퇴 처리 중 오류가 발생했습니다: " + err.message);
-            });
-    }
+        function checkEmailDuplicate() {
+            const email = userEmailInput.value.trim();
+            if (email === originalData.email) {
+                emailMessage.textContent = "현재 사용 중인 이메일입니다.";
+                emailMessage.style.color = "blue";
+                emailMessage.style.display = "block";
+                isEmailChecked = true;
+                return;
+            }
+            if (!email) { alert("이메일을 입력해주세요."); return; }
+
+            fetch(`/api/users/check-email?email=${encodeURIComponent(email)}`)
+                .then(res => res.json())
+                .then(data => {
+                    emailMessage.textContent = data.exists ? "이미 사용 중인 이메일입니다." : "사용 가능한 이메일입니다.";
+                    emailMessage.style.color = data.exists ? "red" : "green";
+                    emailMessage.style.display = "block";
+                    isEmailChecked = !data.exists;
+                })
+                .catch(() => {
+                    emailMessage.textContent = "중복 확인 중 오류가 발생했습니다.";
+                    emailMessage.style.color = "red";
+                    emailMessage.style.display = "block";
+                    isEmailChecked = false;
+                });
+        }
+
+        function withdrawUser() {
+            const pointText = document.getElementById("userPoint").textContent;
+            const pointNumber = pointText.match(/\d+/) ? pointText.match(/\d+/)[0] : 0;
+            if (!confirm(`현재 보유하고 계신 포인트 ${pointNumber}점이 전부 소멸됩니다.\n정말 탈퇴하시겠습니까?`)) return;
+
+            fetch('/api/users/withdraw', { method: 'DELETE' })
+                .then(res => {
+                    if (!res.ok) return res.text().then(t => { throw new Error(t || "탈퇴 실패"); });
+                    alert("탈퇴가 완료되었습니다.");
+                    window.location.href = "/home";
+                })
+                .catch(err => {
+                    console.error("탈퇴 실패:", err);
+                    alert("탈퇴 처리 중 오류가 발생했습니다: " + err.message);
+                });
+        }
+
+        // 전역 노출
+        window.showUseModal = showUseModal;
+        window.showImageOnly = showImageOnly;
+        window.refundItem = refundItem;
+        window.confirmUse = confirmUse;
+    });
 </script>
 </body>
 </html>

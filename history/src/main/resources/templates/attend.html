@@ -23,15 +23,15 @@
         <img src="/img/mainLg2.png" alt="메인 로고">
     </a>
     <ul>
-        <li><a href="">학습하기</a></li>
-        <li><a href="">퀴즈풀기</a></li>
+        <li><a href="/board/topic">학습하기</a></li>
+        <li><a href="/quiz/topic">퀴즈풀기</a></li>
         <li><a href="/attend" class="active">출석하기</a></li>
-        <li><a href="">포인트 상점</a></li>
+        <li><a href="/pointStore">포인트 상점</a></li>
         <li><a href="/faq">FAQ</a></li>
         <li><a href="/notice">공지사항</a></li>
     </ul>
     <div id="user" th:if="${loginUser}">
-        <a href="/myPage" id="userName-link" th:text="${loginUser.name} + '님'">사용자 님</a>
+        <a href="/user/myPage" id="userName-link" th:text="${loginUser.name} + '님'">사용자 님</a>
     </div>
 </header>
 <div id="container">
