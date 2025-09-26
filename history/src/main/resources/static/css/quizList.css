@@ -513,6 +513,7 @@ td {
     position: relative;
     width: 100%; /* 필요 시 추가 */
     margin-left: 0; /* 왼쪽 마진 제거 */
+    min-height: 60px; /* 최소 높이 설정으로 버튼 위치 안정화 */
 }
 
 .pagination {
@@ -540,11 +541,13 @@ td {
     background: #f0f0f0;
 }
 
-/* 관리자 버튼 */
+/* 관리자 버튼 - 위치 조정 */
 #quiz-btn-box {
     position: absolute;
     display: block;
     right: 0;
+    top: 50%; /* 컨테이너 중앙에 위치 */
+    transform: translateY(-50%); /* 정확한 중앙 정렬 */
     text-align: right;
 }
 
@@ -556,7 +559,6 @@ td {
     padding: 8px 14px;
     border-radius: 6px;
     cursor: pointer;
-    margin-top: 10px;
 }
 
 #create-quiz-btn:hover {
