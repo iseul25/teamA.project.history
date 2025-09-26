@@ -45,7 +45,7 @@ public class BoardController {
 
     // 게시글 목록 조회
     @GetMapping("/list")
-    public String list(@RequestParam(value="boardType", required=false) String boardType,
+    public String list(@RequestParam(value = "boardType", required = false) String boardType,
                        HttpSession session,
                        Model model) {
 
@@ -163,7 +163,7 @@ public class BoardController {
 
     // 게시글 등록 폼
     @GetMapping("/create")
-    public String createForm(@RequestParam(value="boardType", required=false) String boardType,
+    public String createForm(@RequestParam(value = "boardType", required = false) String boardType,
                              HttpSession session, Model model) {
 
         session.setAttribute("selectedBoardType", boardType);
@@ -179,6 +179,7 @@ public class BoardController {
     // 게시글 등록 처리
     @PostMapping("/create")
     public String create(@ModelAttribute Board board,
+                         @RequestParam(value = "videoUrl", required = false) String videoUrl,   // ⬅️ 추가
                          @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                          @RequestParam(value = "imgDescription", required = false) String imgDescription,
                          RedirectAttributes redirectAttributes,
@@ -189,6 +190,8 @@ public class BoardController {
             if (loginUser == null) {
                 return "redirect:/login";
             }
+            // 🔹 유튜브 URL 정규화 → embed URL 저장
+            board.setVideoUrl(toYoutubeEmbedUrl(videoUrl));     // ⬅️ 추가
 
             // 이미지 파일 처리
             if (imageFile != null && !imageFile.isEmpty()) {
@@ -274,11 +277,15 @@ public class BoardController {
     // 게시글 수정 처리
     @PostMapping("/edit")
     public String edit(@ModelAttribute Board board,
+                       @RequestParam(value = "videoUrl", required = false) String videoUrl,   // ⬅️ 추가
                        @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                        @RequestParam(value = "imgDescription", required = false) String imgDescription,
                        Model model,
                        RedirectAttributes redirectAttributes) {
         try {
+            // 🔹 유튜브 URL 정규화 → embed URL 저장
+            board.setVideoUrl(toYoutubeEmbedUrl(videoUrl));     // ⬅️ 추가
+
             // 새 이미지가 업로드된 경우
             if (imageFile != null && !imageFile.isEmpty()) {
                 String imageUrl = fileUploadService.saveFile(imageFile);
@@ -389,5 +396,20 @@ public class BoardController {
         }
         return response;
     }
-}
 
+    // 유튜브 링크 관련
+    private static String toYoutubeEmbedUrl(String rawUrl) {
+        if (rawUrl == null || rawUrl.isBlank()) return null;
+        String url = rawUrl.trim();
+
+        // videoId 추출
+        // 허용 패턴: youtu.be/{id}, youtube.com/watch?v={id}, /embed/{id}, /shorts/{id}
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile(
+                "(?:youtu\\.be/|youtube\\.com/(?:watch\\?v=|embed/|shorts/))([A-Za-z0-9_-]{11})"
+        ).matcher(url);
+
+        if (!m.find()) return null; // 유효하지 않으면 저장 안 함(화면에서 미노출)
+        String id = m.group(1);
+        return "https://www.youtube.com/embed/" + id; // 👈 임베드 전용 URL로 표준화
+    }
+}
