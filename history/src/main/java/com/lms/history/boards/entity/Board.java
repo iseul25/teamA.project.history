@@ -21,6 +21,8 @@ public class Board {
     private Date updated;
     private String imgUrl;
     private String imgDescription;
-
     private String name;
+
+    // ⬇️ 추가
+    private String videoUrl;
 }
