@@ -10,31 +10,12 @@
         .modal-content{background:#fefefe;margin:10% auto;padding:0;border:none;border-radius:8px;width:80%;max-width:600px;box-shadow:0 4px 20px rgba(0,0,0,.3)}
         .modal-header{display:flex;justify-content:space-between;align-items:center;padding:20px 30px;border-bottom:1px solid #eee}
         .modal-header h3{margin:0;color:#333}
-        .close{color:#aaa;font-size:28px;font-weight:bold;cursor:pointer;line-height:1}
-        .close:hover,.close:focus{color:#000}
+        .close, .close-use{color:#aaa;font-size:28px;font-weight:bold;cursor:pointer;line-height:1}
+        .close:hover, .close-use:hover, .close:focus{color:#000}
         .modal-body{padding:20px 30px;max-height:400px;overflow-y:auto}
 
-        .purchase-item{display:flex;align-items:center;padding:15px 0;border-bottom:1px solid #f0f0f0}
-        .purchase-item:last-child{border-bottom:none}
-        .item-image{width:50px;height:50px;object-fit:cover;border-radius:4px;margin-right:15px}
-        .item-details{flex:1}
-        .item-name{font-weight:bold;margin-bottom:5px;color:#333}
-        .item-status{font-size:.8em;padding:2px 6px;border-radius:3px;font-weight:bold;margin-top:5px}
-        .item-cost{font-weight:bold;color:#d32f2f;font-size:1.1em}
-        .item-actions{display:flex;gap:8px;align-items:center}
-        .action-buttons{display:flex;gap:5px;margin-top:5px}
-        .btn-history{padding:5px 10px;font-size:.9em;background:#f0f0f0;color:#333;border:1px solid #ddd}
-        .btn-history:hover{background:#e0e0e0}
-        .btn-use{background:#4caf50;color:#fff;padding:4px 8px;font-size:.8em;border:none;border-radius:3px;cursor:pointer}
-        .btn-refund{background:#ff9800;color:#fff;padding:4px 8px;font-size:.8em;border:none;border-radius:3px;cursor:pointer}
-        .btn-cancel{background:#9e9e9e;color:#fff;padding:4px 8px;font-size:.8em;border:none;border-radius:3px;cursor:pointer}
         .action-completed{font-size:.8em;color:#666;font-style:italic}
         .empty-history{text-align:center;padding:40px 20px;color:#666}
-
-        .use-item-image{width:150px;height:150px;object-fit:cover;border-radius:8px;margin:20px auto;display:block}
-        .warning-text{color:#d32f2f;font-size:.9em;text-align:center;margin:10px 0}
-        .modal-buttons{display:flex;justify-content:center;gap:10px;margin-top:20px}
-        .use-modal .modal-content{max-width:400px}
 
         /* 버튼 비활성화 스타일 */
         .btn:disabled {
@@ -97,7 +78,7 @@
                 </tr>
                 <tr>
                     <td class="label">주문 내역</td>
-                    <td class="value">
+                    <td class="value" id="orderHistory">
                         <span id="purchaseCount">0건</span>
                         <button id="viewHistoryBtn" class="btn btn-history">내역 보기</button>
                     </td>
@@ -134,7 +115,7 @@
                     <p class="warning-text">사용 후에는 환불이 불가능합니다.</p>
                     <div class="modal-buttons">
                         <button id="confirmUseBtn" class="btn btn-use">사용</button>
-                        <button id="cancelUseBtn" class="btn btn-cancel">확인</button>
+                        <button id="cancelUseBtn" class="btn btn-cancel">취소</button>
                     </div>
                 </div>
             </div>
