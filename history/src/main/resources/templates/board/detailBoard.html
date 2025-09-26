@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${board.title}">학습 게시물</title>
     <link rel="stylesheet" th:href="@{/css/detailBoard.css}">
+    <!-- (선택) 유튜브/썸네일 프리커넥트 -->
+    <link rel="preconnect" href="https://www.youtube.com">
+    <link rel="preconnect" href="https://img.youtube.com">
 </head>
 
 <body>
@@ -39,10 +42,7 @@
     <div class="sideBox">
         <ul>
             <li class="submenuBox">
-    <span class="mainMenu">
-        선사시대
-        <span class="arrow">&#9660;</span>
-    </span>
+                <span class="mainMenu">선사시대 <span class="arrow">&#9660;</span></span>
                 <ul class="submenu">
                     <li><a th:href="@{/board/list(boardType='선사시대')}" class="study-link">학습하기</a></li>
                     <li><a th:href="@{/quiz/list(boardType='선사시대')}" class="quiz-link">퀴즈풀기</a></li>
@@ -50,10 +50,7 @@
             </li>
 
             <li class="submenuBox">
-    <span class="mainMenu">
-        고조선과 여러 나라
-        <span class="arrow">&#9660;</span>
-    </span>
+                <span class="mainMenu">고조선과 여러 나라 <span class="arrow">&#9660;</span></span>
                 <ul class="submenu">
                     <li><a th:href="@{/board/list(boardType='고조선과 여러 나라')}" class="study-link">학습하기</a></li>
                     <li><a th:href="@{/quiz/list(boardType='고조선과 여러 나라')}" class="quiz-link">퀴즈풀기</a></li>
@@ -61,10 +58,7 @@
             </li>
 
             <li class="submenuBox">
-    <span class="mainMenu">
-        삼국과 가야
-        <span class="arrow">&#9660;</span>
-    </span>
+                <span class="mainMenu">삼국과 가야 <span class="arrow">&#9660;</span></span>
                 <ul class="submenu">
                     <li><a th:href="@{/board/list(boardType='삼국과 가야')}" class="study-link">학습하기</a></li>
                     <li><a th:href="@{/quiz/list(boardType='삼국과 가야')}" class="quiz-link">퀴즈풀기</a></li>
@@ -72,10 +66,7 @@
             </li>
 
             <li class="submenuBox">
-    <span class="mainMenu">
-        남북극시대
-        <span class="arrow">&#9660;</span>
-    </span>
+                <span class="mainMenu">남북극시대 <span class="arrow">&#9660;</span></span>
                 <ul class="submenu">
                     <li><a th:href="@{/board/list(boardType='남북극시대')}" class="study-link">학습하기</a></li>
                     <li><a th:href="@{/quiz/list(boardType='남북극시대')}" class="quiz-link">퀴즈풀기</a></li>
@@ -83,10 +74,7 @@
             </li>
 
             <li class="submenuBox">
-    <span class="mainMenu">
-        고려시대
-        <span class="arrow">&#9660;</span>
-    </span>
+                <span class="mainMenu">고려시대 <span class="arrow">&#9660;</span></span>
                 <ul class="submenu">
                     <li><a th:href="@{/board/list(boardType='고려시대')}" class="study-link">학습하기</a></li>
                     <li><a th:href="@{/quiz/list(boardType='고려시대')}" class="quiz-link">퀴즈풀기</a></li>
@@ -94,10 +82,7 @@
             </li>
 
             <li class="submenuBox">
-    <span class="mainMenu">
-        조선시대
-        <span class="arrow">&#9660;</span>
-    </span>
+                <span class="mainMenu">조선시대 <span class="arrow">&#9660;</span></span>
                 <ul class="submenu">
                     <li><a th:href="@{/board/list(boardType='조선시대')}" class="study-link">학습하기</a></li>
                     <li><a th:href="@{/quiz/list(boardType='조선시대')}" class="quiz-link">퀴즈풀기</a></li>
@@ -105,10 +90,7 @@
             </li>
 
             <li class="submenuBox">
-    <span class="mainMenu">
-        근대
-        <span class="arrow">&#9660;</span>
-    </span>
+                <span class="mainMenu">근대 <span class="arrow">&#9660;</span></span>
                 <ul class="submenu">
                     <li><a th:href="@{/board/list(boardType='근대')}" class="study-link">학습하기</a></li>
                     <li><a th:href="@{/quiz/list(boardType='근대')}" class="quiz-link">퀴즈풀기</a></li>
@@ -116,10 +98,7 @@
             </li>
 
             <li class="submenuBox">
-    <span class="mainMenu">
-        현대
-        <span class="arrow">&#9660;</span>
-    </span>
+                <span class="mainMenu">현대 <span class="arrow">&#9660;</span></span>
                 <ul class="submenu lastUl">
                     <li><a th:href="@{/board/list(boardType='현대')}" class="study-link">학습하기</a></li>
                     <li><a th:href="@{/quiz/list(boardType='현대')}" class="quiz-link">퀴즈풀기</a></li>
@@ -152,6 +131,21 @@
         <div class="post-meta">
             <span th:text="${board.name}">작성자</span>
             <span th:if="${board.created}" th:text="${#dates.format(board.created, 'yyyy-MM-dd')}">작성일</span>
+        </div>
+
+        <!-- [추가] 영상 섹션: 썸네일 → 클릭 시 iFrame 로드 -->
+        <div th:if="${board.videoUrl}" class="post-video video-field"
+             th:attr="data-embed=${board.videoUrl}"
+             style="margin:16px 0;">
+            <button type="button" class="thumb-btn"
+                    style="padding:0;border:0;background:none;cursor:pointer;position:relative;">
+                <img class="thumb" alt="video thumbnail"
+                     style="max-width:100%;width:560px;max-height:315px;display:block;margin:0 auto;">
+                <div style="position:absolute;bottom:10px;left:10px;font-size:16px;background:rgba(0,0,0,.6);color:#fff;padding:6px 10px;border-radius:6px;">
+                    ▶ 재생
+                </div>
+            </button>
+            <div class="iframe-host" style="margin-top:8px;"></div>
         </div>
 
         <!-- 본문 내용 -->
@@ -244,7 +238,7 @@
 </div>
 
 <script>
-    // 사이드바 메인메뉴 클릭 시 서브메뉴 토글
+    // 사이드바 토글
     document.querySelectorAll(".mainMenu").forEach(menu => {
         menu.addEventListener("click", () => {
             const parent = menu.parentElement;
@@ -270,6 +264,46 @@
         const textarea = replyForm.querySelector('textarea');
         if (textarea) textarea.focus();
     }
+
+    // ====== 유튜브(상세) : 썸네일 먼저 → 클릭 시 iFrame 로드 ======
+    (function(){
+        const EMBED_ID_RE = /embed\/([A-Za-z0-9_-]{11})/;
+        function extractFromEmbed(embedUrl){
+            const m = String(embedUrl||'').match(EMBED_ID_RE);
+            return m ? m[1] : null;
+        }
+        function thumbUrl(id){ return `https://img.youtube.com/vi/${id}/hqdefault.jpg`; }
+        function iframeHtml(embed){
+            return `<iframe width="560" height="315" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"
+                    src="${embed}"></iframe>`;
+        }
+
+        document.addEventListener('DOMContentLoaded', function(){
+            const field = document.querySelector('.post-video.video-field');
+            if (!field) return;
+
+            const embed = field.getAttribute('data-embed');
+            const id = extractFromEmbed(embed);
+            const thumb = field.querySelector('.thumb');
+            const btn = field.querySelector('.thumb-btn');
+            const host = field.querySelector('.iframe-host');
+
+            if (id && thumb){
+                thumb.src = thumbUrl(id);
+            }
+
+            if (btn && host && embed){
+                btn.addEventListener('click', function(){
+                    host.innerHTML = iframeHtml(embed);
+                    // 썸네일 버튼은 감춰도 되고 유지해도 됨. 여기선 감춤.
+                    btn.style.display = 'none';
+                }, { passive: true });
+            }
+        });
+    })();
+    // =================================================================================
 </script>
 </body>
 </html>
