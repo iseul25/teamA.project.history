@@ -42,6 +42,7 @@ public class BoardRepository {
             board.setName(rs.getString("name"));
             board.setImgUrl(rs.getString("imgUrl"));
             board.setImgDescription(rs.getString("imgDescription"));
+            board.setVideoUrl(rs.getString("videoUrl"));   // ⬅️ 추가
             return board;
         }, boardType);
     }
@@ -66,6 +67,7 @@ public class BoardRepository {
             board.setName(rs.getString("name"));
             board.setImgUrl(rs.getString("imgUrl"));
             board.setImgDescription(rs.getString("imgDescription"));
+            board.setVideoUrl(rs.getString("videoUrl"));   // ⬅️ 추가
             return board;
         }, boardType, size, offset);
     }
@@ -86,12 +88,13 @@ public class BoardRepository {
             board.setBoardType(rs.getString("boardType"));
             board.setImgUrl(rs.getString("imgUrl"));
             board.setImgDescription(rs.getString("imgDescription"));
+            board.setVideoUrl(rs.getString("videoUrl"));   // ⬅️ 추가
             return board;
         };
     }
 
     public Board save(Board board, int userId) {
-        String sql = "INSERT INTO Board (boardType, title, content, userId, imgUrl, imgDescription) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Board (boardType, title, content, userId, videoUrl, imgUrl, imgDescription) VALUES (?, ?, ?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbc.update(connection -> {
@@ -100,8 +103,9 @@ public class BoardRepository {
             ps.setString(2, board.getTitle());
             ps.setString(3, board.getContent());
             ps.setInt(4, userId);
-            ps.setString(5, board.getImgUrl());
-            ps.setString(6, board.getImgDescription());
+            ps.setString(5, board.getVideoUrl());      // ⬅️ 추가
+            ps.setString(6, board.getImgUrl());
+            ps.setString(7, board.getImgDescription());
             return ps;
         }, keyHolder);
 
@@ -114,11 +118,12 @@ public class BoardRepository {
     }
 
     public void update(Board board) {
-        String sql = "UPDATE Board SET boardType = ?, title = ?, content = ?, imgUrl = ?, imgDescription = ? WHERE boardId = ?";
+        String sql = "UPDATE Board SET boardType=?, title=?, content=?, videoUrl=?, imgUrl=?, imgDescription=? WHERE boardId=?";
         jdbc.update(sql,
                 board.getBoardType(),
                 board.getTitle(),
                 board.getContent(),
+                board.getVideoUrl(),
                 board.getImgUrl(),
                 board.getImgDescription(),
                 board.getBoardId()
@@ -139,6 +144,7 @@ public class BoardRepository {
                 board.setUpdated(rs.getTimestamp("date"));
                 board.setImgUrl(rs.getString("imgUrl"));
                 board.setImgDescription(rs.getString("imgDescription"));
+                board.setVideoUrl(rs.getString("videoUrl"));   // ⬅️ 추가
                 return board;
             }, boardId);
         } catch (EmptyResultDataAccessException e) {
