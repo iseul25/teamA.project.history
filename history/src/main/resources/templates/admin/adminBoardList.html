@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>학습 게시글 관리</title>
     <link rel="stylesheet" th:href="@{/css/adminBoardList.css}">
+    <!-- (선택) 유튜브 도메인 프리커넥트 -->
+    <link rel="preconnect" href="https://www.youtube.com">
+    <link rel="preconnect" href="https://img.youtube.com">
 </head>
 
 <body>
@@ -97,6 +100,10 @@
                     <span class="board-link" th:text="${board.title}"
                           th:onclick="'viewBoard(' + ${board.boardId} + ')'"
                           style="cursor: pointer; color: #007bff; text-decoration: underline;">게시글 제목</span>
+
+                    <!-- ▶︎영상 배지 -->
+                    <span th:if="${board.videoUrl}"
+                          style="margin-left:6px; font-size:12px; color:#e53935;">▶︎영상</span>
                 </td>
                 <td th:text="${#dates.format(board.created, 'yyyy-MM-dd')}">2025-01-01</td>
                 <td>
@@ -115,7 +122,6 @@
                     <td></td>
                 </tr>
             </th:block>
-
 
             <!-- 게시글이 아예 없는 경우 -->
             <tr th:if="${#lists.isEmpty(boards)}">
@@ -136,14 +142,36 @@
                     <input type="hidden" name="boardType" th:value="${currentBoardType}" />
                     <input type="text" id="editTitle" name="title" placeholder="제목" required>
                     <textarea id="editContent" name="content" placeholder="내용" required></textarea>
+
+                    <!-- 이미지 업로드 -->
                     <div class="image-upload-section">
                         <label for="editImageFile">이미지 업로드:</label>
-                        <div id="currentImagePreview" style="margin: 10px 0;">
-                            <!-- 기존 이미지가 있으면 여기에 표시 -->
-                        </div>
+                        <div id="currentImagePreview" style="margin: 10px 0;"></div>
                         <input type="file" id="editImageFile" name="imageFile" accept="image/*">
                         <input type="text" id="editImgDescription" name="imgDescription" placeholder="이미지 설명 (선택사항)">
                     </div>
+
+                    <!-- [추가] 유튜브 URL 입력(가벼운 썸네일 미리보기 → 클릭 시 iFrame 로드) -->
+                    <div class="video-field" style="margin-top:12px;">
+                        <label style="display:block;margin-bottom:6px;">유튜브 URL</label>
+                        <input type="url" name="videoUrl"
+                               placeholder="https://youtu.be/XXXXXXXXXXX 또는 https://www.youtube.com/watch?v=XXXXXXXXXXX"
+                               style="width:100%;box-sizing:border-box;">
+                        <small style="color:#666;">썸네일만 먼저 보여주고, 클릭 시 재생합니다. 저장 시 서버가 embed 링크로 정규화합니다.</small>
+
+                        <div class="video-preview" style="margin-top:10px; display:none;">
+                            <button type="button" class="thumb-btn"
+                                    style="padding:0;border:0;background:none;cursor:pointer;position:relative;">
+                                <img class="thumb" alt="video thumbnail"
+                                     style="max-width:560px;max-height:315px;display:block;">
+                                <div style="position:absolute;bottom:10px;left:10px;font-size:16px;background:rgba(0,0,0,.6);color:#fff;padding:6px 10px;border-radius:6px;">
+                                    ▶ 재생
+                                </div>
+                            </button>
+                            <div class="iframe-host" style="margin-top:8px;"></div>
+                        </div>
+                    </div>
+
                     <button type="submit" id="editBoard-btn">수정 완료</button>
                 </form>
             </div>
@@ -158,27 +186,23 @@
                     <div class="form-group">
                         <div id="viewTitle" class="view-field"></div>
                     </div>
-
                     <div class="form-group">
                         <div id="viewContent" class="view-content"></div>
                     </div>
                 </div>
                 <div class="modal-buttons">
                     <button type="button" onclick="closeViewModal()">닫기</button>
-                    <button type="button" id="editFromViewBtn" onclick="editFromView()">수정하기</button>
                 </div>
             </div>
         </div>
 
-        <!-- Thymeleaf로 페이징 처리 -->
+        <!-- 페이징 -->
         <div id="pagination" class="pagination" th:if="${totalPages > 0}">
-            <!-- 이전 페이지 -->
             <a th:if="${currentPage > 0}"
                th:href="@{/admin/board(page=${currentPage - 1}, boardType=${currentBoardType})}"
                class="page-btn">◀</a>
             <span th:unless="${currentPage > 0}" class="page-btn disabled">◀</span>
 
-            <!-- 페이지 번호들 -->
             <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
                 <a th:unless="${i == currentPage}"
                    th:href="@{/admin/board(page=${i}, boardType=${currentBoardType})}"
@@ -189,7 +213,6 @@
                       class="page-btn active"></span>
             </th:block>
 
-            <!-- 다음 페이지 -->
             <a th:if="${currentPage < totalPages - 1}"
                th:href="@{/admin/board(page=${currentPage + 1}, boardType=${currentBoardType})}"
                class="page-btn">▶</a>
@@ -208,105 +231,125 @@
 </div>
 
 <script>
-    // 드롭다운 메뉴 토글 (인터랙션이므로 JavaScript 필요)
+    // ================= 공통: 썸네일 프리뷰 → 클릭 시 iFrame 로드(중복 바인딩 방지) ================
+    (function(){
+        const ID_RE   = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/;
+        function ytExtractId(url){ const m = String(url||'').trim().match(ID_RE); return m ? m[1] : null; }
+        function ytThumb(id){ return `https://img.youtube.com/vi/${id}/hqdefault.jpg`; }
+        function ytEmbed(id){ return `https://www.youtube.com/embed/${id}`; }
+        function embedToShare(embedUrl){ const m = String(embedUrl||'').match(/embed\/([A-Za-z0-9_-]{11})/); return m ? `https://youtu.be/${m[1]}` : ''; }
+
+        // root: .video-field 컨테이너
+        window.bindVideoField = function(root){
+            if (!root || root.dataset.bound === '1') return;
+            root.dataset.bound = '1';
+
+            const input = root.querySelector('input[name="videoUrl"]');
+            const wrap  = root.querySelector('.video-preview');
+            const btn   = root.querySelector('.thumb-btn');
+            const img   = root.querySelector('.thumb');
+            const host  = root.querySelector('.iframe-host');
+            let t;
+
+            if (!input || !wrap || !btn || !img || !host) return;
+
+            input.addEventListener('input', function(){
+                clearTimeout(t);
+                t = setTimeout(function(){
+                    const id = ytExtractId(input.value);
+                    if (id){
+                        img.src = ytThumb(id);
+                        wrap.style.display = 'block';
+                        host.innerHTML = ''; // iFrame 제거
+                    } else {
+                        wrap.style.display = 'none';
+                        img.removeAttribute('src');
+                        host.innerHTML = '';
+                    }
+                }, 200);
+            }, { passive: true });
+
+            btn.addEventListener('click', function(){
+                const id = ytExtractId(input.value);
+                if (!id) return;
+                host.innerHTML = `<iframe width="560" height="315" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"
+                    src="${ytEmbed(id)}"></iframe>`;
+            }, { passive: true });
+
+            // 수정 모달용: 서버에서 embed 저장돼 있으면 보기 좋게 share URL로 세팅
+            const serverValue = input.getAttribute('data-server-value');
+            if (serverValue) input.value = embedToShare(serverValue);
+            // 초기값 반영 (iFrame은 생성하지 않음, 썸네일만)
+            const initId = ytExtractId(input.value);
+            if (initId){
+                img.src = ytThumb(initId);
+                wrap.style.display = 'block';
+            }
+        };
+
+        // 외부에서도 쓸 유틸(필요 시)
+        window.__ytUtil = { ytExtractId, ytThumb, ytEmbed, embedToShare };
+    })();
+    // =============================================================================================
+
+    // 드롭다운
     const categoryHeader = document.getElementById("categoryHeader");
     const categoryMenu = document.getElementById("categoryMenu");
-    const arrow = categoryHeader.querySelector(".dropdown-arrow");
+    const arrow = categoryHeader ? categoryHeader.querySelector(".dropdown-arrow") : null;
 
-    // 클릭하면 드롭다운 토글
-    categoryHeader.addEventListener("click", (e) => {
-        categoryMenu.classList.toggle("show");
-        if (arrow) arrow.classList.toggle("up");
-    });
-
-    // 바깥 클릭 시 닫기
-    window.addEventListener("click", (e) => {
-        if (!categoryHeader.contains(e.target)) {
-            categoryMenu.classList.remove("show");
-            if (arrow) arrow.classList.remove("up");
-        }
-    });
-
-    // 게시글 삭제 (AJAX 필요)
-    async function deleteBoard(boardId) {
-        if (!confirm(`${boardId}번 게시물을 삭제하시겠습니까?`)) return;
-
-        try {
-            const response = await fetch(`/admin/board/delete/${boardId}`, {
-                method: 'DELETE'
-            });
-
-            if (response.ok) {
-                alert('게시글이 삭제되었습니다.');
-                location.reload();
-            } else {
-                const errorText = await response.text();
-                alert('삭제에 실패했습니다: ' + errorText);
+    if (categoryHeader) {
+        categoryHeader.addEventListener("click", () => {
+            categoryMenu.classList.toggle("show");
+            if (arrow) arrow.classList.toggle("up");
+        });
+        window.addEventListener("click", (e) => {
+            if (!categoryHeader.contains(e.target)) {
+                categoryMenu.classList.remove("show");
+                if (arrow) arrow.classList.remove("up");
             }
-        } catch (error) {
-            alert('삭제 중 오류가 발생했습니다.');
-        }
+        });
     }
 
-    // 게시글 수정 모달 열기
+    // 삭제
+    async function deleteBoard(boardId) {
+        if (!confirm(`${boardId}번 게시물을 삭제하시겠습니까?`)) return;
+        try {
+            const response = await fetch(`/admin/board/delete/${boardId}`, { method: 'DELETE' });
+            if (response.ok) { alert('게시글이 삭제되었습니다.'); location.reload(); }
+            else { alert('삭제에 실패했습니다: ' + await response.text()); }
+        } catch (error) { alert('삭제 중 오류가 발생했습니다.'); }
+    }
+
+    // 수정 모달
     const modal = document.getElementById("editModal");
     const closeBtn = document.querySelector(".closeBtn");
 
-    // HTML 태그를 완전히 제거하는 함수 (더 강화된 버전)
     function stripHtmlTags(html) {
         if (!html) return '';
-
         let content = html;
-
-        // 1. uploads 이미지 태그 제거
         content = content.replace(/<img[^>]*src\s*=\s*['"][^'"]*uploads[^'"]*['"][^>]*\/?>/gi, '');
-
-        // 2. 이미지 설명 p 태그 제거
         content = content.replace(/<p[^>]*style[^>]*color:[^>]*>[^<]*<\/p>/gi, '');
-
-        // 3. br 태그 제거
         content = content.replace(/(<br\s*\/?>)+/gi, '\n');
-
-        // 4. 나머지 HTML 태그 제거
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = content;
-
+        const tempDiv = document.createElement('div'); tempDiv.innerHTML = content;
         return (tempDiv.textContent || tempDiv.innerText || '').trim();
     }
 
     function editBoard(boardId) {
-        console.log('Opening edit modal for board:', boardId);
-
         fetch(`/admin/board/api/${boardId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
+            .then(r => { if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
             .then(board => {
-                console.log('Board data received:', board);
-
-                // 기본 정보 설정
                 document.getElementById("editBoardId").value = board.boardId;
-                document.getElementById("editTitle").value = board.title || '';
+                document.getElementById("editTitle").value   = board.title || '';
+                document.getElementById("editContent").value = stripHtmlTags(board.content);
 
-                // 백엔드에서 이미 정리된 content를 받지만, 추가로 한번 더 정리
-                const cleanContent = stripHtmlTags(board.content);
-                document.getElementById("editContent").value = cleanContent;
-
-                // 이미지 표시 처리 (imgUrl 필드 기준)
                 const previewDiv = document.getElementById("currentImagePreview");
-
                 if (board.imgUrl && board.imgUrl.trim() !== '') {
-                    console.log('Found image URL:', board.imgUrl);
-
-                    // 이미지 미리보기 표시
                     previewDiv.innerHTML = `
-                    <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9;">
+                      <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9;">
                         <p style="margin: 0 0 10px 0; font-weight: bold; color: #333;">현재 등록된 이미지:</p>
-                        <img src="${board.imgUrl}"
-                             alt="${board.imgDescription || ''}"
+                        <img src="${board.imgUrl}" alt="${board.imgDescription || ''}"
                              style="max-width: 200px; max-height: 150px; object-fit: contain; border: 1px solid #ccc; border-radius: 3px; display: block;"
                              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                         <div style="display: none; color: #dc3545; font-size: 12px; margin-top: 5px;">
@@ -315,78 +358,57 @@
                         <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
                             ${board.imgDescription ? '설명: ' + board.imgDescription : '설명 없음'}
                         </p>
-                    </div>
-                `;
-
-                    // 이미지 설명 필드에 기존 값 설정
+                      </div>`;
                     document.getElementById("editImgDescription").value = board.imgDescription || '';
                 } else {
-                    console.log('No image found');
                     previewDiv.innerHTML = `
-                    <div style="border: 1px solid #d1ecf1; padding: 10px; border-radius: 5px; background-color: #d1ecf1; color: #0c5460;">
+                      <div style="border: 1px solid #d1ecf1; padding: 10px; border-radius: 5px; background-color: #d1ecf1; color: #0c5460;">
                         <p style="margin: 0;">등록된 이미지가 없습니다.</p>
                         <p style="margin: 5px 0 0 0; font-size: 12px;">새 이미지를 업로드할 수 있습니다.</p>
-                    </div>
-                `;
+                      </div>`;
                     document.getElementById("editImgDescription").value = '';
                 }
 
-                // boardType 설정
                 const boardTypeInput = document.querySelector("input[name='boardType']");
-                if (boardTypeInput) {
-                    boardTypeInput.value = board.boardType || '';
-                }
-
-                // 파일 입력 필드 초기화
+                if (boardTypeInput) boardTypeInput.value = board.boardType || '';
                 document.getElementById("editImageFile").value = '';
+
+                // 유튜브 필드 바인딩(서버값을 data-server-value로 싣고, 프리뷰는 썸네일만)
+                const videoField = modal.querySelector('.video-field');
+                const videoInput = videoField.querySelector('input[name="videoUrl"]');
+                videoInput.setAttribute('data-server-value', board.videoUrl || '');
+                bindVideoField(videoField);
 
                 modal.classList.add("show");
             })
-            .catch(error => {
-                console.error('Error fetching board data:', error);
-                alert('게시글 정보를 불러올 수 없습니다: ' + error.message);
-            });
+            .catch(e => { alert('게시글 정보를 불러올 수 없습니다: ' + e.message); });
     }
 
-    // 모달 닫기
-    if (closeBtn) {
-        closeBtn.onclick = () => modal.classList.remove("show");
-    }
+    if (closeBtn) closeBtn.onclick = () => modal.classList.remove("show");
+    window.onclick = (e) => { if (e.target == modal) modal.classList.remove("show"); };
 
-    window.onclick = (e) => {
-        if (e.target == modal) modal.classList.remove("show");
-    };
-
-    // 이미지 파일 선택 시 미리보기
     document.getElementById("editImageFile").addEventListener("change", function(e) {
         const file = e.target.files[0];
         const previewDiv = document.getElementById("currentImagePreview");
-
         if (file) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function(ev) {
                 previewDiv.innerHTML = `
-                    <div style="border: 1px solid #28a745; padding: 10px; border-radius: 5px; background-color: #d4edda; color: #155724;">
-                        <p style="margin: 0 0 10px 0; font-weight: bold;">새로 선택된 이미지:</p>
-                        <img src="${e.target.result}"
-                             alt="새 이미지 미리보기"
-                             style="max-width: 200px; max-height: 150px; object-fit: contain; border: 1px solid #ccc; border-radius: 3px; display: block;">
-                        <p style="margin: 5px 0 0 0; font-size: 12px;">
-                            파일명: ${file.name}
-                        </p>
-                    </div>
-                `;
+                  <div style="border: 1px solid #28a745; padding: 10px; border-radius: 5px; background-color: #d4edda; color: #155724;">
+                    <p style="margin: 0 0 10px 0; font-weight: bold;">새로 선택된 이미지:</p>
+                    <img src="${ev.target.result}" alt="새 이미지 미리보기"
+                         style="max-width: 200px; max-height: 150px; object-fit: contain; border: 1px solid #ccc; border-radius: 3px; display: block;">
+                    <p style="margin: 5px 0 0 0; font-size: 12px;">파일명: ${file.name}</p>
+                  </div>`;
             };
             reader.readAsDataURL(file);
         }
     });
 
-    // 수정 완료 처리
     const editForm = document.getElementById("editForm");
     if (editForm) {
         editForm.addEventListener("submit", async e => {
             e.preventDefault();
-
             const formData = new FormData();
             formData.append('id', document.getElementById("editBoardId").value);
             formData.append('title', document.getElementById("editTitle").value);
@@ -394,86 +416,67 @@
             formData.append('page', document.querySelector("input[name='page']").value || '0');
             formData.append('boardType', document.querySelector("input[name='boardType']").value || '전체');
 
-            // 이미지 파일이 선택된 경우 추가
             const imageFile = document.getElementById("editImageFile").files[0];
-            if (imageFile) {
-                formData.append('imageFile', imageFile);
-            }
+            if (imageFile) formData.append('imageFile', imageFile);
 
-            // 이미지 설명 추가
             const imgDescription = document.getElementById("editImgDescription").value;
-            if (imgDescription) {
-                formData.append('imgDescription', imgDescription);
-            }
+            if (imgDescription) formData.append('imgDescription', imgDescription);
+
+            // 유튜브 URL 포함(비면 빈 값)
+            const videoUrl = editForm.querySelector('.video-field input[name="videoUrl"]').value || '';
+            formData.append('videoUrl', videoUrl);
 
             try {
-                const response = await fetch("/admin/board/edit", {
-                    method: "POST",
-                    body: formData
-                });
-
+                const response = await fetch("/admin/board/edit", { method: "POST", body: formData });
                 if (response.ok) {
                     modal.classList.remove("show");
                     alert('게시글이 수정되었습니다.');
                     window.location.href = `/admin/board`;
                 } else {
-                    const errorText = await response.text();
-                    alert("수정에 실패했습니다: " + errorText);
+                    alert("수정에 실패했습니다: " + await response.text());
                 }
             } catch (error) {
                 alert("수정 중 오류가 발생했습니다: " + error.message);
-                console.error(error);
             }
         });
     }
 
-    // ============== 상세보기 모달 관련 코드 ==============
-
-    // 상세보기 모달 관련 변수
+    // ============== 상세보기 모달 ==============
     const viewModal = document.getElementById("viewModal");
     const closeViewBtn = document.querySelector(".closeViewBtn");
     let currentBoardData = null;
 
-    // 게시글 상세보기 함수
     function viewBoard(boardId) {
-        console.log('Opening view modal for board:', boardId);
-
         fetch(`/admin/board/api/${boardId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
+            .then(r => { if(!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
             .then(board => {
-                console.log('Board data received for view:', board);
-
                 currentBoardData = board;
-
                 document.getElementById("viewTitle").textContent = board.title || '';
 
                 const viewContentDiv = document.getElementById("viewContent");
-                if (board.content) {
-                    viewContentDiv.innerHTML = board.content;
-                } else {
-                    viewContentDiv.textContent = '내용이 없습니다.';
+                viewContentDiv.innerHTML = board.content ? board.content : '내용이 없습니다.';
+
+                // 저장된 embed URL이 있으면 하단에 iFrame 표시(상세는 바로 재생 가능)
+                if (board.videoUrl) {
+                    const videoHtml = `
+                      <div style="margin-top:16px;">
+                        <iframe src="${board.videoUrl}" width="560" height="315" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+                      </div>`;
+                    viewContentDiv.insertAdjacentHTML('beforeend', videoHtml);
                 }
 
                 viewModal.classList.add("show");
             })
-            .catch(error => {
-                console.error('Error fetching board data for view:', error);
-                alert('게시글 정보를 불러올 수 없습니다: ' + error.message);
-            });
+            .catch(e => { alert('게시글 정보를 불러올 수 없습니다: ' + e.message); });
     }
 
-    // 상세보기 모달 닫기
     function closeViewModal() {
         viewModal.classList.remove("show");
         currentBoardData = null;
     }
 
-    // 상세보기에서 수정 모달로 전환
     function editFromView() {
         if (currentBoardData) {
             closeViewModal();
@@ -481,17 +484,15 @@
         }
     }
 
-    // 상세보기 모달 닫기 버튼 이벤트
-    if (closeViewBtn) {
-        closeViewBtn.onclick = closeViewModal;
-    }
+    if (closeViewBtn) closeViewBtn.onclick = closeViewModal;
+    window.addEventListener('click', (e) => { if (e.target === viewModal) closeViewModal(); });
 
-    // 상세보기 모달 바깥 클릭 시 닫기 (기존 window.onclick과 충돌 방지)
-    window.addEventListener('click', (e) => {
-        if (e.target === viewModal) {
-            closeViewModal();
-        }
-    });
+    // 전역 노출
+    window.deleteBoard = deleteBoard;
+    window.viewBoard = viewBoard;
+    window.editBoard = editBoard;
+    window.closeViewModal = closeViewModal;
+    window.editFromView  = editFromView;
 </script>
 </body>
 </html>
