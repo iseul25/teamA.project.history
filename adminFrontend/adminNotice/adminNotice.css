@@ -73,8 +73,8 @@ header>ul li a.active {
     text-decoration: underline;
 }
 
-/* sideber */
-#sideber {
+/* sidebar */
+#sidebar {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -89,7 +89,7 @@ header>ul li a.active {
     z-index: 50;
 }
 
-#sideber>ul>li>a {
+#sidebar>ul>li>a {
     display: block;
     color: black;
     padding: 15px;
@@ -103,21 +103,21 @@ header>ul li a.active {
     transition: transform 0.2s ease, font-size 0.2s ease;
 }
 
-#sideber li a.active {
+#sidebar li a.active {
     font-weight: bold;
     font-size: 1.4em;
     text-decoration: underline;
     color: #000;
 }
 
-#sideber li a:not(.active):hover {
+#sidebar li a:not(.active):hover {
     transform: scale(1.2);
     color: #000;
     font-weight: bold;
 }
 
 /* 사이드바 서브메뉴 */
-#sideber .submenu {
+#sidebar .submenu {
     max-height: 500px;
     opacity: 1;
     transform: translateY(0);
@@ -126,18 +126,18 @@ header>ul li a.active {
     text-align: center;
 }
 
-#sideber .submenu li a.active {
+#sidebar .submenu li a.active {
     font-size: 1.2em;
 }
 
-#sideber .submenuBox:hover>.submenu {
+#sidebar .submenuBox:hover>.submenu {
     max-height: 500px;
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
 }
 
-#sideber .submenu li a {
+#sidebar .submenu li a {
     display: block;
     padding: 10px;
     font-size: 16px;
@@ -246,6 +246,31 @@ header>ul li a.active {
     box-shadow: 0 2px 2px #ddd;
     border: 1px solid #dfdfdf;
     border-radius: 15px
+}
+
+#notice-title-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+
+/* 공지사항 등록 버튼 */
+.add-notice-btn {
+    height: 35px;
+    margin: 10px;
+    padding: 0px 12px;
+    border-radius: 10px;           
+    border: 1px solid #7db9fd;   
+    background-color: #cbe3ff; 
+    color: #333;                
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;              
+    transition: all 0.2s ease;
+}
+
+.add-notice-btn:hover {
+    background-color: #a7cefa;
 }
 
 /* 공지사항 관리 테이블 */
