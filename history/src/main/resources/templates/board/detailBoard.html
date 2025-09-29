@@ -8,6 +8,41 @@
     <!-- (선택) 유튜브/썸네일 프리커넥트 -->
     <link rel="preconnect" href="https://www.youtube.com">
     <link rel="preconnect" href="https://img.youtube.com">
+    <style>
+        /* 학습완료 버튼 스타일 */
+        .done-btn-box {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        #done-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #done-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        #done-btn:hover:not(:disabled) {
+            background-color: #218838;
+            transform: translateY(-1px);
+        }
+
+        .timer-info {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 
 <body>
@@ -153,6 +188,25 @@
             <div th:utext="${board.content}">게시글 내용이 여기에 표시됩니다.</div>
         </div>
 
+        <!-- 학습 완료 버튼 -->
+        <div class="done-btn-box" th:if="${loginUser != null}">
+            <button id="done-btn" disabled>학습완료</button>
+        </div>
+
+        <!-- 학습 완료 모달 -->
+        <div id="doneModal" class="done-modal">
+            <div class="done-modal-content">
+                <span class="done-closeBtn">&times;</span>
+                <h2>학습 완료</h2>
+                <p>학습이 완료되었습니다.</p>
+                <p>퀴즈로 바로 이동하시겠습니까?</p>
+                <div class="yes-no-btn-box">
+                    <button id="yes-quiz-btn">예</button>
+                    <button id="no-quiz-btn">아니오</button>
+                </div>
+            </div>
+        </div>
+
         <!-- 댓글 영역 -->
         <div class="comment-section" th:if="${board.boardType != '공지사항'}">
             <h4>댓글</h4>
@@ -203,7 +257,7 @@
                             <input type="hidden" name="boardId" th:value="${board.boardId}">
                             <textarea name="content" class="reply-input" placeholder="답글을 입력하세요" required></textarea>
                             <div style="text-align: right; margin-top: 10px;">
-                                <button type="submit">답글 등록</button>
+                                <button type="submit" class="reply-submit">등록</button>
                                 <button type="button" th:onclick="|toggleReplyForm(${comment.commentId})|" style="margin-left: 10px; background-color: #ddd; border: 1px solid #aaa; padding: 6px 14px; border-radius: 6px; cursor: pointer;">취소</button>
                             </div>
                         </form>
@@ -236,6 +290,12 @@
         <li>© 2025 역사 한 걸음. All rights reserved.</li>
     </ul>
 </div>
+
+<!-- 서버에서 전달받은 데이터를 JavaScript로 변환 -->
+<script th:inline="javascript">
+    const boardId = /*[[${board.boardId}]]*/ 0;
+    const isLoggedIn = /*[[${loginUser != null}]]*/ false;
+</script>
 
 <script>
     // 사이드바 토글
@@ -303,7 +363,105 @@
             }
         });
     })();
-    // =================================================================================
+
+    // ====== 10초 타이머 및 학습 완료 기능 ======
+    function setupStudyTimer() {
+        if (!isLoggedIn) return;
+
+        const doneBtn = document.getElementById("done-btn");
+
+        if (!doneBtn) return;
+
+        // 10초 후 버튼 활성화
+        setTimeout(() => {
+            doneBtn.disabled = false;
+            doneBtn.style.backgroundColor = "#28a745";
+        }, 10000); // 10초
+    }
+
+    // 학습 완료 처리 함수
+    async function completeStudy() {
+        if (!isLoggedIn) {
+            alert('로그인이 필요합니다.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/board/complete-study', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `boardId=${boardId}`
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                console.log('학습 완료 기록 성공');
+                // 모달 표시
+                document.getElementById("doneModal").style.display = "flex";
+            } else {
+                console.error('학습 완료 기록 실패:', result.message);
+                alert('학습 완료 처리 중 오류가 발생했습니다.');
+            }
+        } catch (error) {
+            console.error('학습 완료 처리 중 오류:', error);
+            alert('학습 완료 처리 중 오류가 발생했습니다.');
+        }
+    }
+
+    // 학습 완료 모달
+    function setupDoneModal() {
+        const doneBtn = document.getElementById("done-btn");
+        const doneModal = document.getElementById("doneModal");
+        const doneCloseBtn = doneModal.querySelector(".done-closeBtn");
+        const yesBtn = document.getElementById("yes-quiz-btn");
+        const noBtn = document.getElementById("no-quiz-btn");
+
+        if (!doneBtn || !doneModal) return;
+
+        // 현재 카테고리 가져오기
+        function getCurrentCategory() {
+            const categoryElement = document.querySelector(".post-category");
+            return categoryElement ? categoryElement.textContent.trim() : "";
+        }
+
+        // 모달 열기 (학습 완료 처리)
+        doneBtn.addEventListener("click", async () => {
+            if (doneBtn.disabled) return;
+            await completeStudy();
+        });
+
+        // 모달 닫기 (X 버튼)
+        doneCloseBtn.addEventListener("click", () => {
+            doneModal.style.display = "none";
+        });
+
+        // "예" 버튼 → 퀴즈 목록 이동
+        yesBtn.addEventListener("click", () => {
+            const category = getCurrentCategory();
+            window.location.href = `/quiz/list?quizType=${encodeURIComponent(category)}`;
+        });
+
+        // "아니오" 버튼 → 학습 목록 이동
+        noBtn.addEventListener("click", () => {
+            const category = getCurrentCategory();
+            window.location.href = `/board/list?boardType=${encodeURIComponent(category)}`;
+        });
+
+        // 모달 바깥 클릭 시 닫기
+        window.addEventListener("click", (e) => {
+            if (e.target === doneModal) {
+                doneModal.style.display = "none";
+            }
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        setupStudyTimer();
+        setupDoneModal();
+    });
 </script>
 </body>
 </html>
