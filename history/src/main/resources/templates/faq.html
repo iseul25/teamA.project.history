@@ -15,11 +15,11 @@
         <img th:src="@{/img/mainLg2.png}" alt="메인 로고">
     </a>
     <ul>
-        <li><a th:href="@{/board/topic}" class="active">학습하기</a></li>
+        <li><a th:href="@{/board/topic}">학습하기</a></li>
         <li><a th:href="@{/quiz/topic}">퀴즈풀기</a></li>
         <li><a th:href="@{/attend}">출석하기</a></li>
         <li><a th:href="@{/pointStore}">포인트 상점</a></li>
-        <li><a th:href="@{/faq}">FAQ</a></li>
+        <li><a th:href="@{/faq}" class="active">FAQ</a></li>
         <li><a th:href="@{/notice}">공지사항</a></li>
     </ul>
     <!-- Thymeleaf로 로그인 상태 처리 -->
@@ -49,51 +49,51 @@
 
         <div class="faq-item">
             <div class="faq-question">
-                질문?
+                회원가입은 어떻게 하나요?
                 <span class="arrow">▼</span>
             </div>
             <div class="faq-answer">
-                답변
+                메인 홈 화면에서 회원가입 버튼을 누르면 회원가입을 할 수 있습니다.
             </div>
         </div>
 
         <div class="faq-item">
             <div class="faq-question">
-                질문?
+                게시글은 작성할 수 없나요?
                 <span class="arrow">▼</span>
             </div>
             <div class="faq-answer">
-                답변
+                게시글은 관리자만 작성할 수 있습니다.
             </div>
         </div>
 
         <div class="faq-item">
             <div class="faq-question">
-                질문?
+                학습게시물을 봤는데 퀴즈를 풀 수 없어요.
                 <span class="arrow">▼</span>
             </div>
             <div class="faq-answer">
-                답변
+                학습게시물 내용 밑에 있는 퀴즈풀기 버튼을 누르셔야 풀 수 있습니다.
             </div>
         </div>
 
         <div class="faq-item">
             <div class="faq-question">
-                질문?
+                포인트는 어떻게 얻나요?
                 <span class="arrow">▼</span>
             </div>
             <div class="faq-answer">
-                답변
+                출석이나 퀴즈풀기를 통해 얻을 수 있습니다.
             </div>
         </div>
 
         <div class="faq-item">
             <div class="faq-question">
-                질문?
+                학습 내용에 대해 질문을 하려면 어떻게 해야하나요?
                 <span class="arrow">▼</span>
             </div>
             <div class="faq-answer">
-                답변
+                게시물 내용 아래 댓글에 남겨주시면 답변 해드리겠습니다.
             </div>
         </div>
     </div>
