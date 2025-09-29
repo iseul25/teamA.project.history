@@ -5,7 +5,7 @@
 }
 
 body {
-    background-image: url(/img/mainBg1.png);
+    background-image: url(../img/mainBg1.png);
     /* html, css 합치면 ../ 지우기 */
     height: 100vh;
     display: flex;
@@ -109,7 +109,7 @@ header>ul li a.active {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #f2f2f2;
+    background: #dee8ec;
     padding: 10px 20px;
     font-weight: bold;
 }
@@ -128,7 +128,7 @@ header>ul li a.active {
 }
 
 #calendar-body th {
-    background: #fafafa;
+    background: #f0f8fc;
     font-size: 14px;
     padding: 8px 0;
     border: 1px solid #eee;
