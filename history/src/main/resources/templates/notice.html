@@ -14,12 +14,12 @@
         <img th:src="@{/img/mainLg2.png}" alt="메인 로고">
     </a>
     <ul>
-        <li><a th:href="@{/board/topic}" class="active">학습하기</a></li>
+        <li><a th:href="@{/board/topic}">학습하기</a></li>
         <li><a th:href="@{/quiz/topic}">퀴즈풀기</a></li>
         <li><a th:href="@{/attend}">출석하기</a></li>
         <li><a th:href="@{/pointStore}">포인트 상점</a></li>
         <li><a th:href="@{/faq}">FAQ</a></li>
-        <li><a th:href="@{/notice}">공지사항</a></li>
+        <li><a th:href="@{/notice}" class="active">공지사항</a></li>
     </ul>
     <!-- Thymeleaf로 로그인 상태 처리 -->
     <div id="user" th:if="${session.loginUser != null}">
@@ -83,47 +83,45 @@
             </tbody>
         </table>
 
-        <!-- 관리자만 보이는 등록 버튼 -->
-        <div th:if="${loginUser != null and loginUser.userType == '관리자'}" style="text-align:right; margin-top:15px;">
-            <a th:href="@{/board/create(boardType=공지사항)}" style="text-decoration: none;">
-                <button>공지사항 등록</button>
-            </a>
-        </div>
+        <!-- 페이징과 글쓰기 버튼을 포함하는 컨테이너 -->
+        <div class="bottom-controls">
+            <!-- 페이징 영역 - button 스타일 사용 -->
+            <div class="pagination" th:if="${totalPages > 0}">
+                <!-- 이전 페이지 -->
+                <button th:if="${currentPage > 0}"
+                        th:onclick="|location.href='/notice?page=${currentPage - 1}'|">◀</button>
+                <button th:unless="${currentPage > 0}" disabled>◀</button>
 
-        <!-- 페이징 영역 - button 스타일 사용 -->
-        <div class="pagination" th:if="${totalPages > 0}">
-            <!-- 이전 페이지 -->
-            <button th:if="${currentPage > 0}"
-                    th:onclick="|location.href='/notice?page=${currentPage - 1}'|">◀</button>
-            <button th:unless="${currentPage > 0}" disabled>◀</button>
+                <!-- 페이지 번호들 -->
+                <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                    <button th:unless="${i == currentPage}"
+                            th:onclick="|location.href='/notice?page=${i}'|"
+                            th:text="${i + 1}"></button>
+                    <button th:if="${i == currentPage}"
+                            th:text="${i + 1}"
+                            class="active"
+                            disabled></button>
+                </th:block>
 
-            <!-- 페이지 번호들 -->
-            <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
-                <button th:unless="${i == currentPage}"
-                        th:onclick="|location.href='/notice?page=${i}'|"
-                        th:text="${i + 1}"></button>
-                <button th:if="${i == currentPage}"
-                        th:text="${i + 1}"
-                        class="active"
-                        disabled></button>
-            </th:block>
+                <!-- 다음 페이지 -->
+                <button th:if="${currentPage < totalPages - 1}"
+                        th:onclick="|location.href='/notice?page=${currentPage + 1}'|">▶</button>
+                <button th:unless="${currentPage < totalPages - 1}" disabled>▶</button>
+            </div>
 
-            <!-- 다음 페이지 -->
-            <button th:if="${currentPage < totalPages - 1}"
-                    th:onclick="|location.href='/notice?page=${currentPage + 1}'|">▶</button>
-            <button th:unless="${currentPage < totalPages - 1}" disabled>▶</button>
-        </div>
+            <!-- 페이징이 없는 경우 기본 표시 -->
+            <div class="pagination" th:unless="${totalPages > 0}">
+                <button disabled>◀</button>
+                <button class="active" disabled>1</button>
+                <button disabled>▶</button>
+            </div>
 
-        <!-- 페이징이 없는 경우 기본 표시 -->
-        <div class="pagination" th:unless="${totalPages > 0}">
-            <button disabled>◀</button>
-            <button class="active" disabled>1</button>
-            <button disabled>▶</button>
-        </div>
-
-        <!-- 페이지 정보 표시 -->
-        <div th:if="${totalElements > 0}"
-             style="text-align: center; margin-top: 10px; color: #666; font-size: 14px;">
+            <!-- 관리자만 보이는 등록 버튼 -->
+            <div id="admin-actions" th:if="${loginUser != null and loginUser.userType == '관리자'}">
+                <a th:href="@{/board/create(boardType=공지사항)}">
+                    <button>글쓰기</button>
+                </a>
+            </div>
         </div>
     </div>
 </div>
