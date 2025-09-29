@@ -6,7 +6,7 @@
 
 body {
     background-image: url(../img/mainBg1.png);
-    /* background-color: #F7F4EA; */
+    /*background-color: #fff;*/
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -162,10 +162,19 @@ header>ul li a.active {
 /* container */
 #container {
     margin-left: 290px; /* 사이드바 너비만큼 밀어내기 */
+    /*margin: 0 auto;*/
+    /*width: 100%;*/
     flex: 1;
     margin-top: 50px;
     padding: 40px;
     min-height: calc(100vh - 60px);
+}
+
+.post-video {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-content: center;
 }
 
 #post-box {
