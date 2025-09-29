@@ -1,5 +1,8 @@
 package com.lms.history.quizzes.controller;
 
+import com.lms.history.boards.service.BoardService;
+import com.lms.history.boards.service.BoardStudyService;
+import com.lms.history.boards.entity.Board;
 import com.lms.history.quizzes.entity.Attempt;
 import com.lms.history.quizzes.entity.Category;
 import com.lms.history.quizzes.entity.Quiz;
@@ -24,9 +27,13 @@ import java.util.Map;
 @RequestMapping("/quiz")
 public final class QuizController {
     private final QuizService quizService;
+    private final BoardService boardService;
+    private final BoardStudyService boardStudyService;
 
-    public QuizController(QuizService quizService) {
+    public QuizController(QuizService quizService, BoardService boardService, BoardStudyService boardStudyService) {
         this.quizService = quizService;
+        this.boardService = boardService;
+        this.boardStudyService = boardStudyService;
     }
 
     // 시대 선택 페이지
@@ -44,23 +51,25 @@ public final class QuizController {
         try {
             session.setAttribute("selectedQuizType", quizType);
 
-            // 로그인 사용자 확인 (선택사항)
+            // 로그인 사용자 확인
             Object loginUserObj = session.getAttribute("loginUser");
-            int userId = 0; // 기본값: 로그인하지 않은 사용자
+            int userId = 0;
+            boolean isAdmin = false;
 
             if (loginUserObj != null) {
-                // 로그인한 경우 사용자 ID 가져오기
                 try {
                     if (loginUserObj instanceof User) {
                         User user = (User) loginUserObj;
                         userId = user.getUserId();
+                        isAdmin = "관리자".equals(user.getUserType());
                     } else {
                         @SuppressWarnings("unchecked")
                         Map<String, Object> userMap = (Map<String, Object>) loginUserObj;
                         userId = (Integer) userMap.get("userId");
+                        isAdmin = "관리자".equals(userMap.get("userType"));
                     }
                 } catch (Exception e) {
-                    userId = 0; // 오류 시 기본값 사용
+                    userId = 0;
                 }
             }
 
@@ -76,15 +85,37 @@ public final class QuizController {
             List<Map<String, Object>> allCategories = quizService.findByQuizTypeWithScores(quizType, userId);
 
             if (allCategories == null || allCategories.isEmpty()) {
-                // 목록이 없을 때도 페이지네이션 정보 설정
                 model.addAttribute("categories", new ArrayList<>());
                 model.addAttribute("currentPage", 1);
-                model.addAttribute("totalPages", 1); // 최소 1페이지로 설정
+                model.addAttribute("totalPages", 1);
                 model.addAttribute("message", "해당 타입의 퀴즈 카테고리가 없습니다.");
             } else {
+                // ✅ 학습 완료 여부 확인 추가 (일반 사용자만)
+                if (userId > 0 && !isAdmin) {
+                    for (Map<String, Object> category : allCategories) {
+                        String quizListName = (String) category.get("quizListName");
+
+                        // 같은 제목의 게시글 찾기
+                        Board board = boardService.findByTitleAndType(quizListName, quizType);
+                        boolean canTakeQuiz = false;
+
+                        if (board != null) {
+                            // 학습 완료 여부 확인 (startAt과 endAt이 다른 경우)
+                            canTakeQuiz = boardStudyService.hasCompletedStudy(board.getBoardId(), userId);
+                        }
+
+                        category.put("canTakeQuiz", canTakeQuiz);
+                    }
+                } else {
+                    // 관리자는 모든 퀴즈 접근 가능
+                    for (Map<String, Object> category : allCategories) {
+                        category.put("canTakeQuiz", true);
+                    }
+                }
+
                 int pageSize = 10;
                 int totalCategories = allCategories.size();
-                int totalPages = Math.max(1, (int) Math.ceil((double) totalCategories / pageSize)); // 최소 1페이지 보장
+                int totalPages = Math.max(1, (int) Math.ceil((double) totalCategories / pageSize));
                 page = Math.max(1, Math.min(page, totalPages));
 
                 int startIdx = (page - 1) * pageSize;
@@ -125,23 +156,18 @@ public final class QuizController {
             HttpSession session) {
 
         try {
-            // 페이지 크기 설정
             int pageSize = 10;
-
-            // 해당 퀴즈 카테고리의 모든 성적 현황 조회
             List<Map<String, Object>> allScores = quizService.findScoresByQuizCategoryId(quizCategoryId);
 
             Map<String, Object> response = new HashMap<>();
 
             if (allScores == null || allScores.isEmpty()) {
-                // 데이터가 없을 때
                 response.put("scores", new ArrayList<>());
                 response.put("currentPage", 1);
                 response.put("totalPages", 1);
                 response.put("totalCount", 0);
                 response.put("message", "응시한 학생이 없습니다.");
             } else {
-                // 페이지네이션 계산
                 int totalScores = allScores.size();
                 int totalPages = Math.max(1, (int) Math.ceil((double) totalScores / pageSize));
                 page = Math.max(1, Math.min(page, totalPages));
@@ -165,9 +191,6 @@ public final class QuizController {
         }
     }
 
-    /**
-     * 퀴즈 현황 페이지 (별도 페이지로도 접근 가능)
-     */
     @GetMapping("/status/page/{quizCategoryId}")
     public String getQuizStatusPage(
             @PathVariable int quizCategoryId,
@@ -177,8 +200,6 @@ public final class QuizController {
 
         try {
             int pageSize = 10;
-
-            // 해당 퀴즈 카테고리의 모든 성적 현황 조회
             List<Map<String, Object>> allScores = quizService.findScoresByQuizCategoryId(quizCategoryId);
 
             if (allScores == null || allScores.isEmpty()) {
