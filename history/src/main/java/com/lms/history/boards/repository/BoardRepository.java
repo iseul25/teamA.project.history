@@ -153,6 +153,20 @@ public class BoardRepository {
         }
     }
 
+    public Board findByTitleAndType(String title, String boardType) {
+        String sql = "SELECT * FROM board WHERE title = ? AND boardType = ? LIMIT 1";
+        List<Board> results = jdbc.query(sql, (rs, rowNum) -> {
+            Board board = new Board();
+            board.setBoardId(rs.getInt("boardId"));
+            board.setTitle(rs.getString("title"));
+            board.setBoardType(rs.getString("boardType"));
+            // ... 나머지 필드 설정 ...
+            return board;
+        }, title, boardType);
+
+        return results.isEmpty() ? null : results.get(0);
+    }
+
     public void deleteById(int boardId) {
         String sql = "DELETE FROM Board WHERE boardId = ?";
         jdbc.update(sql, boardId);

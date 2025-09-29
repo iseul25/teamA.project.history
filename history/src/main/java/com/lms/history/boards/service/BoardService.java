@@ -63,4 +63,8 @@ public class BoardService {
     public void delete(int boardId) {
         boardRepository.deleteById(boardId);
     }
+
+    public Board findByTitleAndType(String title, String boardType) {
+        return boardRepository.findByTitleAndType(title, boardType);
+    }
 }

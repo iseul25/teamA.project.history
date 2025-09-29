@@ -3,10 +3,7 @@ package com.lms.history.boards.controller;
 import com.lms.history.boards.entity.Board;
 import com.lms.history.boards.entity.Comment;
 import com.lms.history.boards.entity.CommentReply;
-import com.lms.history.boards.service.BoardService;
-import com.lms.history.boards.service.CommentReplyService;
-import com.lms.history.boards.service.CommentService;
-import com.lms.history.boards.service.FileUploadService;
+import com.lms.history.boards.service.*;
 import com.lms.history.users.entity.User;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -28,13 +25,16 @@ public class BoardController {
     private final CommentService commentService;
     private final FileUploadService fileUploadService;
     private final CommentReplyService replyService;
+    private final BoardStudyService boardStudyService;
 
     public BoardController(BoardService boardService, CommentService commentService,
-                           FileUploadService fileUploadService, CommentReplyService replyService) {
+                           FileUploadService fileUploadService, CommentReplyService replyService,
+                           BoardStudyService boardStudyService) {
         this.boardService = boardService;
         this.commentService = commentService;
         this.fileUploadService = fileUploadService;
         this.replyService = replyService;
+        this.boardStudyService = boardStudyService;
     }
 
     // 시대 선택 페이지
@@ -58,6 +58,23 @@ public class BoardController {
         return "board/listBoard";
     }
 
+    @PostMapping("/start-study")
+    @ResponseBody
+    public Map<String, Object> startStudy(@RequestParam("boardId") int boardId,
+                                          HttpSession session) {
+        Map<String, Object> result = new HashMap<>();
+        User loginUser = (User) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            result.put("status", "fail");
+            result.put("message", "로그인이 필요합니다.");
+            return result;
+        }
+
+        boardStudyService.startStudy(boardId, loginUser.getUserId());
+        result.put("status", "success");
+        return result;
+    }
+
     // 게시글 상세보기 (댓글 목록 포함)
     @GetMapping("/detail")
     public String detail(@RequestParam("boardId") int boardId, HttpSession session, Model model) {
@@ -67,6 +84,7 @@ public class BoardController {
             if (board == null) {
                 return "redirect:/board/list?error=notfound";
             }
+
             List<Comment> comments = commentService.findByBoardId(boardId);
 
             // 각 댓글의 답글 조회
@@ -80,11 +98,39 @@ public class BoardController {
             model.addAttribute("board", board);
             model.addAttribute("comments", comments);
             model.addAttribute("repliesMap", repliesMap);
+
             return "board/detailBoard";
         } catch (Exception e) {
             e.printStackTrace();
             return "redirect:/board/list?error=database";
         }
+    }
+
+    @PostMapping("/complete-study")
+    @ResponseBody
+    public Map<String, Object> completeStudy(@RequestParam("boardId") int boardId,
+                                             HttpSession session) {
+        Map<String, Object> result = new HashMap<>();
+
+        User loginUser = (User) session.getAttribute("loginUser");
+        if (loginUser == null) {
+            result.put("status", "fail");
+            result.put("message", "로그인이 필요합니다.");
+            return result;
+        }
+
+        try {
+            // 해당 사용자의 가장 최근 학습 기록을 찾아서 완료 처리
+            boardStudyService.completeStudy(boardId, loginUser.getUserId());
+            result.put("status", "success");
+            result.put("message", "학습 완료 기록 저장 완료");
+        } catch (Exception e) {
+            result.put("status", "fail");
+            result.put("message", "학습 완료 처리 중 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     // 댓글 작성 처리
