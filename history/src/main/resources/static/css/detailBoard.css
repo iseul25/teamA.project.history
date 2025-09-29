@@ -597,6 +597,106 @@ header>ul li a.active {
     background-color: #d3d3d3;
 }
 
+/* 학습 완료 버튼 */
+.done-btn-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#done-btn {
+    padding: 9px 15px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1.5px 1.5px #ddd;
+    background-color: #6badf8;
+    border: 1px solid #82b7fc;
+    cursor: pointer;
+}
+
+#done-btn:hover {
+    background-color: #8abdff;
+}
+
+/* 학습 완료 모달 */
+.done-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+    z-index: 1200;
+    justify-content: center;
+    align-items: center;
+}
+
+.done-closeBtn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.done-modal-content {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    padding: 30px;
+    width: 500px;
+    max-width: 90%;
+    text-align: center;
+    position: relative;
+}
+
+.done-modal-content h2 {
+    font-size: 30px;
+    margin-bottom: 15px;
+}
+
+.done-modal-content p {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+/* 학습 완료 예, 아니오 버튼 */
+#yes-quiz-btn,
+#no-quiz-btn {
+    margin: 3px;
+    margin-top: 15px;
+    padding: 5px 13px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #222;
+    font-size: 16px;
+    font-weight: 500;
+    box-shadow: 0 1.5px 1.5px #aaa;
+    transition: 0.3s;
+}
+
+#yes-quiz-btn {
+    background-color: #bdd8fc;
+    border: 1px solid #82b7fc;
+}
+
+#no-quiz-btn {
+    background-color: #ddd;
+    border: 1px solid #aaa;
+}
+
+#yes-quiz-btn:hover {
+    background-color: #82b7fc;
+}
+
+#no-quiz-btn:hover {
+    background-color: #aaa;
+}
+
 /* 하단 부분 */
 #footer {
     display: flex;
