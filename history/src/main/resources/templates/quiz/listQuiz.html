@@ -156,7 +156,30 @@
             <th:block th:if="${categories != null and !#lists.isEmpty(categories)}">
                 <tr th:each="category, stat : ${categories}">
                     <td th:text="${(currentPage - 1) * 10 + stat.index + 1}">1</td>
-                    <td th:text="${category['quizListName']}">카테고리명</td>
+
+                    <!-- 제목 칸 수정 -->
+                    <td>
+                        <!-- 로그인한 일반 사용자 -->
+                        <th:block th:if="${session.loginUser != null and session.loginUser.userType != '관리자'}">
+                            <a href="javascript:void(0);"
+                               th:attr="data-quiz-id=${category['quizCategoryId']}, data-can-take=${category['canTakeQuiz']}"
+                               class="quiz-title-link"
+                               style="color: #007bff; text-decoration: underline; cursor: pointer;"
+                               th:text="${category['quizListName']}">퀴즈 제목</a>
+                        </th:block>
+
+                        <!-- 비로그인 사용자: 클릭하면 로그인 메시지 -->
+                        <th:block th:if="${session.loginUser == null}">
+                            <a href="javascript:void(0);"
+                               class="quiz-title-login-required"
+                               style="color: #007bff; text-decoration: underline; cursor: pointer;"
+                               th:text="${category['quizListName']}">퀴즈 제목</a>
+                        </th:block>
+
+                        <!-- 관리자: 그냥 표시 -->
+                        <span th:if="${session.loginUser != null and session.loginUser.userType == '관리자'}"
+                              th:text="${category['quizListName']}">퀴즈 제목</span>
+                    </td>
 
                     <!-- 관리자 전용 -->
                     <td th:if="${session.loginUser != null and session.loginUser.userType == '관리자'}">
@@ -312,6 +335,33 @@
             }
         });
         paginationDiv.appendChild(nextBtn);
+    });
+
+    // 비로그인 사용자 클릭 이벤트
+    document.addEventListener("DOMContentLoaded", () => {
+        // 일반 사용자: 학습 완료 확인
+        document.querySelectorAll(".quiz-title-link").forEach(link => {
+            link.addEventListener("click", function() {
+                const quizCategoryId = this.getAttribute("data-quiz-id");
+                const canTakeQuiz = this.getAttribute("data-can-take") === "true";
+
+                if (canTakeQuiz) {
+                    // 학습 완료: 바로 퀴즈 페이지로 이동
+                    window.location.href = `/quiz/start?quizCategoryId=${quizCategoryId}`;
+                } else {
+                    // 학습 미완료: 알림 메시지
+                    alert("학습을 먼저 완료해주세요.\n해당 학습 게시글을 읽고 학습완료 버튼을 눌러주세요.");
+                }
+            });
+        });
+
+        // 비로그인 사용자: 로그인 요청
+        document.querySelectorAll(".quiz-title-login-required").forEach(link => {
+            link.addEventListener("click", function() {
+                alert("로그인이 필요한 서비스입니다.");
+                window.location.href = "/";
+            });
+        });
     });
 
     // 퀴즈 삭제 확인 메시지 처리
