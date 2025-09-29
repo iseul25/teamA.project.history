@@ -1,32 +1,180 @@
--- 1번 관리자가 선사시대 제1회 퀴즈문항의 하위 10개의 퀴즈 생성(quiz 테이블에 생성)
+1. 학습 참여 트랜잭션
+-- 학습참여 기록 루틴(30초 이상만) 및 응시가능 퀴즈 목록 호출
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+    
+    -- 30초 미만 학습 시간 체크
+    IF p_studySeconds < 30 THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = '유효한 학습으로 인정되려면 최소 30초 이상 학습해야 합니다.';
+    END IF;
+    
+    START TRANSACTION;
+    
+    -- 학습 시작 시간을 현재 시간에서 학습 시간만큼 빼서 계산
+    IF EXISTS (
+        SELECT 1 FROM board_study WHERE boardId = p_boardId AND userId = p_userId
+    ) THEN
+        -- 존재하면 startAt과 endAt만 업데이트
+        UPDATE board_study
+        SET startAt = DATE_SUB(NOW(), INTERVAL p_studySeconds SECOND),
+            endAt = NOW()
+        WHERE boardId = p_boardId AND userId = p_userId;
+    ELSE
+        -- 존재하지 않으면 새로 삽입
+        INSERT INTO board_study (boardId, userId, startAt, endAt)
+        VALUES (
+            p_boardId,
+            p_userId,
+            DATE_SUB(NOW(), INTERVAL p_studySeconds SECOND),
+            NOW()
+        );
+    END IF;
+		
+	 COMMIT;
+    
+    -- 결과 반환: 사용자와 관련된 퀴즈 카테고리 정보 조회
+    SELECT u.userId, u.boardId, u.endAt, q.quizCategoryId, q.quizType, q.quizListName
+    FROM board_study u
+    JOIN quiz_category q ON u.boardId = q.boardId
+    WHERE u.userId = p_userId;
+END
 
-/*1번 관리자가 선사시대 제1회 퀴즈문항 생성*/
-INSERT INTO quiz_category (userId, quizType, quizListName)
-VALUES (1, '선사시대', '제1회 퀴즈문항');
 
-/*하위 10개 퀴즈 생성*/
-INSERT INTO quiz (quizCategoryId, imgUrl, question, item1, item2, item3, item4, answer, quizScore) 
-VALUES (
-1, NULL/*이미지 링크가 없으니 NULL로 대체*/, '대한민국의 수도는 어디일까요?', '서울', '부산', '인천', '대구',
-1/*정답은 선택지 1인 '서울'*/, 10/* 퀴즈에 10점배정*/);
+2. 퀴즈 생성 트랜잭션
+BEGIN
+    DECLARE v_quizCategoryId INT;
+    
+    -- 에러 핸들링
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+    
+    START TRANSACTION;
+    
+    -- 1. 관리자가 n시대 제n회 퀴즈문항 카테고리 생성
+    INSERT INTO quiz_category (userId, quizType, quizListName)
+    VALUES (1, '조선시대', '제1회 퀴즈문항');
+    
+    -- 방금 생성된 카테고리 ID 가져오기
+    SET v_quizCategoryId = LAST_INSERT_ID();
+    
+    -- 2. n시대 관련 퀴즈 문항들 생성 (최소 3개)
+    
+    -- 퀴즈 1
+    INSERT INTO quiz (quizCategoryId, imgUrl, question, item1, item2, item3, item4, answer, quizScore) 
+    VALUES (
+        v_quizCategoryId, 
+        NULL, 
+        '조선을 건국한 왕의 본명은?', 
+        '이성계', 
+        '이방원', 
+        '이성은', 
+        '이승만',
+        1,
+        10
+    );
+    
+    -- 퀴즈 2
+    INSERT INTO quiz (quizCategoryId, imgUrl, question, item1, item2, item3, item4, answer, quizScore) 
+    VALUES (
+        v_quizCategoryId, 
+        NULL, 
+        '조선의 수도는 어디였습니까?', 
+        '개경', 
+        '한양', 
+        '경주', 
+        '평양',
+        2,
+        10
+    );
+    
+    -- 퀴즈 3
+    INSERT INTO quiz (quizCategoryId, imgUrl, question, item1, item2, item3, item4, answer, quizScore) 
+    VALUES (
+        v_quizCategoryId, 
+        NULL, 
+        '세종대왕의 업적에 해당되는 것은?', 
+        '훈민정음', 
+        '목민심서', 
+        '팔만대장경', 
+        '난중일기',
+        1,
+        10
+    );
+    
+
+    COMMIT;
+    
+    -- 결과 확인용 SELECT
+    SELECT 
+        v_quizCategoryId as createdCategoryId,
+        '퀴즈가 성공적으로 생성되었습니다.' as message,
+        (SELECT COUNT(*) FROM quiz WHERE quizCategoryId = v_quizCategoryId) as totalQuizCount;
+        
+END
 
 
--- 41번 유저가 n시대 제n회 퀴즈문항에 응시하여 답변을 제출함(quiz_attempt 테이블에 답변 저장, 해당 답변 제출 이후 1번 트리거 활성화 -> 이후 2번 트리거 활성화)
+3. 퀴즈 답변 제출 및 채점점
+-- 45번 유저가 조선시대 제1회 퀴즈문항에 응시하여 답변을 제출함(quiz_attempt 테이블에 답변 저장)
 INSERT INTO quiz_attempt (userId, quizCategoryId, quizId, selected, attemptAt)
 VALUES
-  (41, 1, 1, 1, NOW()),
-  (41, 1, 2, 2, NOW()),
-  (41, 1, 3, 3, NOW()),
-  (41, 1, 4, 4, NOW()),
-  (41, 1, 5, 3, NOW()),
-  (41, 1, 6, 2, NOW()),
-  (41, 1, 7, 1, NOW()),
-  (41, 1, 8, 2, NOW()),
-  (41, 1, 9, 3, NOW()),
-  (41, 1, 10, 4, NOW()); /*quizId 1~10까지 n(선사)시대 제n(1)회 퀴즈문항*/
+  (
+  	45,
+    (
+      SELECT quizCategoryId FROM quiz_category 
+      WHERE quizType = '조선시대' AND quizListName = '제1회 퀴즈문항'
+    ),
+    (
+      SELECT quizId FROM quiz 
+      WHERE quizNumber = 1 
+			AND quizCategoryId = (
+          SELECT quizCategoryId FROM quiz_category 
+          WHERE quizType = '조선시대' AND quizListName = '제1회 퀴즈문항'
+        )
+    ), 
+	 1, NOW()
+  ),
+  (
+  	45,
+    (
+      SELECT quizCategoryId FROM quiz_category 
+      WHERE quizType = '조선시대' AND quizListName = '제1회 퀴즈문항'
+    ),
+    (
+      SELECT quizId FROM quiz 
+      WHERE quizNumber = 2 
+			AND quizCategoryId = (
+          SELECT quizCategoryId FROM quiz_category 
+          WHERE quizType = '조선시대' AND quizListName = '제1회 퀴즈문항'
+        )
+    ), 
+	 1, NOW()
+  ),
+  (
+  	45,
+    (
+      SELECT quizCategoryId FROM quiz_category 
+      WHERE quizType = '조선시대' AND quizListName = '제1회 퀴즈문항'
+    ),
+    (
+      SELECT quizId FROM quiz 
+      WHERE quizNumber = 3 
+			AND quizCategoryId = (
+          SELECT quizCategoryId FROM quiz_category 
+          WHERE quizType = '조선시대' AND quizListName = '제1회 퀴즈문항'
+        )
+    ), 
+	 1, NOW()
+  );
   
-
--- (1번 트리거로 대체함)41번 유저가 낸 답변을 각 항목별로 채점(quiz_attempt 테이블에 채점기록,)
+-- 41번 유저가 낸 답변을 각 항목별로 채점(quiz_attempt 테이블에 채점기록,)
 UPDATE quiz_attempt qa
 JOIN quiz q ON qa.quizId = q.quizId
 SET qa.earnedScore = CASE
@@ -35,8 +183,7 @@ SET qa.earnedScore = CASE
 END
 WHERE qa.userId = 41;
 
-
--- (2번 트리거로 대체함)41번 유저가 선사시대 제1회 퀴즈문항에서 맞은 총점 및 환산 포인트 항목 새로 생성하여 기입
+-- 41번 유저가 선사시대 제1회 퀴즈문항에서 맞은 총점 및 환산 포인트 생성
 INSERT INTO quiz_score (quizCategoryId, userId, totalScore,earnedPoint)
 VALUES (
     1, 41,
@@ -52,6 +199,7 @@ VALUES (
     )
 );
 
+
 /*points 테이블에 상점이용 생성*/
 INSERT INTO points (userId, attendanceId, itemId, scoreId) 
 VALUES (2, NULL, 1, NULL);
@@ -61,6 +209,7 @@ VALUES (3, NULL, 2, NULL);
 
 INSERT INTO points (userId, attendanceId, itemId, scoreId) 
 VALUES (5, NULL, 3, NULL);
+
 
 /*상점이용에 따른 포인트 차감*/
 UPDATE points pt
@@ -97,6 +246,7 @@ VALUES (3, NULL, NULL, 8);
 
 INSERT INTO points (userId, attendanceId, itemId, scoreId) 
 VALUES (5, NULL, NULL, 9);
+
 
 /*퀴즈응시에 따른 포인트 적립*/
 UPDATE points pt
