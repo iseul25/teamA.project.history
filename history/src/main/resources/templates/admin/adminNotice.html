@@ -56,7 +56,10 @@
 
 <div id="container">
     <div class="boardBox">
-        <div class="board-title">공지사항</div>
+        <div id="notice-title-box">
+            <div class="board-title">공지사항</div>
+            <button class="add-notice-btn">공지사항 등록</button>
+        </div>
 
         <!-- URL 파라미터 메시지 표시 (Thymeleaf로 처리) -->
         <div th:if="${param.success}" class="alert success" th:text="${param.success[0]}"></div>
