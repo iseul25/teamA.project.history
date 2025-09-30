@@ -515,8 +515,8 @@ CREATE TRIGGER `tr_quiz_attempt_before_insert` BEFORE INSERT ON `quiz_attempt` F
     DECLARE quiz_score_value INT;
     
     -- quiz 테이블에서 해당 quizId의 answer를 조회
-    SELECT answer
-    INTO quiz_answer
+   	SELECT answer, quizScore
+    INTO quiz_answer, quiz_score_value
     FROM quiz 
     WHERE quizId = NEW.quizId;
     
@@ -589,5 +589,6 @@ CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `v_users_secure` AS select 
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
+
 
 
