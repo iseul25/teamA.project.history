@@ -33,24 +33,13 @@ CREATE TABLE IF NOT EXISTS `board` (
   PRIMARY KEY (`boardId`) USING BTREE,
   KEY `FK_board_user` (`userId`) USING BTREE,
   CONSTRAINT `FK_board_user` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='게시글(학습내용 포함)';
+) ENGINE=InnoDB AUTO_INCREMENT=82 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='게시글(학습내용 포함)';
 
 -- 테이블 데이터 history.board:~29 rows (대략적) 내보내기
 INSERT INTO `board` (`boardId`, `userId`, `boardType`, `title`, `content`, `videoUrl`, `imgUrl`, `imgDescription`, `date`) VALUES
-	(23, 1, '선사시대', 'ㅁㅁ', 'ㅁㅁㅋ', 'https://www.youtube.com/embed/UEpxN7RPTDU', '/uploads/99dfbfe1-2dbc-4ec9-ad0b-29abce4a3abf_1758613923694.jpg', '', '2025-09-22'),
-	(35, 1, '선사시대', 'ㄷㄷㄷ', 'ㄷㄷㄷ', NULL, NULL, '', '2025-09-23'),
-	(36, 1, '선사시대', '글쓰기', '<img src=\'/uploads/24279b54-23b3-4c01-b544-d6b1feffd238_1758596017417.png\' alt=\'\' style=\'max-width: 100%; height: auto; margin: 15px 0; border: 1px solid #ddd; border-radius: 5px; display: block;\'/><br/>글쓰기', NULL, '/uploads/24279b54-23b3-4c01-b544-d6b1feffd238_1758596017417.png', '', '2025-09-23'),
 	(38, 1, '고조선과 여러 나라', '고려시대', '고려시대', NULL, NULL, '', '2025-09-23'),
 	(39, 1, '삼국과 가야', '삼국과 가야', '삼국과 가야', NULL, NULL, '', '2025-09-23'),
-	(40, 1, '선사시대', 'ㅁㅁ', 'ㅁㅁ', NULL, NULL, '', '2025-09-26'),
-	(41, 1, '선사시대', 'ㅁㅁ', 'ㅁㅁ', NULL, NULL, '', '2025-09-26'),
-	(42, 1, '선사시대', 'ㅁㅁ', 'ㅁㅁ', NULL, NULL, '', '2025-09-26'),
-	(43, 1, '선사시대', 'ㅁㅁ', 'ㅁㅁ', NULL, NULL, '', '2025-09-26'),
-	(44, 1, '선사시대', 'ㅁㅁ', 'ㅁㅁ', NULL, NULL, '', '2025-09-26'),
-	(45, 1, '선사시대', 'ㅁㅁ', 'ㅁㅁ', NULL, NULL, '', '2025-09-26'),
-	(46, 1, '선사시대', 'ㅁㅁ', 'ㅁㅁ', NULL, NULL, '', '2025-09-26'),
-	(47, 1, '선사시대', 'ㅁㅁ', 'ㅁㅁ', NULL, NULL, '', '2025-09-26'),
-	(53, 1, '공지사항', 'LMS 이용 방법 안내', '처음 메인화면에 들어오시면 오른쪽 중앙 하단부분에 회원가입 버튼을 누르시면 회원가입을 진행할 수 있습니다.\r\n회원가입 후 로그인을 하시면 학습목록에서 학습게시물들을 열람 하실 수 있습니다.\r\n학습 게시물을 보고 학습을 마친 후 게시물 안 하단에 있는 퀴즈 버튼을 누르지 않으면 게시물에서 학습을 다 하여도 인정되지 않아 퀴즈를 풀지 않은 것으로 처리됩니다.\r\n버튼을 누르시고 나면 학습한 내용 관련 퀴즈를 푸실 수 있습니다. \r\n아직 학습하지 않은 내용은 퀴즈를 풀 수 없습니다.', NULL, '', '', '2025-09-29'),
+	(53, 1, '공지사항', 'LMS 이용 방법 안내', '처음 메인화면에 들어오시면 오른쪽 중앙 하단부분에 회원가입 버튼을 누르시면 회원가입을 진행할 수 있습니다.\r<br/>회원가입 후 로그인을 하시면 학습목록에서 학습게시물들을 열람 하실 수 있습니다.\r<br/>학습 게시물을 보고 학습을 마친 후 게시물 안 하단에 있는 퀴즈 버튼을 누르지 않으면 게시물에서 학습을 다 하여도 인정되지 않아 퀴즈를 풀지 않은 것으로 처리됩니다.\r<br/>버튼을 누르시고 나면 학습한 내용 관련 퀴즈를 푸실 수 있습니다. \r<br/>아직 학습하지 않은 내용은 퀴즈를 풀 수 없습니다.', NULL, '', '', '2025-09-29'),
 	(54, 1, '공지사항', '포인트 상점 안내', '포인트는 출석하기와 퀴즈풀기를 통해 포인트를 얻을 수 있습니다.\r\n출석은 +10p 퀴즈는 한 문제당 +10p (60점 이상 포인트 지급)를 통해 얻을 수 있습니다.\r\n얻은 포인트를 통해 포인트 상점에서 원하는 상품을 구매하실 수 있습니다.\r\n상품을 구매하시면 포인트는 그만큼 차감되고 마이페이지에서 구입한 상품을 보실 수 있습니다.\r\n사용/환불도 마이페이지 구매내역에서 진행하실 수 있습니다.', NULL, NULL, '', '2025-09-29'),
 	(55, 1, '공지사항', '학습 및 퀴즈 일정 안내', '학습 주제\r\n조선의 건국과 건국 이념\r\n학습 영상 : "이성계와 위화도 회군"\r\n영상 링크 : https://youtu.be/RtCjbhORaY8?si=aiangxhYZ1Y4bcOM\r\n퀴즈 주제 및 활동\r\n조선의 건국과 건국 이념\r\n객관식 퀴즈 10문제\r\n참고사항\r\n학습 게시물 활동은 학습을 한 이후 밑에 퀴즈 버튼을 눌러야 과정 이수로 인정됩니다.\r\n퀴즈는 60점 이상 넘어야 포인트가 지급됩니다.\r\n학습한 내용이 아닌 퀴즈는 학습하기를 통해 학습을 한 이후에 풀 수 있습니다.', NULL, '', '', '2025-09-29'),
 	(56, 1, '공지사항', '신규 컨텐츠 업로드 안내', '학습을 도와줄 새로운 학습 게시물이 추가 되었습니다.\r\n\r\n업로드 정보\r\n학습 주제 : 조선의 정치 제도\r\n주요 내용 : 조선의 중앙 집권 체제, 의정부와 6조, 삼사(사헌부, 사간원, 홍문관)의 역할, 과거 제도 설명\r\n\r\n영상 : 링크\r\n\r\n퀴즈 주제 : 조선의 정치 제도\r\n객관식 10문제\r\n\r\n학습 자료, 퀴즈 문제 업로드', NULL, NULL, '', '2025-09-29'),
@@ -65,7 +54,17 @@ INSERT INTO `board` (`boardId`, `userId`, `boardType`, `title`, `content`, `vide
 	(65, 1, '조선시대', '조선의 과거제도와 교육 제도', '조선에서는 나라를 다스릴 관리(관료)를 뽑기 위해 시험을 봤다. 이 시험을 과거제도라고 한다.\r\n오늘날의 공무원 시험처럼, 열심히 공부해서 합격하면 높은 벼슬도 할 수 있었다. 대표적으로는 문과와 무과, 그리고 기술직 시험인 잡과가 있었다.\r\n문과 : 유교 경전을 잘 아는 사람을 뽑는 시험\r\n무과 : 무술과 전략 등 군사에 능한 사람을 뽑는 시험\r\n잡과 : 의사, 천문학자, 역관(통역사) 등 기술직 시험\r\n\r\n하지만 신분의 벽이 완전히 없어지진 않았다. 양반이 아니면 시험을 보기조차 어려운 경우도 많았다. 조선에는 교육기관도 있었다.\r\n\r\n서당 : 마을 아이들이 한문가 유교를 배우는 곳\r\n향교 : 지방의 관립 학교\r\n성균관 : 서울에 있는 최고 교육기관, 관리가 되기 위한 곳\r\n\r\n* 조선은 시험을 통해 능력을 인정하려 했지만, 신분 차별이 여전히 남아 있었던 사회이다. *', NULL, NULL, '', '2025-09-29'),
 	(66, 1, '조선시대', '조선의 수도 - 한양의 도시 구조와 발전', '조선이 처음 세워졌을 때 수도는 한양(지금의 서울)이었다.\r\n이성계와 정도전은 한양이 지리적으로 중심에 있고, 산과 강이 있어 방어와 교통이 모두 유리하다고 생각하였다. \r\n한양은 유교적인 질서에 따라 계획적으로 설계된 도시였다. \r\n중앙에는 왕이 사는 경복궁이 있었고, 도시는 북악산을 등지고 남쪽을 바라보는 구조였다. \r\n사방에는 4대문(흥인지문, 숭례문, 숙정문, 돈의문)이 세워졌고, 중심 거리인 종로에는 상점과 관청이 있었다. \r\n한양에는 육의전이라는 정부가 운영한 큰 상점들이 있었고, 저자거리(시장)에서는 일반 백성들이 물건을 사고 팔 수 있었다.\r\n\r\n* 조선의 한양은 단순한 수도가 아니라, 왕권과 유교질서를 도시 설계에 담은 상징적인 도시였다. *', NULL, '', '', '2025-09-29'),
 	(67, 1, '조선시대', '조선의 법과 범죄 처벌 제도', '조선은 나라를 안정적으로 운영하기 위해 법을 아주 중요하게 여겼다. 조선의 대표적인 법전은 바로 경국대전이다. 경국대전은 조선의 행정, 형벌, 예법 등을 정리한 조선의 헌법 같은 책이다.\r\n범죄를 저지른 사람에게는 신분과 죄의 무게에 따라 처벌이 달라졌다.\r\n형벌의 종류는 다음과 같다.\r\n\r\n태형 : 회초리로 때리는 형벌 (가벼운 범죄)\r\n장형 : 곤장을 치는 형벌 (태형보다 무거움)\r\n도형 : 일정 기간 노동형\r\n유배 : 멀리 시골이나 외딴섬으로 쫓아내는 벌\r\n사형 : 가장 무거운 형벌\r\n\r\n또한 조선에는 신문고 라는 제도가 있었다. 억울한 백성들이 북을 치면, 직접 억울함을 왕에게 알릴 수 있었다. 하지만 실제로 이 제도를 쓰기에는 쉽지 않았다.\r\n* 조선은 법으로 나라를 다스리려 했지만, 신분과 권력의 차이가 법의 공정함을 가로막기도 했다. *', NULL, NULL, '', '2025-09-29'),
-	(68, 1, '조선시대', '조선의 예술과 놀이 문화', '조선은 엄격한 신분 사회였지만, 사람들은 나름의 방식으로 예술과 놀이를 즐기며 살아갔다.\r\n서민층은 말로 전해지던 이야기를 글로 적은 한글 소설을 읽기 시작했고, 귀로 듣는 극 형태인 판소리도 유행했다. 예를 들어 <춘향전>, <흥부전>, <심청전> 같은 이야기들이 이 시기에 만들어지고 퍼졌다. 탈춤, 줄타기, 풍물놀이 같은 민속 예술도 마을 잔치나 명절 때 많이 공연되었고, 백성들의 스트레스를 풀어주는 역할을 하였다. 반면 양반층은 시를 짓고 글씨(서예)를 쓰거나 그림을 그리는 것을 취미로 삼았다. 김흥도, 신윤복 같은 화가들은 사람들의 일상이나 풍속을 담은 그림을 남기기도 했다.\r\n* 조선의 예술은 신분에 따라 내용과 형식은 달랐지만, 모두 삶을 표현하고 즐기려는 공통된 마음이 담겨있었다. *', NULL, NULL, '', '2025-09-29');
+	(68, 1, '조선시대', '조선의 예술과 놀이 문화', '조선은 엄격한 신분 사회였지만, 사람들은 나름의 방식으로 예술과 놀이를 즐기며 살아갔다.\r\n서민층은 말로 전해지던 이야기를 글로 적은 한글 소설을 읽기 시작했고, 귀로 듣는 극 형태인 판소리도 유행했다. 예를 들어 <춘향전>, <흥부전>, <심청전> 같은 이야기들이 이 시기에 만들어지고 퍼졌다. 탈춤, 줄타기, 풍물놀이 같은 민속 예술도 마을 잔치나 명절 때 많이 공연되었고, 백성들의 스트레스를 풀어주는 역할을 하였다. 반면 양반층은 시를 짓고 글씨(서예)를 쓰거나 그림을 그리는 것을 취미로 삼았다. 김흥도, 신윤복 같은 화가들은 사람들의 일상이나 풍속을 담은 그림을 남기기도 했다.\r\n* 조선의 예술은 신분에 따라 내용과 형식은 달랐지만, 모두 삶을 표현하고 즐기려는 공통된 마음이 담겨있었다. *', NULL, NULL, '', '2025-09-29'),
+	(72, 1, '선사시대', '구석기 시대 사람들의 생활', '불의 사용과 이동 생활, 사냥과 채집 중심의 생존 방식.\r<br/>구석기 시대 사람들은 이동하며 살았고, 사냥과 채집으로 먹을 것을 구했습니다.\r<br/>불을 사용해 음식을 익히고 추위를 막았으며, 뗀석기를 사용했습니다.', 'https://www.youtube.com/embed/UEpxN7RPTDU', '', '', '2025-09-30'),
+	(73, 1, '공지사항', '줄바꿈', '줄바꿈\r<br/>되는지\r<br/>확인', NULL, NULL, '', '2025-09-30'),
+	(74, 1, '선사시대', '줄바꿈', '줄바꿈\r<br/>되는지\r<br/>확인', NULL, NULL, '', '2025-09-30'),
+	(75, 1, '선사시대', '신석기 시대와 농경의 시작', '빗살무늬토기, 정착 생활, 가축 사육의 등장.\r<br/>신석기 시대에는 빗살무늬토기를 사용하며 농사를 짓기 시작했습니다.\r<br/>가축을 기르고 정착 생활을 하며, 마을 공동체가 형성되었습니다.', 'https://www.youtube.com/embed/-xQt67LpABY', '', '', '2025-09-30'),
+	(76, 1, '선사시대', '청동기 시대와 고인돌', '청동기 사용, 계급 사회 형성, 대표적 무덤 양식인 고인돌.\r<br/>청동기 도구가 사용되면서 권력을 가진 집단이 생겨났습니다. \r<br/>계급이 분화되고, 지배층의 무덤인 고인돌이 만들어졌습니다.', NULL, '', '', '2025-09-30'),
+	(77, 1, '선사시대', '한국 최초의 국가, 고조선의 탄생', '단군 신화, 고조선의 성립과 의미.\r<br/>단군 신화로 알려진 고조선은 우리 민족 최초의 국가입니다. \r<br/>고조선은 사회 질서를 세우고 법을 통해 사람들을 다스렸습니다.', 'https://www.youtube.com/embed/tCVa6aUWeiE', '', '', '2025-09-30'),
+	(78, 1, '선사시대', '철기 시대와 고조선의 멸망', '철기 사용의 확산, 위만조선과 한 무제의 침입.\r<br/>철기의 사용으로 무기가 발달하면서 국가 간 전쟁이 활발해졌습니다. \r<br/>위만조선은 한나라와의 전쟁에서 패배하며 멸망했습니다.', 'https://www.youtube.com/embed/Y9IqxpsJTl0', '', '', '2025-09-30'),
+	(79, 1, '선사시대', '선사시대 유물과 유적의 의미', '뗀석기, 간석기, 빗살무늬토기, 고인돌 등은 선사시대 사람들의 생활을 보여주는 중요한 자료입니다. \r<br/>지금은 박물관이나 유적지에서 볼 수 있습니다.', NULL, '', '', '2025-09-30'),
+	(80, 1, '선사시대', '선사시대에서 국가로의 전환', '구석기 → 신석기 → 청동기 → 철기 → 고조선으로 이어지는 발전 과정.\r<br/>구석기 → 신석기 → 청동기 → 철기로 이어지는 흐름 속에서 사람들은 점점 정착하고 농업과 무기를 발전시켰습니다. \r<br/>이 과정을 거쳐 고조선과 같은 국가가 등장했습니다.', NULL, '', '', '2025-09-30'),
+	(81, 1, '선사시대', '우리 생활 속에 남아 있는 선사시대 흔적', '고인돌 세계문화유산, 박물관 전시, 현대 문화재 속 선사 흔적 소개.\r<br/>세계문화유산으로 지정된 고인돌, 다양한 박물관 전시, 체험학습 프로그램 등을 통해 오늘날에도 선사시대의 흔적을 접할 수 있습니다.', NULL, '', '', '2025-09-30');
 
 -- 테이블 history.board_comment 구조 내보내기
 CREATE TABLE IF NOT EXISTS `board_comment` (
@@ -83,10 +82,7 @@ CREATE TABLE IF NOT EXISTS `board_comment` (
 
 -- 테이블 데이터 history.board_comment:~3 rows (대략적) 내보내기
 INSERT INTO `board_comment` (`commentId`, `boardId`, `userId`, `comment`, `date`) VALUES
-	(32, 23, 64, '하이요', '2025-09-26'),
-	(40, 39, 1, 'ㅁㅁㅁㅁㅁ', '2025-09-29'),
-	(41, 35, 1, 'ㄷㄷㄷ', '2025-09-29'),
-	(43, 23, 64, '힘들다', '2025-09-29');
+	(40, 39, 1, 'ㅁㅁㅁㅁㅁ', '2025-09-29');
 
 -- 테이블 history.board_study 구조 내보내기
 CREATE TABLE IF NOT EXISTS `board_study` (
@@ -100,27 +96,10 @@ CREATE TABLE IF NOT EXISTS `board_study` (
   KEY `FK_board_study_users` (`userId`),
   CONSTRAINT `FK_board_study_board` FOREIGN KEY (`boardId`) REFERENCES `board` (`boardId`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_board_study_users` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='각 사용자 별 특정 학습 게시글의 참여 시작과 완료 시간을 기록한 항목';
+) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='각 사용자 별 특정 학습 게시글의 참여 시작과 완료 시간을 기록한 항목';
 
 -- 테이블 데이터 history.board_study:~37 rows (대략적) 내보내기
 INSERT INTO `board_study` (`studyId`, `boardId`, `userId`, `startAt`, `endAt`) VALUES
-	(27, 23, 1, '2025-09-29 06:48:11', '2025-09-29 06:48:11'),
-	(28, 23, 1, '2025-09-29 07:07:19', '2025-09-29 07:07:19'),
-	(29, 23, 1, '2025-09-29 07:16:09', '2025-09-29 07:16:09'),
-	(30, 36, 1, '2025-09-29 07:20:21', '2025-09-29 07:20:21'),
-	(31, 23, 1, '2025-09-29 07:25:39', '2025-09-29 07:25:39'),
-	(32, 23, 1, '2025-09-29 07:28:34', '2025-09-29 07:28:34'),
-	(33, 23, 1, '2025-09-29 07:28:49', '2025-09-29 07:29:00'),
-	(34, 23, 1, '2025-09-29 07:35:45', '2025-09-29 07:35:45'),
-	(35, 23, 1, '2025-09-29 07:45:39', '2025-09-29 07:45:50'),
-	(36, 23, 41, '2025-09-29 07:46:23', '2025-09-29 07:46:35'),
-	(37, 23, 64, '2025-09-29 07:47:43', '2025-09-29 07:47:43'),
-	(38, 23, 64, '2025-09-29 07:48:02', '2025-09-29 07:48:29'),
-	(39, 23, 1, '2025-09-29 07:48:52', '2025-09-29 07:48:52'),
-	(40, 23, 1, '2025-09-29 07:49:37', '2025-09-29 07:49:37'),
-	(41, 23, 1, '2025-09-29 07:58:33', '2025-09-29 07:58:33'),
-	(42, 23, 64, '2025-09-29 08:05:08', '2025-09-29 08:06:16'),
-	(43, 23, 41, '2025-09-29 08:31:42', '2025-09-29 08:31:53'),
 	(44, 58, 1, '2025-09-29 08:38:27', '2025-09-29 08:38:27'),
 	(45, 58, 1, '2025-09-29 08:39:00', '2025-09-29 08:39:00'),
 	(46, 62, 1, '2025-09-29 08:40:48', '2025-09-29 08:40:48'),
@@ -140,7 +119,43 @@ INSERT INTO `board_study` (`studyId`, `boardId`, `userId`, `startAt`, `endAt`) V
 	(60, 59, 64, '2025-09-29 08:47:25', '2025-09-29 08:47:25'),
 	(61, 58, 64, '2025-09-29 08:47:28', '2025-09-29 08:47:28'),
 	(62, 64, 64, '2025-09-29 08:47:33', '2025-09-29 08:47:33'),
-	(63, 66, 64, '2025-09-29 08:47:37', '2025-09-29 08:47:37');
+	(63, 66, 64, '2025-09-29 08:47:37', '2025-09-29 08:47:37'),
+	(68, 72, 1, '2025-09-30 00:05:49', '2025-09-30 00:05:49'),
+	(69, 74, 1, '2025-09-30 00:06:34', '2025-09-30 00:06:34'),
+	(70, 72, 1, '2025-09-30 00:11:30', '2025-09-30 00:11:30'),
+	(71, 72, 1, '2025-09-30 00:11:43', '2025-09-30 00:11:43'),
+	(72, 75, 1, '2025-09-30 00:11:51', '2025-09-30 00:11:51'),
+	(73, 76, 1, '2025-09-30 00:12:22', '2025-09-30 00:12:22'),
+	(74, 77, 1, '2025-09-30 00:12:37', '2025-09-30 00:12:37'),
+	(75, 78, 1, '2025-09-30 00:12:54', '2025-09-30 00:12:54'),
+	(76, 79, 1, '2025-09-30 00:13:11', '2025-09-30 00:13:11'),
+	(77, 80, 1, '2025-09-30 00:13:32', '2025-09-30 00:13:32'),
+	(78, 80, 1, '2025-09-30 00:13:41', '2025-09-30 00:13:41'),
+	(79, 81, 1, '2025-09-30 00:13:46', '2025-09-30 00:13:46'),
+	(80, 74, 1, '2025-09-30 00:14:06', '2025-09-30 00:14:06'),
+	(83, 72, 1, '2025-09-30 00:14:20', '2025-09-30 00:14:20'),
+	(84, 72, 1, '2025-09-30 00:20:23', '2025-09-30 00:20:23'),
+	(85, 72, 1, '2025-09-30 00:20:45', '2025-09-30 00:20:45'),
+	(86, 72, 1, '2025-09-30 00:21:06', '2025-09-30 00:21:06'),
+	(87, 72, 1, '2025-09-30 00:21:19', '2025-09-30 00:21:19'),
+	(88, 72, 1, '2025-09-30 00:21:31', '2025-09-30 00:21:31'),
+	(89, 75, 1, '2025-09-30 00:21:47', '2025-09-30 00:21:47'),
+	(90, 75, 1, '2025-09-30 00:21:58', '2025-09-30 00:21:58'),
+	(91, 75, 1, '2025-09-30 00:22:07', '2025-09-30 00:22:07'),
+	(92, 75, 1, '2025-09-30 00:22:17', '2025-09-30 00:22:17'),
+	(93, 72, 1, '2025-09-30 00:22:23', '2025-09-30 00:22:23'),
+	(94, 72, 1, '2025-09-30 00:22:43', '2025-09-30 00:22:43'),
+	(95, 75, 1, '2025-09-30 00:22:47', '2025-09-30 00:22:47'),
+	(96, 76, 1, '2025-09-30 00:22:58', '2025-09-30 00:22:58'),
+	(97, 76, 1, '2025-09-30 00:23:08', '2025-09-30 00:23:08'),
+	(98, 77, 1, '2025-09-30 00:23:12', '2025-09-30 00:23:12'),
+	(99, 77, 1, '2025-09-30 00:23:20', '2025-09-30 00:23:20'),
+	(100, 78, 1, '2025-09-30 00:23:25', '2025-09-30 00:23:25'),
+	(101, 79, 1, '2025-09-30 00:23:32', '2025-09-30 00:23:32'),
+	(102, 80, 1, '2025-09-30 00:23:42', '2025-09-30 00:23:42'),
+	(103, 81, 1, '2025-09-30 00:23:50', '2025-09-30 00:23:50'),
+	(104, 81, 1, '2025-09-30 00:23:56', '2025-09-30 00:23:56'),
+	(105, 80, 1, '2025-09-30 00:23:58', '2025-09-30 00:23:58');
 
 -- 테이블 history.comment_reply 구조 내보내기
 CREATE TABLE IF NOT EXISTS `comment_reply` (
@@ -157,6 +172,83 @@ CREATE TABLE IF NOT EXISTS `comment_reply` (
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='답글에 대한 항목';
 
 -- 테이블 데이터 history.comment_reply:~1 rows (대략적) 내보내기
+
+-- 프로시저 history.CreateQuiz 구조 내보내기
+DELIMITER //
+CREATE PROCEDURE `CreateQuiz`()
+    COMMENT '퀴즈생성 루틴'
+BEGIN
+    DECLARE v_quizCategoryId INT;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        RESIGNAL;
+    END;
+    
+    START TRANSACTION;
+
+	 -- 1. 관리자가 n시대 제n회 퀴즈문항 카테고리 생성
+    INSERT INTO quiz_category (userId, quizType, quizListName)
+    VALUES (1, '조선시대', '제1회 퀴즈문항');
+    
+    -- 방금 생성된 카테고리 ID 가져오기
+    SET v_quizCategoryId = LAST_INSERT_ID();
+    
+    -- 2. n시대 관련 퀴즈 문항들 생성 (최소 3개)
+    
+    -- 퀴즈 1
+    INSERT INTO quiz (quizCategoryId, imgUrl, question, item1, item2, item3, item4, answer, quizScore) 
+    VALUES (
+        v_quizCategoryId, 
+        NULL, 
+        '조선을 건국한 왕의 본명은?', 
+        '이성계', 
+        '이방원', 
+        '이성은', 
+        '이승만',
+        1,
+        10
+    );
+    
+    -- 퀴즈 2
+    INSERT INTO quiz (quizCategoryId, imgUrl, question, item1, item2, item3, item4, answer, quizScore) 
+    VALUES (
+        v_quizCategoryId, 
+        NULL, 
+        '조선의 수도는 어디였습니까?', 
+        '개경', 
+        '한양', 
+        '경주', 
+        '평양',
+        2,
+        10
+    );
+    
+    -- 퀴즈 3
+    INSERT INTO quiz (quizCategoryId, imgUrl, question, item1, item2, item3, item4, answer, quizScore) 
+    VALUES (
+        v_quizCategoryId, 
+        NULL, 
+        '세종대왕의 업적에 해당되는 것은?', 
+        '훈민정음', 
+        '목민심서', 
+        '팔만대장경', 
+        '난중일기',
+        1,
+        10
+    );
+    
+
+    COMMIT;
+    
+    -- 결과 확인용 SELECT
+    SELECT 
+        v_quizCategoryId as createdCategoryId,
+        '퀴즈가 성공적으로 생성되었습니다.' as message,
+        (SELECT COUNT(*) FROM quiz WHERE quizCategoryId = v_quizCategoryId) as totalQuizCount;
+        
+END//
+DELIMITER ;
 
 -- 테이블 history.points 구조 내보내기
 CREATE TABLE IF NOT EXISTS `points` (
@@ -177,7 +269,7 @@ CREATE TABLE IF NOT EXISTS `points` (
   CONSTRAINT `FK_points_quiz_score` FOREIGN KEY (`scoreId`) REFERENCES `quiz_score` (`scoreId`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_points_user` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_points_user_attendance` FOREIGN KEY (`attendanceId`) REFERENCES `user_attendance` (`attendanceId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=149 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='포인트 내역 기술';
+) ENGINE=InnoDB AUTO_INCREMENT=150 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='포인트 내역 기술';
 
 -- 테이블 데이터 history.points:~18 rows (대략적) 내보내기
 INSERT INTO `points` (`pointId`, `userId`, `attendanceId`, `itemId`, `scoreId`, `pointChange`, `totalPoint`, `createAt`) VALUES
@@ -203,7 +295,8 @@ INSERT INTO `points` (`pointId`, `userId`, `attendanceId`, `itemId`, `scoreId`, 
 	(145, 1, 992, NULL, NULL, 10, 10, '2025-09-26 15:57:16'),
 	(146, 64, 993, NULL, NULL, 10, 10, '2025-09-29 08:42:00'),
 	(147, 64, NULL, 28, NULL, -10, 0, '2025-09-29 08:42:17'),
-	(148, 41, 994, NULL, NULL, 10, 70, '2025-09-29 10:54:44');
+	(148, 41, 994, NULL, NULL, 10, 70, '2025-09-29 10:54:44'),
+	(149, 64, 995, NULL, NULL, 10, 10, '2025-09-30 09:03:20');
 
 -- 테이블 history.point_shop 구조 내보내기
 CREATE TABLE IF NOT EXISTS `point_shop` (
@@ -256,12 +349,17 @@ CREATE TABLE IF NOT EXISTS `quiz` (
   `item3` varchar(100) DEFAULT NULL,
   `item4` varchar(100) DEFAULT NULL,
   `answer` int DEFAULT NULL,
+  `quizScore` int DEFAULT NULL,
   PRIMARY KEY (`quizId`) USING BTREE,
   KEY `FK_quiz_quiz_category` (`quizCategoryId`),
   CONSTRAINT `FK_quiz_quiz_category` FOREIGN KEY (`quizCategoryId`) REFERENCES `quiz_category` (`quizCategoryId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='퀴즈 각 문항에 대한 항목';
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='퀴즈 각 문항에 대한 항목';
 
--- 테이블 데이터 history.quiz:~0 rows (대략적) 내보내기
+-- 테이블 데이터 history.quiz:~3 rows (대략적) 내보내기
+INSERT INTO `quiz` (`quizId`, `quizCategoryId`, `quizNumber`, `imgUrl`, `question`, `item1`, `item2`, `item3`, `item4`, `answer`, `quizScore`) VALUES
+	(10, 7, NULL, NULL, '조선을 건국한 왕의 본명은?', '이성계', '이방원', '이성은', '이승만', 1, 10),
+	(11, 7, NULL, NULL, '조선의 수도는 어디였습니까?', '개경', '한양', '경주', '평양', 2, 10),
+	(12, 7, NULL, NULL, '세종대왕의 업적에 해당되는 것은?', '훈민정음', '목민심서', '팔만대장경', '난중일기', 1, 10);
 
 -- 테이블 history.quiz_attempt 구조 내보내기
 CREATE TABLE IF NOT EXISTS `quiz_attempt` (
@@ -293,12 +391,11 @@ CREATE TABLE IF NOT EXISTS `quiz_category` (
   PRIMARY KEY (`quizCategoryId`),
   KEY `FK_quiz_category_users` (`userId`),
   CONSTRAINT `FK_quiz_category_users` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='퀴즈 카테고리 분류에 관한 항목';
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='퀴즈 카테고리 분류에 관한 항목';
 
--- 테이블 데이터 history.quiz_category:~2 rows (대략적) 내보내기
+-- 테이블 데이터 history.quiz_category:~1 rows (대략적) 내보내기
 INSERT INTO `quiz_category` (`quizCategoryId`, `userId`, `quizType`, `quizListName`, `createAt`) VALUES
-	(4, 1, '선사시대', 'ㅁㅁ', '2025-09-29 17:31:18'),
-	(5, 1, '선사시대', 'ㅇㅇ', '2025-09-29 17:32:26');
+	(7, 1, '조선시대', '제1회 퀴즈문항', '2025-09-30 09:20:50');
 
 -- 테이블 history.quiz_score 구조 내보내기
 CREATE TABLE IF NOT EXISTS `quiz_score` (
@@ -315,7 +412,7 @@ CREATE TABLE IF NOT EXISTS `quiz_score` (
   CONSTRAINT `FK_quiz_score_users` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='퀴즈 채점 및 포인트 환산에 관한 항목';
 
--- 테이블 데이터 history.quiz_score:~1 rows (대략적) 내보내기
+-- 테이블 데이터 history.quiz_score:~0 rows (대략적) 내보내기
 
 -- 테이블 history.users 구조 내보내기
 CREATE TABLE IF NOT EXISTS `users` (
@@ -345,7 +442,7 @@ CREATE TABLE IF NOT EXISTS `user_attendance` (
   PRIMARY KEY (`attendanceId`) USING BTREE,
   KEY `FK_attendance_user` (`userId`) USING BTREE,
   CONSTRAINT `FK_user_attendance_user` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=995 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='출석기록';
+) ENGINE=InnoDB AUTO_INCREMENT=996 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='출석기록';
 
 -- 테이블 데이터 history.user_attendance:~12 rows (대략적) 내보내기
 INSERT INTO `user_attendance` (`attendanceId`, `userId`, `attendanceDate`, `pointAdd`) VALUES
@@ -362,7 +459,8 @@ INSERT INTO `user_attendance` (`attendanceId`, `userId`, `attendanceDate`, `poin
 	(991, 64, '2025-09-26 10:22:32', 10),
 	(992, 1, '2025-09-26 15:57:16', 10),
 	(993, 64, '2025-09-29 08:41:54', 10),
-	(994, 41, '2025-09-29 10:54:38', 10);
+	(994, 41, '2025-09-29 10:54:38', 10),
+	(995, 64, '2025-09-30 09:03:20', 10);
 
 -- 뷰 history.v_quiz_secure 구조 내보내기
 -- VIEW 종속성 오류를 극복하기 위해 임시 테이블을 생성합니다.
