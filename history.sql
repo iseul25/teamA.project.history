@@ -197,9 +197,10 @@ BEGIN
     -- 2. n시대 관련 퀴즈 문항들 생성 (최소 3개)
     
     -- 퀴즈 1
-    INSERT INTO quiz (quizCategoryId, imgUrl, question, item1, item2, item3, item4, answer, quizScore) 
+    INSERT INTO quiz (quizCategoryId, quizNumber, imgUrl, question, item1, item2, item3, item4, answer, quizScore) 
     VALUES (
         v_quizCategoryId, 
+		1, 
         NULL, 
         '조선을 건국한 왕의 본명은?', 
         '이성계', 
@@ -211,9 +212,10 @@ BEGIN
     );
     
     -- 퀴즈 2
-    INSERT INTO quiz (quizCategoryId, imgUrl, question, item1, item2, item3, item4, answer, quizScore) 
+    INSERT INTO quiz (quizCategoryId, quizNumber, imgUrl, question, item1, item2, item3, item4, answer, quizScore) 
     VALUES (
         v_quizCategoryId, 
+		2, 
         NULL, 
         '조선의 수도는 어디였습니까?', 
         '개경', 
@@ -225,9 +227,10 @@ BEGIN
     );
     
     -- 퀴즈 3
-    INSERT INTO quiz (quizCategoryId, imgUrl, question, item1, item2, item3, item4, answer, quizScore) 
+    INSERT INTO quiz (quizCategoryId, quizNumber, imgUrl, question, item1, item2, item3, item4, answer, quizScore) 
     VALUES (
         v_quizCategoryId, 
+		3, 
         NULL, 
         '세종대왕의 업적에 해당되는 것은?', 
         '훈민정음', 
@@ -586,4 +589,5 @@ CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `v_users_secure` AS select 
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
+
 
