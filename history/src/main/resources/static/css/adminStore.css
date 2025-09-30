@@ -322,15 +322,18 @@ header>ul li a.active {
 .add-product-btn {
     display: block;
     padding: 6px 12px;
-    background-color: #ddd;
-    border: 1px solid #bdbdbd;
-    border-radius: 5px;
+    border: 1px solid #7db9fd;
+    background-color: #cbe3ff;
+    border-radius: 10px;
+    color: #333;
     font-size: 15px;
+    font-weight: bold;
     cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .add-product-btn:hover {
-    background-color: #d1d1d1;
+    background-color: #a7cefa;
 }
 
 /* 상품 추가 모달 */
