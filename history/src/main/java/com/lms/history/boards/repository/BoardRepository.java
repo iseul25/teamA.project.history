@@ -50,12 +50,14 @@ public class BoardRepository {
     // 페이징 처리된 게시글 조회 (최신순)
     public List<Board> findByBoardTypeWithPaging(String boardType, int page, int size) {
         int offset = page * size;
-        String sql = "SELECT * FROM Board b JOIN users u ON b.userId = u.userId " +
+        String sql = "SELECT b.*, u.name " +
+                "FROM Board b " +
+                "JOIN users u ON b.userId = u.userId " +
                 "WHERE b.boardType = ? " +
-                "ORDER BY b.date DESC " +
+                "ORDER BY b.boardId DESC " +  // date → boardId로 변경
                 "LIMIT ? OFFSET ?";
 
-        return jdbc.query(sql, (rs, rowNum) -> {
+        List<Board> boards = jdbc.query(sql, (rs, rowNum) -> {
             Board board = new Board();
             board.setBoardId(rs.getInt("boardId"));
             board.setUserId(rs.getInt("userId"));
@@ -67,9 +69,11 @@ public class BoardRepository {
             board.setName(rs.getString("name"));
             board.setImgUrl(rs.getString("imgUrl"));
             board.setImgDescription(rs.getString("imgDescription"));
-            board.setVideoUrl(rs.getString("videoUrl"));   // ⬅️ 추가
+            board.setVideoUrl(rs.getString("videoUrl"));
             return board;
         }, boardType, size, offset);
+
+        return boards;
     }
 
     // 특정 타입의 총 게시글 수 조회
