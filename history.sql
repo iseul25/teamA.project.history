@@ -517,10 +517,9 @@ CREATE TRIGGER `tr_quiz_attempt_before_insert` BEFORE INSERT ON `quiz_attempt` F
     FROM quiz 
     WHERE quizId = NEW.quizId;
     
-    -- selected와 answer가 같으면 10점을, 다르면 0점을 earnedScore에 설정
+	-- selected와 answer가 같으면 quizScore를, 다르면 0점을 earnedScore에 설정
     IF NEW.selected = quiz_answer THEN
-        SET NEW.earnedScore = 10;
-    ELSE
+        SET NEW.earnedScore = quiz_score_value;
         SET NEW.earnedScore = 0;
     END IF;
 END//
@@ -587,3 +586,4 @@ CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `v_users_secure` AS select 
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
+
