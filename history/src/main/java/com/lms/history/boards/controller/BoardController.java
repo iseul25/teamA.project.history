@@ -237,7 +237,11 @@ public class BoardController {
                 return "redirect:/login";
             }
             // 🔹 유튜브 URL 정규화 → embed URL 저장
-            board.setVideoUrl(toYoutubeEmbedUrl(videoUrl));     // ⬅️ 추가
+            board.setVideoUrl(toYoutubeEmbedUrl(videoUrl));   // ⬅️ 추가
+
+            if (board.getContent() != null) {
+                board.setContent(board.getContent().replace("\n", "<br/>"));
+            }
 
             // 이미지 파일 처리
             if (imageFile != null && !imageFile.isEmpty()) {
@@ -331,6 +335,10 @@ public class BoardController {
         try {
             // 🔹 유튜브 URL 정규화 → embed URL 저장
             board.setVideoUrl(toYoutubeEmbedUrl(videoUrl));     // ⬅️ 추가
+
+            if (board.getContent() != null) {
+                board.setContent(board.getContent().replace("\n", "<br/>"));
+            }
 
             // 새 이미지가 업로드된 경우
             if (imageFile != null && !imageFile.isEmpty()) {
