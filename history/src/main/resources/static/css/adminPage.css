@@ -296,17 +296,21 @@ td {
 }
 
 /* 회원 삭제 버튼 */
-.deleteBtn {
-    padding: 4px 10px;
+.delete-button {
+    display: inline-block;
+    padding: 2px 8px;
+    color: #222;
     font-size: 14px;
-    border-radius: 9px;
-    border: 1px solid #a1a1a1;
+    font-weight: 500;
+    border-radius: 5px;
+    text-decoration: none;
     cursor: pointer;
-    transition: all 0.2s ease;
+    background-color: #ddd;
+    border: 1px solid #aaa;
 }
 
-.deleteBtn:hover {
-    background-color: #e0e0e0;
+.delete-button:hover {
+    background-color: #aaa;
 }
 
 /* 페이징 버튼 */
