@@ -368,6 +368,34 @@ header>ul li a.active {
     padding: 0 20px;
 }
 
+#notice-title-box,
+#board-title-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+
+/* 공지사항, 게시글 등록 버튼 */
+.add-notice-btn,
+.add-board-btn {
+    height: 35px;
+    margin: 10px;
+    padding: 0px 12px;
+    border-radius: 10px;
+    border: 1px solid #7db9fd;
+    background-color: #cbe3ff;
+    color: #333;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.add-notice-btn:hover,
+.add-board-btn:hover {
+    background-color: #a7cefa;
+}
+
 .board-title {
     font-size: 35px;
     font-weight: 600;
