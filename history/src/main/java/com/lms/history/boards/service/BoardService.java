@@ -2,8 +2,11 @@ package com.lms.history.boards.service;
 
 import com.lms.history.boards.entity.Board;
 import com.lms.history.boards.repository.BoardRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 @Service
@@ -23,8 +26,9 @@ public class BoardService {
     }
 
     // JpaRepository가 없는 경우의 페이징 처리
-    public List<Board> findByBoardTypeWithPaging(String boardType, int page, int size) {
-        return boardRepository.findByBoardTypeWithPaging(boardType, page, size);
+    public List<Board> findByBoardTypeWithPaging(String boardType, int page, int pageSize) {
+        // 이 메서드가 Repository의 findByBoardTypeWithPaging을 호출해야 합니다
+        return boardRepository.findByBoardTypeWithPaging(boardType, page, pageSize);
     }
 
     // 총 개수를 구하는 메서드
@@ -67,4 +71,5 @@ public class BoardService {
     public Board findByTitleAndType(String title, String boardType) {
         return boardRepository.findByTitleAndType(title, boardType);
     }
+
 }
