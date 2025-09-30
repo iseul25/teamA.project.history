@@ -159,7 +159,7 @@
             </tbody>
         </table>
         <!-- 페이징 영역 -->
-        <div id="pagination" class="pagination"></div>
+        <div id="orderList-pagination" class="pagination"></div>
     </div>
 </div>
 <div id="footer">
@@ -321,28 +321,40 @@
         });
     }
 
-    // 상품 페이징 렌더링
+    // 상품 페이징 렌더링 (10개까지만 표시)
     function renderProductPagination(totalItems, currentPage, totalPages) {
         const paginationDiv = document.querySelector("#productBox #pagination");
         paginationDiv.innerHTML = "";
+
+        const maxVisible = 10; // 한 번에 보이는 페이지 버튼 수
+        const startPage = Math.floor((currentPage - 1) / maxVisible) * maxVisible + 1;
+        let endPage = startPage + maxVisible - 1;
+        if (endPage > totalPages) endPage = totalPages;
+
+        // 이전 버튼
         const prevBtn = document.createElement("button");
         prevBtn.textContent = "◀";
         prevBtn.disabled = currentPage === 1;
         prevBtn.addEventListener("click", () => loadProducts(currentPage - 1));
         paginationDiv.appendChild(prevBtn);
-        for (let i = 1; i <= totalPages; i++) {
+
+        // 페이지 번호 버튼 (최대 10개만 표시)
+        for (let i = startPage; i <= endPage; i++) {
             const btn = document.createElement("button");
             btn.textContent = i;
             if (i === currentPage) btn.classList.add("active");
             btn.addEventListener("click", () => loadProducts(i));
             paginationDiv.appendChild(btn);
         }
+
+        // 다음 버튼
         const nextBtn = document.createElement("button");
         nextBtn.textContent = "▶";
         nextBtn.disabled = currentPage === totalPages;
         nextBtn.addEventListener("click", () => loadProducts(currentPage + 1));
         paginationDiv.appendChild(nextBtn);
     }
+
 
     // 주문 목록 로드
     async function loadOrders(page = 1) {
@@ -413,6 +425,41 @@
         }
         bindOrderEvents();
     }
+
+    // 주문 페이징 렌더링 (10개까지만 표시)
+    function renderOrderPagination(totalItems, currentPage, totalPages) {
+        const paginationDiv = document.querySelector("#orderBox #orderList-pagination");
+        paginationDiv.innerHTML = "";
+
+        const maxVisible = 10; // 한 번에 보이는 페이지 버튼 수
+        const startPage = Math.floor((currentPage - 1) / maxVisible) * maxVisible + 1;
+        let endPage = startPage + maxVisible - 1;
+        if (endPage > totalPages) endPage = totalPages;
+
+        // 이전 버튼
+        const prevBtn = document.createElement("button");
+        prevBtn.textContent = "◀";
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.addEventListener("click", () => loadOrders(currentPage - 1));
+        paginationDiv.appendChild(prevBtn);
+
+        // 페이지 번호 버튼 (10개까지만)
+        for (let i = startPage; i <= endPage; i++) {
+            const btn = document.createElement("button");
+            btn.textContent = i;
+            if (i === currentPage) btn.classList.add("active");
+            btn.addEventListener("click", () => loadOrders(i));
+            paginationDiv.appendChild(btn);
+        }
+
+        // 다음 버튼
+        const nextBtn = document.createElement("button");
+        nextBtn.textContent = "▶";
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.addEventListener("click", () => loadOrders(currentPage + 1));
+        paginationDiv.appendChild(nextBtn);
+    }
+
 
     // 모달 관련 함수들
     const addModal = document.getElementById("addProductModal");
