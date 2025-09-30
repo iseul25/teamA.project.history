@@ -47,9 +47,9 @@
         <li class="submenuBox">
             <a th:href="@{/admin/board}" class="active">게시글관리</a>
             <ul class="submenu">
-                <li><a th:href="@{/admin/board}" class="active">학습 게시글</a></li>
-                <li><a th:href="@{/admin/quiz}">퀴즈 게시글</a></li>
-                <li><a th:href="@{/admin/notice}">공지사항 게시글</a></li>
+                <li><a th:href="@{/admin/board}" class="active">학습하기</a></li>
+                <li><a th:href="@{/admin/quiz}">퀴즈풀기</a></li>
+                <li><a th:href="@{/admin/notice}">공지사항</a></li>
             </ul>
         </li>
         <li><a th:href="@{/admin/comment}">댓글관리</a></li>
@@ -59,7 +59,7 @@
 
 <div id="container">
     <div class="boardBox">
-        <div class="board-title">학습게시글</div>
+        <div class="board-title">학습하기</div>
 
         <!-- URL 파라미터 메시지 표시 (Thymeleaf로 처리) -->
         <div th:if="${param.success}" class="alert success" th:text="${param.success[0]}"></div>
