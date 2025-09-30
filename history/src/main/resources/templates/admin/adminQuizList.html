@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>퀴즈 게시물 관리</title>
+    <link rel="stylesheet" th:href="@{/css/adminQuiz.css}">
+</head>
+
+<body>
+<header>
+    <a th:href="@{/}">
+        <img th:src="@{/img/mainLg2.png}" alt="메인 로고">
+    </a>
+    <ul>
+        <li><a th:href="@{/board/topic}">학습하기</a></li>
+        <li><a th:href="@{/quiz/topic}">퀴즈풀기</a></li>
+        <li><a th:href="@{/attend}">출석하기</a></li>
+        <li><a th:href="@{/pointStore}">포인트 상점</a></li>
+        <li><a th:href="@{/faq}">FAQ</a></li>
+        <li><a th:href="@{/notice}">공지사항</a></li>
+    </ul>
+    <div id="user" th:if="${session.loginUser != null}">
+        <a th:if="${session.loginUser.userType == '관리자'}"
+           th:href="@{/admin/users}"
+           th:text="${session.loginUser.name} + '관리자'"></a>
+        <a th:unless="${session.loginUser.userType == '관리자'}"
+           th:href="@{/user/myPage}"
+           th:text="${session.loginUser.name} + '님'"></a>
+    </div>
+</header>
+
+<div id="sidebar">
+    <ul>
+        <li><a th:href="@{/admin/users}">회원관리</a></li>
+        <li class="submenuBox">
+            <a th:href="@{/admin/board}" class="active">게시글관리</a>
+            <ul class="submenu">
+                <li><a th:href="@{/admin/post}">학습하기</a></li>
+                <li><a th:href="@{/admin/quiz}" class="active">퀴즈풀기</a></li>
+                <li><a th:href="@{/admin/notice}">공지사항</a></li>
+            </ul>
+        </li>
+        <li><a href="">댓글관리</a></li>
+        <li><a th:href="@{/admin/store}">상점관리</a></li>
+    </ul>
+</div>
+
+<div id="container">
+    <div class="quizList-box">
+        <div class="quizList-title">퀴즈풀기</div>
+
+        <!-- 퀴즈 리스트 테이블 -->
+        <table class="quizList-table">
+            <thead>
+            <tr>
+                <th style="width: 100px;">번호</th>
+                <th id="categoryHeader" style="width: 190px;">
+                    카테고리 <span class="arrow">▼</span>
+                    <ul id="categoryMenu" class="dropdown">
+                        <li data-category="전체">전체</li>
+                        <li data-category="선사시대">선사시대</li>
+                        <li data-category="고조선과 여러 나라">고조선과 여러 나라</li>
+                        <li data-category="삼국과 가야">삼국과 가야</li>
+                        <li data-category="남북극시대">남북극시대</li>
+                        <li data-category="고려시대">고려시대</li>
+                        <li data-category="조선시대">조선시대</li>
+                        <li data-category="근대">근대</li>
+                        <li data-category="현대">현대</li>
+                    </ul>
+                </th>
+                <th>제목</th>
+                <th style="width: 150px;">등록 일자</th>
+                <th style="width: 150px;">작업</th>
+            </tr>
+            </thead>
+            <tbody id="quizList-body">
+            <tr th:each="quiz, iterStat : ${quizList}">
+                <td th:text="${iterStat.index + 1 + (currentPage - 1) * pageSize}"></td>
+                <td th:text="${quiz.category}"></td>
+                <td>
+                    <a th:href="@{/quiz/start(quizCategoryId=${quiz.id})}"
+                       th:text="${quiz.title}"></a>
+                </td>
+                <td th:text="${quiz.date}"></td>
+                <td>
+                    <input type="hidden" name="quizCategoryId" th:value="${quiz.id}" class="quiz-id"/>
+                    <button class="status-btn">현황</button>
+                    <button class="delete-btn" th:data-id="${quiz.id}">삭제</button>
+                </td>
+            </tr>
+
+            <!-- 퀴즈 목록이 아예 없을 때 -->
+            <tr th:if="${#lists.isEmpty(quizList)}">
+                <td colspan="5" style="text-align: center; padding: 50px;">등록된 게시글이 없습니다.</td>
+            </tr>
+
+            <!-- 페이지 크기보다 적은 경우 빈 행 채우기 -->
+            <tr th:each="i : ${#numbers.sequence(1, pageSize - quizList.size())}"
+                th:if="${quizList.size() < pageSize} and ${!#lists.isEmpty(quizList)}">
+                <td>&nbsp;</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <!-- 목록 페이징 영역 -->
+        <div id="quizList-pagination" class="quizList-pagination"></div>
+
+        <!-- 퀴즈 현황 모달 -->
+        <div id="status-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="closeBtn">&times;</span>
+                <h2>퀴즈 현황</h2>
+                <table class="status-table">
+                    <thead>
+                    <tr>
+                        <th style="width: 90px;">번호</th>
+                        <th>사용자</th>
+                        <th style="width: 120px;">점수</th>
+                        <th style="width: 120px;">수료여부</th>
+                    </tr>
+                    </thead>
+                    <tbody id="status-body">
+                    <!-- JS로 동적으로 채워짐 -->
+                    </tbody>
+                </table>
+                <div id="status-pagination" class="status-pagination"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="footer">
+    <ul>
+        <li>대표전화: 042-222-2402</li>
+        <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+        <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+        <li>© 2025 역사 한 걸음. All rights reserved.</li>
+    </ul>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener("DOMContentLoaded", () => {
+        // 서버에서 전달받은 데이터
+        const totalPages = /*[[${totalPages}]]*/ 1;
+        const currentPage = /*[[${currentPage}]]*/ 1;
+        const currentCategory = /*[[${currentCategory}]]*/ '전체';
+        const quizList = /*[[${quizList}]]*/ [];
+
+        // 카테고리 드롭다운 관련
+        const categoryHeader = document.getElementById("categoryHeader");
+        const categoryMenu = document.getElementById("categoryMenu");
+        const arrow = categoryHeader.querySelector(".arrow");
+
+        // 드롭다운 열기/닫기
+        categoryHeader.addEventListener("click", (e) => {
+            if (e.target.closest("#categoryMenu")) return;
+            categoryMenu.classList.toggle("show");
+            arrow.classList.toggle("up");
+        });
+
+        // 카테고리 선택
+        categoryMenu.querySelectorAll("li").forEach(item => {
+            item.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const category = item.dataset.category;
+                window.location.href = `/admin/quiz?page=1&category=${encodeURIComponent(category)}`;
+            });
+        });
+
+        // 바깥 클릭 시 닫기
+        window.addEventListener("click", (e) => {
+            if (!categoryHeader.contains(e.target)) {
+                categoryMenu.classList.remove("show");
+                arrow.classList.remove("up");
+            }
+        });
+
+        // 목록 페이징 렌더링
+        renderPagination();
+
+        function renderPagination() {
+            const paginationDiv = document.getElementById("quizList-pagination");
+            paginationDiv.innerHTML = "";
+
+            if (quizList.length === 0) {
+                paginationDiv.style.display = 'none';
+                return;
+            }
+
+            paginationDiv.style.display = 'block';
+
+            // 이전 버튼
+            const prevBtn = document.createElement("button");
+            prevBtn.textContent = "◀";
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.addEventListener("click", () => {
+                if (currentPage > 1) {
+                    window.location.href = `/admin/quiz?page=${currentPage - 1}&category=${encodeURIComponent(currentCategory)}`;
+                }
+            });
+            paginationDiv.appendChild(prevBtn);
+
+            // 페이지 번호 버튼
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement("button");
+                btn.textContent = i;
+                if (i === currentPage) btn.classList.add("active");
+                btn.addEventListener("click", () => {
+                    window.location.href = `/admin/quiz?page=${i}&category=${encodeURIComponent(currentCategory)}`;
+                });
+                paginationDiv.appendChild(btn);
+            }
+
+            // 다음 버튼
+            const nextBtn = document.createElement("button");
+            nextBtn.textContent = "▶";
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.addEventListener("click", () => {
+                if (currentPage < totalPages) {
+                    window.location.href = `/admin/quiz?page=${currentPage + 1}&category=${encodeURIComponent(currentCategory)}`;
+                }
+            });
+            paginationDiv.appendChild(nextBtn);
+        }
+
+        // 삭제 버튼
+        document.addEventListener("click", (e) => {
+            if (e.target.classList.contains("delete-btn")) {
+                const quizId = e.target.dataset.id;
+                if (confirm("정말 삭제하시겠습니까?")) {
+                    fetch(`/admin/quiz/${quizId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                alert('삭제되었습니다.');
+                                location.reload();
+                            } else {
+                                alert('삭제에 실패했습니다.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('삭제 중 오류가 발생했습니다.');
+                        });
+                }
+            }
+        });
+
+        // ========== 현황 모달 처리 (quizList.html과 동일) ==========
+        const statusModal = document.getElementById("status-modal");
+        const closeBtn = statusModal.querySelector(".closeBtn");
+        const statusBody = document.getElementById("status-body");
+        const statusPagination = document.getElementById("status-pagination");
+
+        let currentQuizCategoryId = null;
+        let currentStatusPage = 1;
+
+        // 모달 닫기
+        closeBtn.addEventListener("click", () => statusModal.style.display = "none");
+        window.addEventListener("click", e => {
+            if (e.target === statusModal) statusModal.style.display = "none";
+        });
+
+        // 보기 버튼 클릭 시 이벤트
+        document.body.addEventListener("click", async (e) => {
+            if (e.target.classList.contains("status-btn")) { // <- 여기 수정
+                const row = e.target.closest("tr");
+                const quizIdInput = row.querySelector("input[name='quizCategoryId']");
+                if (!quizIdInput) return;
+
+                currentQuizCategoryId = quizIdInput.value;
+                currentStatusPage = 1;
+
+                statusModal.style.display = "flex";
+                await loadStatusData();
+            }
+        });
+
+        // 성적 현황 데이터 로드
+        async function loadStatusData() {
+            try {
+                const response = await fetch(`/quiz/status/${currentQuizCategoryId}?page=${currentStatusPage}`)
+                const data = response.ok ? await response.json() : null;
+
+                if (data && data.scores && data.scores.length > 0) {
+                    renderStatusTable(data.scores);
+                    renderStatusPagination(data.currentPage, data.totalPages);
+                } else {
+                    renderStatusTable(null);
+                    hidePagination();
+                }
+            } catch (err) {
+                console.error(err);
+                renderStatusTable(null);
+                hidePagination();
+            }
+        }
+
+        function renderStatusTable(scores) {
+            statusBody.innerHTML = "";
+
+            if (!scores || scores.length === 0) {
+                statusBody.innerHTML = `<tr><td colspan="4" style="text-align:center; height: 400px; vertical-align: middle;">데이터가 없습니다.</td></tr>`;
+            } else {
+                const pageStart = (currentStatusPage - 1) * 10;
+                scores.forEach((score, idx) => {
+                    statusBody.insertAdjacentHTML("beforeend", `
+                            <tr>
+                                <td>${pageStart + idx + 1}</td>
+                                <td>${score.username}</td>
+                                <td>${score.score}</td>
+                                <td>${score.passed}</td>
+                            </tr>
+                        `);
+                });
+
+                for (let i = scores.length; i < 10; i++) {
+                    statusBody.insertAdjacentHTML("beforeend", `
+                            <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                        `);
+                }
+            }
+        }
+
+        function hidePagination() {
+            statusPagination.style.display = 'none';
+        }
+
+        function renderStatusPagination(currentPageNum, totalPages) {
+            statusPagination.innerHTML = "";
+            statusPagination.style.display = 'block';
+
+            const prevBtn = document.createElement("button");
+            prevBtn.textContent = "◀";
+            prevBtn.classList.add("page-btn");
+            prevBtn.addEventListener("click", async () => {
+                if (currentStatusPage > 1) {
+                    currentStatusPage--;
+                    await loadStatusData();
+                }
+            });
+            statusPagination.appendChild(prevBtn);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement("button");
+                btn.textContent = i;
+                btn.classList.add("page-btn");
+                if (i === currentPageNum) btn.classList.add("active");
+                btn.addEventListener("click", async () => {
+                    currentStatusPage = i;
+                    await loadStatusData();
+                });
+                statusPagination.appendChild(btn);
+            }
+
+            const nextBtn = document.createElement("button");
+            nextBtn.textContent = "▶";
+            nextBtn.classList.add("page-btn");
+            nextBtn.addEventListener("click", async () => {
+                if (currentStatusPage < totalPages) {
+                    currentStatusPage++;
+                    await loadStatusData();
+                }
+            });
+            statusPagination.appendChild(nextBtn);
+        }
+    });
+    /*]]>*/
+</script>
+</body>
+
+</html>
