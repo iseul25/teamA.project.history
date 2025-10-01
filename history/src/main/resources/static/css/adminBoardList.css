@@ -73,7 +73,7 @@ header>ul li a.active {
     text-decoration: underline;
 }
 
-/* sideber */
+/* sidebar */
 #sidebar {
     list-style-type: none;
     margin: 0;
@@ -259,7 +259,7 @@ header>ul li a.active {
     font-weight: bold;
 }
 
-/* 게시글 수정 모델 */
+/* 게시글 수정, 등록, 공지사항 등록 모달 */
 .modal {
     display: none;
     position: fixed;
@@ -283,14 +283,15 @@ header>ul li a.active {
     padding: 20px;
     border-radius: 10px;
     width: 60%;
-    height: 85%;
+    max-height: 85%;
     overflow-y: auto; /* 모달 전체에 스크롤 추가 */
     display: flex;
     flex-direction: column;
 }
 
 .closeBtn,
-.closeAddBtn {
+.closeAddBtn,
+.closeEditBtn {
     position: absolute;
     top: 10px;
     right: 15px;
@@ -306,7 +307,8 @@ header>ul li a.active {
 }
 
 #editForm,
-#addForm {
+#addForm,
+#addBoardForm {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -317,7 +319,6 @@ header>ul li a.active {
 #editForm textarea {
     width: 90%;
     padding: 15px;
-    padding-left: 20px;
     margin: 10px 0;
     border: 1px solid #c9c9c9;
     border-radius: 5px;
@@ -338,7 +339,6 @@ header>ul li a.active {
 #addForm textarea {
     width: 90%;
     padding: 15px;
-    padding-left: 20px;
     margin: 10px 0;
     border: 1px solid #c9c9c9;
     border-radius: 5px;
@@ -355,7 +355,40 @@ header>ul li a.active {
     overflow-y: auto;
 }
 
-/* 모델 안 수정 버튼 */
+#addBoardForm input,
+#addBoardForm textarea {
+    width: 90%;
+    padding: 15px;
+    margin: 10px auto;
+    border: 1px solid #c9c9c9;
+    border-radius: 5px;
+    font-size: 16px;
+    box-shadow: 0 1.5px 1.5px #d1d1d1;
+    overflow-y: auto;
+}
+
+#addBoardForm textarea {
+    min-height: 500px;  /* 최소 높이 */
+    max-height: 500px;  /* 최대 높이 */
+    height: 500px;      /* 항상 고정 높이 */
+    resize: none;       /* 크기 조절 막기 */
+    overflow-y: auto;
+}
+
+#addImage-box {
+    margin-top: 20px;
+}
+
+/* 유튜브 링크 */
+.video-field {
+    display: block;
+    width: 54.5%;
+    padding: 15px;
+    margin: 0 auto;
+    font-size: 16px;
+}
+
+/* 모달 안 수정, 등록 버튼 */
 #editBoard-btn {
     display: block;
     margin: 10px auto;
@@ -386,6 +419,30 @@ header>ul li a.active {
 
 #addForm button:hover {
     background-color: #7e7e7e;
+}
+
+#addBoardForm button {
+    display: block;
+    margin: 10px auto;
+    padding: 6px 12px;
+    background-color: #919191;
+    border: 1px solid #7e7e7e;
+    border-radius: 5px;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+#addBoardForm button:hover {
+    background-color: #7e7e7e;
+}
+
+#addBoardType-box label {
+    font-size: 18px;
+}
+
+#addBoardType {
+    padding: 8px;
 }
 
 /* container */
@@ -419,7 +476,7 @@ header>ul li a.active {
 .add-board-btn {
     height: 35px;
     margin: 10px;
-    padding: 0px 12px;
+    padding: 0 12px;
     border-radius: 10px;
     border: 1px solid #7db9fd;
     background-color: #cbe3ff;
@@ -560,14 +617,15 @@ td {
 .pagination {
     margin-top: 20px;
     text-align: center;
+    font-size: 13px;
 }
 
 .pagination button,
 .pagination .page-btn {
     border: 1px solid #ddd;
     background: #fff;
-    padding: 5px 10px;
-    margin: 0 3px;
+    padding: 3px 10px;
+    margin: 0 1px;
     cursor: pointer;
     border-radius: 4px;
     text-decoration: none;
