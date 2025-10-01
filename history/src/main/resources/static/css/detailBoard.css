@@ -161,9 +161,9 @@ header>ul li a.active {
 
 /* container */
 #container {
-    /*margin-left: 290px; !* 사이드바 너비만큼 밀어내기 *!*/
-    margin: 0 auto;
-    width: 100%;
+    margin-left: 290px; /* 사이드바 너비만큼 밀어내기 */
+    /*margin: 0 auto;*/
+    /*width: 100%;*/
     flex: 1;
     margin-top: 50px;
     padding: 40px;
@@ -264,7 +264,7 @@ header>ul li a.active {
 .post-content img {
     display: block !important;      /* inline style 대신 적용 */
     margin: 15px auto !important;   /* 상하 여백 유지 + 수평 가운데 정렬 */
-    max-width: 30% !important;     /* 가로 100% 제한 */
+    max-width: 100% !important;     /* 가로 100% 제한 */
     height: auto !important;        /* 비율 유지 */
     border-radius: 5px !important;  /* 모서리 둥글게 */
     border: 1px solid #ddd !important; /* 테두리 */
@@ -276,8 +276,8 @@ header>ul li a.active {
 }
 
 .post-image img {
-    max-width: 30%;
-    max-height: 100px; /* 세로 최대 높이 제한 */
+    max-width: 100%;
+    max-height: 400px; /* 세로 최대 높이 제한 */
     border-radius: 8px;
     border: 1px solid #ddd;
     display: block;

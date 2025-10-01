@@ -50,14 +50,12 @@ public class BoardRepository {
     // 페이징 처리된 게시글 조회 (최신순)
     public List<Board> findByBoardTypeWithPaging(String boardType, int page, int size) {
         int offset = page * size;
-        String sql = "SELECT b.*, u.name " +
-                "FROM Board b " +
-                "JOIN users u ON b.userId = u.userId " +
+        String sql = "SELECT * FROM Board b JOIN users u ON b.userId = u.userId " +
                 "WHERE b.boardType = ? " +
-                "ORDER BY b.boardId DESC " +  // date → boardId로 변경
+                "ORDER BY b.date DESC " +
                 "LIMIT ? OFFSET ?";
 
-        List<Board> boards = jdbc.query(sql, (rs, rowNum) -> {
+        return jdbc.query(sql, (rs, rowNum) -> {
             Board board = new Board();
             board.setBoardId(rs.getInt("boardId"));
             board.setUserId(rs.getInt("userId"));
@@ -69,11 +67,9 @@ public class BoardRepository {
             board.setName(rs.getString("name"));
             board.setImgUrl(rs.getString("imgUrl"));
             board.setImgDescription(rs.getString("imgDescription"));
-            board.setVideoUrl(rs.getString("videoUrl"));
+            board.setVideoUrl(rs.getString("videoUrl"));   // ⬅️ 추가
             return board;
         }, boardType, size, offset);
-
-        return boards;
     }
 
     // 특정 타입의 총 게시글 수 조회
@@ -162,9 +158,15 @@ public class BoardRepository {
         List<Board> results = jdbc.query(sql, (rs, rowNum) -> {
             Board board = new Board();
             board.setBoardId(rs.getInt("boardId"));
+            board.setUserId(rs.getInt("userId"));
             board.setTitle(rs.getString("title"));
+            board.setContent(rs.getString("content"));
             board.setBoardType(rs.getString("boardType"));
-            // ... 나머지 필드 설정 ...
+            board.setCreated(rs.getTimestamp("date"));
+            board.setUpdated(rs.getTimestamp("date"));
+            board.setImgUrl(rs.getString("imgUrl"));
+            board.setImgDescription(rs.getString("imgDescription"));
+            board.setVideoUrl(rs.getString("videoUrl"));
             return board;
         }, title, boardType);
 

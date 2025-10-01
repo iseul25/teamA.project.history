@@ -17,7 +17,7 @@
     <ul>
         <li><a th:href="@{/board/topic}">학습하기</a></li>
         <li><a th:href="@{/quiz/topic}">퀴즈풀기</a></li>
-        <li><a th:href="@{/attend}">출석하기</a></li>
+        <li><a th:href="@{/attend}" onclick="checkLoginAndAttend(event)">출석하기</a></li>
         <li><a th:href="@{/pointStore}">포인트 상점</a></li>
         <li><a th:href="@{/faq}" class="active">FAQ</a></li>
         <li><a th:href="@{/notice}">공지사항</a></li>
@@ -117,27 +117,30 @@
         });
     });
 
-    async function checkLogin() {
+    async function checkLoginAndAttend(e) {
+        e.preventDefault(); // 기본 이동 막기
+
         try {
-            const response = await fetch("/api/check-login", {
-                credentials: "include"
-            });
-            const data = await response.json();
+            const res = await fetch('/api/users/check-login', { credentials: 'include' });
+            if (!res.ok) throw new Error('server');
 
-            const userDiv = document.getElementByEmail("user");
-            const usernameLink = document.getElementById("username-link");
+            const data = await res.json();
+            // 컨트롤러의 응답 키에 맞춰 사용 (예: data.loggedIn 또는 data.isLoggedIn)
+            const isLoggedIn = data.loggedIn ?? data.isLoggedIn ?? data.login === true;
 
-            if (data.isLoggedIn) {
-                usernameLink.textContent = data.name;
-                usernameLink.href = "/mypage.html";
-                userDiv.style.display = "block";
+            if (isLoggedIn) {
+                window.location.href = '/attend';
+                return true;   // 이동 허용(의미상)
             } else {
-                userDiv.style.display = "none";  // 그냥 안 보이게만 처리
+                alert('로그인 해주세요.');
+                // 필요하면 로그인 페이지로 유도
+                // window.location.href = '/user/login';
+                return false;  // 이동 차단
             }
         } catch (err) {
-            console.error("로그인 체크 에러:", err);
+            alert('로그인 상태 확인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+            return false;
         }
     }
 </script>
-
 </html>

@@ -12,13 +12,14 @@ import lombok.Setter;
 public class Quiz {
     private int quizId;
     private int quizCategoryId;
+    private Integer quizNumber;      // 추가 (DB에 있는 컬럼)
     private String imgUrl;
     private String question;
     private String item1;
     private String item2;
     private String item3;
     private String item4;
-    private int answer;
+    private Integer answer;
     private String commentary;
-    private int quizScore;
+    private Integer quizScore;       // 추가 (DB에 있는 컬럼)
 }

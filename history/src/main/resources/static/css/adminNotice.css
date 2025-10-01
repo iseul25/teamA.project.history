@@ -248,6 +248,31 @@ header>ul li a.active {
     border-radius: 15px
 }
 
+#notice-title-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+
+/* 공지사항 등록 버튼 */
+.add-notice-btn {
+    height: 35px;
+    margin: 10px;
+    padding: 0px 12px;
+    border-radius: 10px;
+    border: 1px solid #7db9fd;
+    background-color: #cbe3ff;
+    color: #333;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.add-notice-btn:hover {
+    background-color: #a7cefa;
+}
+
 /* 공지사항 관리 테이블 */
 .noticeBox {
     padding: 0 20px;

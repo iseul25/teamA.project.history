@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>퀴즈 목록</title>
+    <link rel="stylesheet" th:href="@{/css/quizList.css}">
+</head>
+
+<body>
+<header>
+    <a th:href="@{/}"><img th:src="@{/img/mainLg2.png}" alt="메인 로고"></a>
+    <ul>
+        <li><a th:href="@{/board/topic}">학습하기</a></li>
+        <li><a th:href="@{/quiz/topic}" class="active">퀴즈풀기</a></li>
+        <li><a th:href="@{/attend}">출석하기</a></li>
+        <li><a th:href="@{/pointStore}">포인트 상점</a></li>
+        <li><a th:href="@{/faq}">FAQ</a></li>
+        <li><a th:href="@{/notice}">공지사항</a></li>
+    </ul>
+    <div id="user" th:if="${session.loginUser != null}">
+        <a th:if="${session.loginUser.userType == '관리자'}"
+           th:href="@{/admin/users}"
+           th:text="${session.loginUser.name} + '님'"></a>
+        <a th:unless="${session.loginUser.userType == '관리자'}"
+           th:href="@{/user/myPage}"
+           th:text="${session.loginUser.name} + '님'"></a>
+    </div>
+</header>
+
+<div id="sidebar">
+    <div class="sideBox">
+        <ul>
+            <li class="submenuBox">
+                <span class="mainMenu">선사시대 <span class="arrow">&#9660;</span></span>
+                <ul class="submenu">
+                    <li><a th:href="@{/board/list(boardType='선사시대')}" class="study-link">학습하기</a></li>
+                    <li><a th:href="@{/quiz/list(quizType='선사시대')}" class="quiz-link">퀴즈풀기</a></li>
+                </ul>
+            </li>
+            <li class="submenuBox">
+                <span class="mainMenu">고조선과 여러 나라 <span class="arrow">&#9660;</span></span>
+                <ul class="submenu">
+                    <li><a th:href="@{/board/list(boardType='고조선과 여러 나라')}" class="study-link">학습하기</a></li>
+                    <li><a th:href="@{/quiz/list(quizType='고조선과 여러 나라')}" class="quiz-link">퀴즈풀기</a></li>
+                </ul>
+            </li>
+            <li class="submenuBox">
+                <span class="mainMenu">삼국과 가야 <span class="arrow">&#9660;</span></span>
+                <ul class="submenu">
+                    <li><a th:href="@{/board/list(boardType='삼국과 가야')}" class="study-link">학습하기</a></li>
+                    <li><a th:href="@{/quiz/list(quizType='삼국과 가야')}" class="quiz-link">퀴즈풀기</a></li>
+                </ul>
+            </li>
+            <li class="submenuBox">
+                <span class="mainMenu">남북극시대 <span class="arrow">&#9660;</span></span>
+                <ul class="submenu">
+                    <li><a th:href="@{/board/list(boardType='남북극시대')}" class="study-link">학습하기</a></li>
+                    <li><a th:href="@{/quiz/list(quizType='남북극시대')}" class="quiz-link">퀴즈풀기</a></li>
+                </ul>
+            </li>
+            <li class="submenuBox">
+                <span class="mainMenu">고려시대 <span class="arrow">&#9660;</span></span>
+                <ul class="submenu">
+                    <li><a th:href="@{/board/list(boardType='고려시대')}" class="study-link">학습하기</a></li>
+                    <li><a th:href="@{/quiz/list(quizType='고려시대')}" class="quiz-link">퀴즈풀기</a></li>
+                </ul>
+            </li>
+            <li class="submenuBox">
+                <span class="mainMenu">조선시대 <span class="arrow">&#9660;</span></span>
+                <ul class="submenu">
+                    <li><a th:href="@{/board/list(boardType='조선시대')}" class="study-link">학습하기</a></li>
+                    <li><a th:href="@{/quiz/list(quizType='조선시대')}" class="quiz-link">퀴즈풀기</a></li>
+                </ul>
+            </li>
+            <li class="submenuBox">
+                <span class="mainMenu">근대 <span class="arrow">&#9660;</span></span>
+                <ul class="submenu">
+                    <li><a th:href="@{/board/list(boardType='근대')}" class="study-link">학습하기</a></li>
+                    <li><a th:href="@{/quiz/list(quizType='근대')}" class="quiz-link">퀴즈풀기</a></li>
+                </ul>
+            </li>
+            <li class="submenuBox">
+                <span class="mainMenu">현대 <span class="arrow">&#9660;</span></span>
+                <ul class="submenu lastUl">
+                    <li><a th:href="@{/board/list(boardType='현대')}" class="study-link">학습하기</a></li>
+                    <li><a th:href="@{/quiz/list(quizType='현대')}" class="quiz-link">퀴즈풀기</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div id="container">
+    <div class="listBox">
+        <div class="list-title" th:text="${selectedQuizType} + ' 퀴즈'">선택된 퀴즈 타입</div>
+
+        <table class="list-table">
+            <thead>
+            <tr>
+                <th style="width: 120px;">번호</th>
+                <th style="width: auto;">제목</th>
+                <th th:if="${session.loginUser != null and session.loginUser.userType == '관리자'}" style="width: 160px;">
+                    퀴즈현황
+                </th>
+                <th th:if="${session.loginUser != null and session.loginUser.userType == '관리자'}" style="width: 160px;">
+                    관리
+                </th>
+                <th th:if="${session.loginUser == null or session.loginUser.userType != '관리자'}" style="width: 160px;">
+                    점수
+                </th>
+                <th th:if="${session.loginUser == null or session.loginUser.userType != '관리자'}" style="width: 160px;">
+                    수료여부
+                </th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:if="${#lists.isEmpty(categories)}">
+                <td colspan="5" style="text-align:center; height: 120px; vertical-align: middle;">
+                    등록된 퀴즈가 없습니다.
+                </td>
+            </tr>
+
+            <th:block th:if="${categories != null and !#lists.isEmpty(categories)}">
+                <tr th:each="category, stat : ${categories}">
+                    <td th:text="${(currentPage - 1) * 10 + stat.index + 1}">1</td>
+
+                    <td>
+                        <!-- 로그인한 일반 사용자 -->
+                        <th:block th:if="${session.loginUser != null and session.loginUser.userType != '관리자'}">
+                            <a href="javascript:void(0);"
+                               class="quiz-title-link"
+                               th:attr="data-quiz-id=${category['quizCategoryId']}, data-can-take=${category['canTakeQuiz']}"
+                               style="color:#333; text-decoration:underline; cursor:pointer;"
+                               th:text="${category['quizListName']}">퀴즈 제목</a>
+                        </th:block>
+
+                        <!-- 비로그인 사용자 -->
+                        <th:block th:if="${session.loginUser == null}">
+                            <a href="javascript:void(0);"
+                               class="quiz-title-login-required"
+                               style="color:#007bff; text-decoration:underline; cursor:pointer;"
+                               th:text="${category['quizListName']}">퀴즈 제목</a>
+                        </th:block>
+
+                        <!-- 관리자 -->
+                        <th:block th:if="${session.loginUser != null and session.loginUser.userType == '관리자'}">
+                            <a th:href="@{/quiz/start(quizCategoryId=${category['quizCategoryId']})}"
+                               style="color:#007bff; text-decoration:underline; cursor:pointer;"
+                               th:text="${category['quizListName']}">퀴즈 제목</a>
+                        </th:block>
+                    </td>
+
+                    <!-- 관리자 전용 -->
+                    <td th:if="${session.loginUser != null and session.loginUser.userType == '관리자'}">
+                        <input type="hidden" name="quizCategoryId" th:value="${category['quizCategoryId']}"/>
+                        <button class="statusBtn">보기</button>
+                    </td>
+                    <td th:if="${session.loginUser != null and session.loginUser.userType == '관리자'}">
+                        <form th:action="@{/quiz/delete}" method="post" style="display:inline;" class="deleteForm">
+                            <input type="hidden" name="quizCategoryId" th:value="${category['quizCategoryId']}"/>
+                            <input type="hidden" name="quizType" th:value="${selectedQuizType}"/>
+                            <button type="submit" class="deleteBtn">삭제</button>
+                        </form>
+                    </td>
+
+                    <!-- 일반 사용자 전용 -->
+                    <td th:if="${session.loginUser == null or session.loginUser.userType != '관리자'}">
+                        <span th:if="${session.loginUser != null}" th:text="${category['totalScore']}"></span>
+                        <span th:if="${session.loginUser == null}">&nbsp;</span>
+                    </td>
+                    <td th:if="${session.loginUser == null or session.loginUser.userType != '관리자'}">
+                        <span th:if="${session.loginUser != null}" th:text="${category['pass']} ? '수료' : '미수료'"></span>
+                        <span th:if="${session.loginUser == null}">&nbsp;</span>
+                    </td>
+                </tr>
+
+                <!-- 빈 줄 채우기 -->
+                <tr th:each="i : ${#numbers.sequence(categories.size() + 1, 10)}">
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td th:if="${session.loginUser != null and session.loginUser.userType == '관리자'}">&nbsp;</td>
+                    <td th:if="${session.loginUser != null and session.loginUser.userType == '관리자'}">&nbsp;</td>
+                    <td th:if="${session.loginUser == null or session.loginUser.userType != '관리자'}">&nbsp;</td>
+                    <td th:if="${session.loginUser == null or session.loginUser.userType != '관리자'}">&nbsp;</td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table>
+
+        <div class="pagination-container">
+            <div class="pagination"></div>
+            <div id="quiz-btn-box" th:if="${session.loginUser != null and session.loginUser.userType == '관리자'}">
+                <button id="create-quiz-btn" type="button">퀴즈출제</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 관리자용: 퀴즈 현황 모달 -->
+<div id="status-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="closeBtn">&times;</span>
+        <h3>퀴즈 현황</h3>
+        <table class="status-table">
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>유저명</th>
+                <th>점수</th>
+                <th>수료여부</th>
+            </tr>
+            </thead>
+            <tbody id="status-body"></tbody>
+        </table>
+        <div id="status-pagination" class="pagination"></div>
+    </div>
+</div>
+
+<!-- 관리자용: 퀴즈 출제 모달 -->
+<div id="quiz-modal" class="modal" style="display:none;"
+     th:if="${session.loginUser != null and session.loginUser.userType == '관리자'}">
+    <div class="quiz-modal-content">
+        <span class="closeBtn">&times;</span>
+        <h2>퀴즈 출제</h2>
+        <form id="quiz-form" enctype="multipart/form-data">
+            <input type="hidden" name="quizType" th:value="${selectedQuizType}"/>
+            <div id="quiz-pages"></div>
+            <div class="quiz-nav">
+                <button type="button" id="quiz-prev-btn">이전</button>
+                <div id="quiz-pagination"></div>
+                <button type="button" id="quiz-next-btn">다음</button>
+            </div>
+            <button type="submit" id="submit-btn" style="display:none;">등록하기</button>
+        </form>
+    </div>
+</div>
+
+<div id="footer">
+    <ul>
+        <li>대표전화: 042-222-2402</li>
+        <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+        <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+        <li>© 2025 역사 한 걸음. All rights reserved.</li>
+    </ul>
+</div>
+
+<script th:inline="javascript">
+    // ===== 공통: 사이드바 토글 =====
+    document.querySelectorAll(".mainMenu").forEach(menu => {
+        menu.addEventListener("click", () => {
+            const parent = menu.parentElement;
+            const submenu = parent.querySelector(".submenu");
+            if (submenu.classList.contains("show")) {
+                submenu.style.maxHeight = submenu.scrollHeight + "px";
+                submenu.offsetHeight;
+                submenu.classList.remove("show");
+                submenu.style.maxHeight = "0px";
+                parent.classList.remove("open");
+            } else {
+                submenu.classList.add("show");
+                submenu.style.maxHeight = submenu.scrollHeight + "px";
+                parent.classList.add("open");
+            }
+        });
+    });
+
+    // ===== 서버 페이지네이션 이동 =====
+    document.addEventListener("DOMContentLoaded", () => {
+        const totalPages = /*[[${totalPages}]]*/ 1;
+        const currentPage = /*[[${currentPage}]]*/ 1;
+        const selectedQuizType = '[[${selectedQuizType}]]';
+        const paginationDiv = document.querySelector(".pagination-container .pagination");
+        const categories = /*[[${categories}]]*/ null;
+
+        if (!categories || categories.length === 0) {
+            paginationDiv.style.display = 'none';
+            return;
+        }
+
+        paginationDiv.innerHTML = "";
+        paginationDiv.style.display = 'block';
+        const pages = totalPages <= 0 ? 1 : totalPages;
+
+        const prevBtn = document.createElement("button");
+        prevBtn.textContent = "◀";
+        prevBtn.classList.add("page-btn");
+        prevBtn.addEventListener("click", () => {
+            if (pages > 1 && currentPage > 1) {
+                window.location.href = `/quiz/list?quizType=${encodeURIComponent(selectedQuizType)}&page=${currentPage - 1}`;
+            }
+        });
+        paginationDiv.appendChild(prevBtn);
+
+        for (let i = 1; i <= pages; i++) {
+            const btn = document.createElement("button");
+            btn.textContent = i;
+            btn.classList.add("page-btn");
+            if (i === currentPage) btn.classList.add("active");
+            btn.addEventListener("click", () => {
+                if (pages > 1) {
+                    window.location.href = `/quiz/list?quizType=${encodeURIComponent(selectedQuizType)}&page=${i}`;
+                }
+            });
+            paginationDiv.appendChild(btn);
+        }
+
+        const nextBtn = document.createElement("button");
+        nextBtn.textContent = "▶";
+        nextBtn.classList.add("page-btn");
+        nextBtn.addEventListener("click", () => {
+            if (pages > 1 && currentPage < pages) {
+                window.location.href = `/quiz/list?quizType=${encodeURIComponent(selectedQuizType)}&page=${currentPage + 1}`;
+            }
+        });
+        paginationDiv.appendChild(nextBtn);
+    });
+
+    // ===== 사용자/비로그인 클릭 동작 =====
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".quiz-title-link").forEach(link => {
+            link.addEventListener("click", function () {
+                const quizCategoryId = this.getAttribute("data-quiz-id");
+                const canTakeQuiz = this.getAttribute("data-can-take") === "true";
+                if (canTakeQuiz) {
+                    window.location.href = `/quiz/start?quizCategoryId=${quizCategoryId}`;
+                } else {
+                    alert("학습을 먼저 완료해주세요.\n해당 학습 게시글을 읽고 학습완료 버튼을 눌러주세요.");
+                }
+            });
+        });
+        document.querySelectorAll(".quiz-title-login-required").forEach(link => {
+            link.addEventListener("click", function () {
+                alert("로그인이 필요한 서비스입니다.");
+                window.location.href = "/";
+            });
+        });
+    });
+
+    // ===== 삭제 확인 =====
+    document.addEventListener("DOMContentLoaded", () => {
+        const deleteForms = document.querySelectorAll(".deleteForm");
+        deleteForms.forEach(form => {
+            form.addEventListener("submit", function (event) {
+                const confirmed = confirm("정말 이 퀴즈를 삭제하시겠습니까?");
+                if (!confirmed) event.preventDefault();
+            });
+        });
+    });
+
+    // ===== 관리자: 성적 현황 모달 로딩 =====
+    document.addEventListener("DOMContentLoaded", () => {
+        const statusModal = document.getElementById("status-modal");
+        const closeBtn = statusModal.querySelector(".closeBtn");
+        const statusBody = document.getElementById("status-body");
+        const statusPagination = document.getElementById("status-pagination");
+
+        let currentQuizCategoryId = null;
+        let currentPage = 1;
+
+        closeBtn.addEventListener("click", () => statusModal.style.display = "none");
+        window.addEventListener("click", e => {
+            if (e.target === statusModal) statusModal.style.display = "none";
+        });
+
+        document.body.addEventListener("click", async (e) => {
+            if (e.target.classList.contains("statusBtn")) {
+                const row = e.target.closest("tr");
+                const quizIdInput = row.querySelector("input[name='quizCategoryId']");
+                if (!quizIdInput) return;
+                currentQuizCategoryId = quizIdInput.value;
+                currentPage = 1;
+                statusModal.style.display = "flex";
+                await loadStatusData();
+            }
+        });
+
+        async function loadStatusData() {
+            try {
+                const response = await fetch(`/quiz/status/${currentQuizCategoryId}?page=${currentPage}`);
+                const data = response.ok ? await response.json() : null;
+                if (data && data.scores && data.scores.length > 0) {
+                    renderStatusTable(data.scores);
+                    renderPagination(data.currentPage, data.totalPages);
+                } else {
+                    renderStatusTable(null);
+                    hidePagination();
+                }
+            } catch (err) {
+                console.error(err);
+                renderStatusTable(null);
+                hidePagination();
+            }
+        }
+
+        function renderStatusTable(scores) {
+            statusBody.innerHTML = "";
+            if (!scores || scores.length === 0) {
+                statusBody.innerHTML = `<tr><td colspan="4" style="text-align:center; height: 400px; vertical-align: middle;">데이터가 없습니다.</td></tr>`;
+            } else {
+                const pageStart = (currentPage - 1) * 10;
+                scores.forEach((score, idx) => {
+                    statusBody.insertAdjacentHTML("beforeend", `
+                        <tr>
+                            <td>${pageStart + idx + 1}</td>
+                            <td>${score.username}</td>
+                            <td>${score.score}</td>
+                            <td>${score.passed}</td>
+                        </tr>
+                    `);
+                });
+                for (let i = scores.length; i < 10; i++) {
+                    statusBody.insertAdjacentHTML("beforeend", `<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>`);
+                }
+            }
+        }
+
+        function hidePagination() {
+            statusPagination.style.display = 'none';
+        }
+
+        function renderPagination(currentPageNum, totalPages) {
+            statusPagination.innerHTML = "";
+            statusPagination.style.display = 'block';
+            const prevBtn = document.createElement("button");
+            prevBtn.textContent = "◀";
+            prevBtn.classList.add("page-btn");
+            prevBtn.addEventListener("click", async () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    await loadStatusData();
+                }
+            });
+            statusPagination.appendChild(prevBtn);
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement("button");
+                btn.textContent = i;
+                btn.classList.add("page-btn");
+                if (i === currentPageNum) btn.classList.add("active");
+                btn.addEventListener("click", async () => {
+                    currentPage = i;
+                    await loadStatusData();
+                });
+                statusPagination.appendChild(btn);
+            }
+            const nextBtn = document.createElement("button");
+            nextBtn.textContent = "▶";
+            nextBtn.classList.add("page-btn");
+            nextBtn.addEventListener("click", async () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    await loadStatusData();
+                }
+            });
+            statusPagination.appendChild(nextBtn);
+        }
+    });
+
+    // ===== 관리자: 퀴즈 출제 모달 =====
+    (function setupQuizCreate() {
+        const createBtn = document.getElementById("create-quiz-btn");
+        const quizModal = document.getElementById("quiz-modal");
+        if (!createBtn || !quizModal) return;
+
+        const pagesContainer = document.getElementById("quiz-pages");
+        const prevBtn = document.getElementById("quiz-prev-btn");
+        const nextBtn = document.getElementById("quiz-next-btn");
+        const submitBtn = document.getElementById("submit-btn");
+        const pagination = document.getElementById("quiz-pagination");
+        const form = document.getElementById("quiz-form");
+
+        // 문제 10개 자동 생성
+        for (let i = 1; i <= 10; i++) {
+            const pageDiv = document.createElement("div");
+            pageDiv.classList.add("quiz-page");
+            pageDiv.dataset.page = i;
+            pageDiv.style.display = "none";
+            pageDiv.innerHTML = `
+                <h3>문제 ${i}</h3>
+                ${i === 1 ? `<label>퀴즈 제목</label><br><input type="text" name="title" placeholder="퀴즈 제목 입력" required><br>` : ""}
+                <label>퀴즈 지문</label><br>
+                <textarea name="quizText${i}" placeholder="문제 지문 입력" required></textarea><br>
+                <label>퀴즈 이미지</label><br>
+                <input type="file" name="quizImage${i}" accept="image/*"><br>
+                <div class="edit-image-preview" style="margin-top:10px;">
+                    <img class="preview-img" src="" alt="미리보기" style="margin:0 auto; max-width:30%; display:none;">
+                </div>
+                <div class="options-box">
+                    <div class="option-item"><label>보기 1</label><input type="text" name="option1_${i}" placeholder="객관식 1번" required></div>
+                    <div class="option-item"><label>보기 2</label><input type="text" name="option2_${i}" placeholder="객관식 2번" required></div>
+                    <div class="option-item"><label>보기 3</label><input type="text" name="option3_${i}" placeholder="객관식 3번" required></div>
+                    <div class="option-item"><label>보기 4</label><input type="text" name="option4_${i}" placeholder="객관식 4번" required></div>
+                </div>
+                <div class="answer-box">
+                    <label>정답 번호</label>
+                    <select name="answer${i}" required>
+                        <option value="1">1번</option>
+                        <option value="2">2번</option>
+                        <option value="3">3번</option>
+                        <option value="4">4번</option>
+                    </select>
+                </div>
+            `;
+            pagesContainer.appendChild(pageDiv);
+        }
+
+        // 이미지 미리보기
+        document.addEventListener("change", (e) => {
+            if (e.target.matches("input[type='file'][name^='quizImage']")) {
+                const file = e.target.files[0];
+                const preview = e.target.closest(".quiz-page").querySelector(".preview-img");
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        preview.src = ev.target.result;
+                        preview.style.display = "block";
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    preview.src = "";
+                    preview.style.display = "none";
+                }
+            }
+        });
+
+        let quizModalCurrentPage = 1;
+        const totalPages = 10;
+
+        function renderQuizModalPagination() {
+            pagination.innerHTML = "";
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement("button");
+                btn.textContent = i;
+                if (i === quizModalCurrentPage) btn.classList.add("active");
+                btn.addEventListener("click", () => showPage(i));
+                pagination.appendChild(btn);
+            }
+        }
+
+        function showPage(page) {
+            quizModalCurrentPage = page;
+            document.querySelectorAll(".quiz-page").forEach((p, i) => {
+                p.style.display = (i === page - 1) ? "block" : "none";
+            });
+            prevBtn.style.display = (page === 1) ? "none" : "inline-block";
+            nextBtn.style.display = (page === totalPages) ? "none" : "inline-block";
+            submitBtn.style.display = (page === totalPages) ? "inline-block" : "none";
+            renderQuizModalPagination();
+        }
+
+        prevBtn.addEventListener("click", () => {
+            if (quizModalCurrentPage > 1) showPage(quizModalCurrentPage - 1);
+        });
+        nextBtn.addEventListener("click", () => {
+            if (quizModalCurrentPage < totalPages) showPage(quizModalCurrentPage + 1);
+        });
+
+        // 열고 닫기
+        const closeBtn = quizModal.querySelector(".closeBtn");
+        createBtn.addEventListener("click", () => {
+            quizModal.style.display = "flex";
+            showPage(1);
+        });
+        closeBtn.addEventListener("click", () => {
+            quizModal.style.display = "none";
+        });
+        window.addEventListener("click", (e) => {
+            if (e.target === quizModal) quizModal.style.display = "none";
+        });
+
+        // 제출
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            // 필수값 검사
+            for (let i = 1; i <= 10; i++) {
+                const text = formData.get(`quizText${i}`);
+                const o1 = formData.get(`option1_${i}`);
+                const o2 = formData.get(`option2_${i}`);
+                const o3 = formData.get(`option3_${i}`);
+                const o4 = formData.get(`option4_${i}`);
+                if (!text || !o1 || !o2 || !o3 || !o4) {
+                    alert(`문제 ${i}에 입력하지 않은 칸이 있습니다.`);
+                    return;
+                }
+            }
+
+            try {
+                const res = await fetch("/quiz/create-bulk", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (res.ok) {
+                    alert("퀴즈가 등록되었습니다!");
+                    const selectedQuizType = formData.get("quizType") || "";
+                    window.location.href = `/quiz/list?quizType=${encodeURIComponent(selectedQuizType)}`;
+                } else {
+                    alert("등록에 실패했습니다.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("등록 중 오류가 발생했습니다.");
+            }
+        });
+    })();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // URL 파라미터에서 error 확인
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+
+        if (error === 'already_passed') {
+            alert('이미 수료한 퀴즈입니다. 재응시할 수 없습니다.');
+            // URL에서 error 파라미터 제거 (선택사항)
+            const newUrl = window.location.pathname + '?quizType=' + urlParams.get('quizType');
+            window.history.replaceState({}, '', newUrl);
+        }
+    });
+</script>
+</body>
+</html>

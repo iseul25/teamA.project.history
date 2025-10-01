@@ -71,5 +71,4 @@ public class BoardService {
     public Board findByTitleAndType(String title, String boardType) {
         return boardRepository.findByTitleAndType(title, boardType);
     }
-
 }

@@ -6,8 +6,13 @@ import com.lms.history.quizzes.entity.Quiz;
 import com.lms.history.quizzes.entity.Score;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -76,6 +81,18 @@ public class QuizRepository {
         jdbc.update(sql, quizCategoryId);
     }
 
+    // 💡 롤백 메서드 1: 특정 카테고리의 모든 퀴즈 문제를 삭제
+    public int deleteAllQuizzesByCategoryId(int quizCategoryId) {
+        String sql = "DELETE FROM quiz WHERE quizCategoryId = ?";
+        return jdbc.update(sql, quizCategoryId);
+    }
+
+    // 💡 롤백 메서드 2: 특정 카테고리를 삭제 (반환형 int)
+    public int deleteCategoryById(int quizCategoryId) {
+        String sql = "DELETE FROM QUIZ_CATEGORY WHERE quizCategoryId = ?";
+        return jdbc.update(sql, quizCategoryId);
+    }
+
     public List<Map<String, Object>> findScoresByQuizCategoryId(int quizCategoryId) {
         String sql = """
         SELECT 
@@ -134,15 +151,167 @@ public class QuizRepository {
             Quiz quiz = new Quiz();
             quiz.setQuizId(rs.getInt("quizId"));
             quiz.setQuizCategoryId(rs.getInt("quizCategoryId"));
+
+            // quizNumber (nullable)
+            quiz.setQuizNumber(rs.getObject("quizNumber", Integer.class));
+
+            quiz.setImgUrl(rs.getString("imgUrl"));
             quiz.setQuestion(rs.getString("question"));
             quiz.setItem1(rs.getString("item1"));
             quiz.setItem2(rs.getString("item2"));
             quiz.setItem3(rs.getString("item3"));
             quiz.setItem4(rs.getString("item4"));
-            quiz.setAnswer(rs.getInt("answer"));
-            quiz.setCommentary(rs.getString("commentary"));
-            quiz.setQuizScore(rs.getInt("quizScore"));
+
+            // answer (int 컬럼이면 wasNull 처리 권장)
+            int answer = rs.getInt("answer");
+            quiz.setAnswer(rs.wasNull() ? null : answer);
+
+            // ★ commentary는 DB에 없음 → 읽지 말자
+            quiz.setCommentary(null);
+
+            // quizScore (nullable)
+            quiz.setQuizScore(rs.getObject("quizScore", Integer.class));
+
             return quiz;
         };
+    }
+
+    public void deleteAttemptsByUserAndCategory(int userId, int quizCategoryId) {
+        String sql = "DELETE FROM quiz_attempt WHERE userId = ? AND quizCategoryId = ?";
+        jdbc.update(sql, userId, quizCategoryId);
+    }
+
+    public void saveAttempt(Attempt attempt) {
+        String sql = "INSERT INTO quiz_attempt (userId, quizCategoryId, quizId, selected, attemptAt) " +
+                "VALUES (?, ?, ?, ?, ?)";
+        jdbc.update(sql,
+                attempt.getUserId(),
+                attempt.getQuizCategoryId(),
+                attempt.getQuizId(),
+                attempt.getSelected(),
+                attempt.getAttemptAt()
+        );
+    }
+
+    public int saveCategory(Category category) {
+        String sql = "INSERT INTO quiz_category (userId, quizType, quizListName, createAt) VALUES (?, ?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbc.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, category.getUserId());
+            ps.setString(2, category.getQuizType());
+            ps.setString(3, category.getQuizListName());
+            ps.setTimestamp(4, Timestamp.valueOf(category.getCreateAt()));
+            return ps;
+        }, keyHolder);
+
+        return keyHolder.getKey().intValue();
+    }
+
+    public void saveQuiz(Quiz quiz) {
+        String sql = "INSERT INTO quiz (quizCategoryId, quizNumber, imgUrl, question, item1, item2, item3, item4, answer, quizScore) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        jdbc.update(sql,
+                quiz.getQuizCategoryId(),
+                quiz.getQuizNumber(),
+                quiz.getImgUrl(),
+                quiz.getQuestion(),
+                quiz.getItem1(),
+                quiz.getItem2(),
+                quiz.getItem3(),
+                quiz.getItem4(),
+                quiz.getAnswer(),
+                quiz.getQuizScore()
+        );
+    }
+
+    // 1) 제목+타입으로 카테고리 조회
+    public Integer findCategoryIdByTitleAndType(String title, String quizType) {
+        String sql = "SELECT quizCategoryId FROM quiz_category WHERE quizListName = ? AND quizType = ?";
+        try {
+            return jdbc.queryForObject(sql, Integer.class, title, quizType);
+        } catch (org.springframework.dao.EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    // 2) 카테고리 업서트
+    public int upsertQuizCategory(String title, String quizType, int userId) {
+        Integer found = findCategoryIdByTitleAndType(title, quizType);
+        if (found != null) return found;
+
+        Category c = new Category();
+        c.setUserId(userId);
+        c.setQuizType(quizType);
+        c.setQuizListName(title);
+        c.setCreateAt(java.time.LocalDateTime.now());
+        return saveCategory(c);
+    }
+
+    // 3) 퀴즈 저장 후 PK 반환
+    public int insertQuizReturningId(Quiz quiz) {
+        String sql = """
+        INSERT INTO quiz
+        (quizCategoryId, quizNumber, imgUrl, question, item1, item2, item3, item4, answer, quizScore)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """;
+        KeyHolder kh = new GeneratedKeyHolder();
+        jdbc.update(con -> {
+            PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            int i = 1;
+            ps.setInt(i++, quiz.getQuizCategoryId());
+            if (quiz.getQuizNumber() == null) ps.setNull(i++, java.sql.Types.INTEGER); else ps.setInt(i++, quiz.getQuizNumber());
+            if (quiz.getImgUrl() == null)     ps.setNull(i++, java.sql.Types.VARCHAR); else ps.setString(i++, quiz.getImgUrl());
+            ps.setString(i++, quiz.getQuestion());
+            ps.setString(i++, quiz.getItem1());
+            ps.setString(i++, quiz.getItem2());
+            ps.setString(i++, quiz.getItem3());
+            ps.setString(i++, quiz.getItem4());
+            if (quiz.getAnswer() == null)     ps.setNull(i++, java.sql.Types.INTEGER); else ps.setInt(i++, quiz.getAnswer());
+            if (quiz.getQuizScore() == null)  ps.setNull(i++, java.sql.Types.INTEGER); else ps.setInt(i++, quiz.getQuizScore());
+            return ps;
+        }, kh);
+        Number key = kh.getKey();
+        if (key == null) throw new IllegalStateException("quiz PK 생성 실패");
+        return key.intValue();
+    }
+
+    // 4) 이미지 URL 업데이트
+    public void updateQuizImageUrl(int quizId, String imgUrl) {
+        String sql = "UPDATE quiz SET imgUrl = ? WHERE quizId = ?";
+        jdbc.update(sql, imgUrl, quizId);
+    }
+
+    // 수료 여부 확인
+    public String checkPassStatus(int userId, int quizCategoryId) {
+        String sql = "SELECT pass FROM quiz_score WHERE userId = ? AND quizCategoryId = ?";
+        try {
+            return jdbc.queryForObject(sql, String.class, userId, quizCategoryId);
+        } catch (org.springframework.dao.EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    // 문제 수정
+    public void updateQuiz(Quiz quiz) {
+        String sql = """
+        UPDATE quiz 
+        SET question = ?, item1 = ?, item2 = ?, item3 = ?, item4 = ?, 
+            answer = ?, imgUrl = ?, quizNumber = ?, quizScore = ?
+        WHERE quizId = ?
+    """;
+        jdbc.update(sql,
+                quiz.getQuestion(),
+                quiz.getItem1(),
+                quiz.getItem2(),
+                quiz.getItem3(),
+                quiz.getItem4(),
+                quiz.getAnswer(),
+                quiz.getImgUrl(),
+                quiz.getQuizNumber(),
+                quiz.getQuizScore(),
+                quiz.getQuizId()
+        );
     }
 }

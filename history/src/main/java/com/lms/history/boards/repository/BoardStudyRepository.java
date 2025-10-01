@@ -54,5 +54,20 @@ public class BoardStudyRepository {
             return bs;
         }, userId, boardId);
     }
+
+    // 학습 완료 여부 확인 (startAt과 endAt이 다른 경우)
+    public boolean hasCompletedStudy(int boardId, int userId) {
+        String sql = """
+        SELECT COUNT(*) 
+        FROM board_study 
+        WHERE boardId = ? 
+          AND userId = ? 
+          AND endAt IS NOT NULL
+          AND startAt != endAt
+    """;
+
+        Integer count = jdbc.queryForObject(sql, Integer.class, boardId, userId);
+        return count != null && count > 0;
+    }
 }
 
