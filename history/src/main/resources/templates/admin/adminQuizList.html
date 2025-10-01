@@ -35,15 +35,15 @@
     <ul>
         <li><a th:href="@{/admin/users}">회원관리</a></li>
         <li class="submenuBox">
-            <a th:href="@{/admin/board}" class="active">게시글관리</a>
+            <a href="/admin/board" class="active">게시글관리</a>
             <ul class="submenu">
-                <li><a th:href="@{/admin/board}">학습하기</a></li>
-                <li><a th:href="@{/admin/quiz}" class="active">퀴즈풀기</a></li>
-                <li><a th:href="@{/admin/notice}">공지사항</a></li>
+                <li><a href="/admin/board" class="active">학습하기</a></li>
+                <li><a href="/admin/quiz">퀴즈풀기</a></li>
+                <li><a href="/admin/notice">공지사항</a></li>
             </ul>
         </li>
-        <li><a href="">댓글관리</a></li>
-        <li><a th:href="@{/admin/store}">상점관리</a></li>
+        <li><a href="/admin/comment">댓글관리</a></li>
+        <li><a href="/admin/pointStore">상점관리</a></li>
     </ul>
 </div>
 
