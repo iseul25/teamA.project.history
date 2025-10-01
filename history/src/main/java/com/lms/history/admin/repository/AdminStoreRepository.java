@@ -82,7 +82,7 @@ public class AdminStoreRepository {
                     u.email,
                     ps.itemName as productName,
                     ABS(p.pointChange) as price,
-                    DATE_FORMAT(NOW(), '%Y-%m-%d') as orderDate
+                    DATE_FORMAT(p.createAt, '%Y-%m-%d') as orderDate
                 FROM points p
                 JOIN users u ON p.userId = u.userId
                 LEFT JOIN point_shop ps ON p.itemId = ps.itemId
