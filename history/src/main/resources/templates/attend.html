@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>출석하기</title>
+    <link rel="stylesheet" href="/css/attend.css">
+    <style>
+        /* 새로운 CSS 규칙을 여기에 추가 */
+        .attended-stamp {
+            width: 60px;
+            height: 60px;
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            /* 이미지의 부모 요소에 position: relative;가 필요합니다. */
+        }
+    </style>
+</head>
+<body>
+<header>
+    <a href="/">
+        <img src="/img/mainLg2.png" alt="메인 로고">
+    </a>
+    <ul>
+        <li><a href="/board/topic">학습하기</a></li>
+        <li><a href="/quiz/topic">퀴즈풀기</a></li>
+        <li><a href="/attend" class="active">출석하기</a></li>
+        <li><a href="/pointStore">포인트 상점</a></li>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/notice">공지사항</a></li>
+    </ul>
+    <div id="user" th:if="${loginUser}">
+        <a href="/user/myPage" id="userName-link" th:text="${loginUser.name} + '님'">사용자 님</a>
+    </div>
+</header>
+<div id="container">
+    <div id="attend-info" th:if="${attendedToday} != null">
+        <p th:if="${!attendedToday}">출석 버튼을 클릭하면 출석이 완료됩니다.</p>
+        <p th:if="${!attendedToday}">출석 시 10포인트가 지급됩니다.</p>
+        <p th:if="${attendedToday}">오늘은 이미 출석을 완료했습니다.</p>
+    </div>
+
+    <div id="calendar">
+        <div id="calendar-header">
+            <button id="prev-month">◀</button>
+            <span id="month-year" th:text="${yearMonth != null ? yearMonth : #temporals.format(#temporals.createNow(), 'yyyy-MM')}"></span>
+            <button id="next-month">▶</button>
+        </div>
+        <table id="calendar-body">
+            <thead>
+            <tr>
+                <th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th>
+            </tr>
+            </thead>
+            <tbody id="calendar-days">
+            <tr th:each="week : ${calendarDays}">
+                <td th:each="day : ${week}" style="position: relative;">
+                    <div class="day-number" th:text="${day.day}" th:classappend="${day.isToday ? 'today' : ''}"></div>
+                    <img th:if="${day.attended}" src="/img/stamp1.png" alt="출석 도장" class="attended-stamp">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="attBtn">
+        <button id="attend-btn" th:if="${attendedToday != null and !attendedToday}">출석체크</button>
+        <button id="attend-btn" th:if="${attendedToday != null and attendedToday}" disabled style="background-color:#ccc; cursor:not-allowed;">출석 완료</button>
+    </div>
+</div>
+<div id="footer">
+    <ul>
+        <li>대표전화: 042-222-2402</li>
+        <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+        <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+        <li>© 2025 역사 한 걸음. All rights reserved.</li>
+    </ul>
+</div>
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const attendBtn = document.getElementById("attend-btn");
+
+        if (attendBtn) {
+            attendBtn.addEventListener("click", async () => {
+                try {
+                    // 서버에 출석 체크 요청
+                    const res = await fetch("/api/attend/check", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" }
+                    });
+                    const data = await res.json();
+
+                    if (res.ok) {
+                        // 1. 알림 메시지 표시
+                        alert("출석 완료! 10포인트가 지급되었습니다.");
+
+                        // 2. 출석 버튼 상태 변경
+                        attendBtn.disabled = true;
+                        attendBtn.textContent = "출석 완료";
+                        attendBtn.style.backgroundColor = "#ccc";
+                        attendBtn.style.cursor = "not-allowed";
+
+                        // 3. 오늘 날짜에 출석 도장 이미지 추가
+                        const todayCell = document.querySelector(".today").closest('td');
+                        if (todayCell) {
+                            // 이미 도장이 있는지 확인 (중복 추가 방지)
+                            if (!todayCell.querySelector(".attended-stamp")) {
+                                const stampImg = document.createElement("img");
+                                stampImg.src = "/img/stamp1.png"; // 이미지 경로 설정
+                                stampImg.alt = "출석 도장";
+                                stampImg.className = "attended-stamp";
+                                todayCell.appendChild(stampImg);
+                            }
+                        }
+
+                        // 4. 정보 메시지 업데이트
+                        const attendInfo = document.getElementById("attend-info");
+                        if (attendInfo) {
+                            attendInfo.innerHTML = "<p>오늘은 이미 출석을 완료했습니다.</p>";
+                        }
+
+                    } else {
+                        alert(data.message || "출석 실패: 알 수 없는 오류");
+                    }
+                } catch (err) {
+                    console.error("출석 체크 실패:", err);
+                    alert("출석 체크 중 오류가 발생했습니다.");
+                }
+            });
+        }
+
+        // 다음/이전 달 이동 기능 (기존 로직 유지)
+        document.getElementById('prev-month').addEventListener('click', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            let year = parseInt(urlParams.get('year')) || new Date().getFullYear();
+            let month = parseInt(urlParams.get('month')) || new Date().getMonth() + 1;
+            let newDate = new Date(year, month - 2);
+            window.location.href = `/attend?year=${newDate.getFullYear()}&month=${newDate.getMonth() + 1}`;
+        });
+
+        document.getElementById('next-month').addEventListener('click', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            let year = parseInt(urlParams.get('year')) || new Date().getFullYear();
+            let month = parseInt(urlParams.get('month')) || new Date().getMonth() + 1;
+            let newDate = new Date(year, month);
+            window.location.href = `/attend?year=${newDate.getFullYear()}&month=${newDate.getMonth() + 1}`;
+        });
+    });
+</script>
+</html>

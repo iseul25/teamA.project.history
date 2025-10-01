@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 등록</title>
+    <link rel="stylesheet" th:href="@{/css/createBoard.css}">
+    <link rel="preconnect" href="https://www.youtube.com">
+    <link rel="preconnect" href="https://img.youtube.com">
+</head>
+<body>
+<header>
+    <a th:href="@{/}">
+        <img th:src="@{/img/mainLg2.png}" alt="메인 로고">
+    </a>
+    <ul>
+        <li><a th:href="@{/board/topic}" class="active">학습하기</a></li>
+        <li><a th:href="@{/quiz/topic}">퀴즈풀기</a></li>
+        <li><a th:href="@{/attend}">출석하기</a></li>
+        <li><a th:href="@{/pointStore}">포인트 상점</a></li>
+        <li><a th:href="@{/faq}">FAQ</a></li>
+        <li><a th:href="@{/notice}">공지사항</a></li>
+    </ul>
+    <div id="user" th:if="${session.loginUser != null}">
+        <!-- 관리자인 경우 -->
+        <a th:if="${session.loginUser.userType == '관리자'}"
+           th:href="@{/admin/users}"
+           class="userName-link"
+           th:text="${session.loginUser.name} + '님'"></a>
+
+        <!-- 일반 사용자인 경우 -->
+        <a th:unless="${session.loginUser.userType == '관리자'}"
+           th:href="@{/user/myPage}"
+           class="userName-link"
+           th:text="${session.loginUser.name} + '님'"></a>
+    </div>
+</header>
+
+<div id="container">
+    <div id="post-box">
+        <h2 class="post-header">게시글 등록</h2>
+
+        <!-- 에러 메시지 -->
+        <div th:if="${errorMessage}" style="color:red; margin-bottom: 10px;">
+            <p th:text="${errorMessage}"></p>
+        </div>
+
+        <form th:action="@{/board/create}" method="post" enctype="multipart/form-data">
+            <!-- boardType hidden -->
+            <input type="hidden" name="boardType" th:value="${board.boardType}">
+
+            <!-- 제목 -->
+            <div class="post-info">
+                <input type="text" name="title" placeholder="제목" required th:value="${board != null} ? ${board.title} : ''">
+            </div>
+
+            <!-- 내용 -->
+            <div class="post-content">
+                <textarea name="content" placeholder="본문" rows="12" required th:text="${board != null} ? ${board.content} : ''"></textarea>
+            </div>
+
+            <!-- 이미지 -->
+            <div class="post-image">
+                <label for="imageFile">이미지 파일 첨부</label>
+                <input type="file" id="imageFile" name="imageFile" accept="image/*">
+                <div class="image-preview" th:if="${board != null and board.imgUrl != null}">
+                    <img th:src="@{${board.imgUrl}}" th:alt="${board.imgDescription}">
+                </div>
+            </div>
+
+            <!-- 이미지 설명 -->
+            <div class="post-info">
+                <input type="text" name="imgDescription" placeholder="이미지 설명 (선택사항)" th:value="${board != null} ? ${board.imgDescription} : ''">
+            </div>
+
+            <!-- [추가] 유튜브 URL(썸네일 미리보기 → 클릭 시 로드) -->
+            <div class="video-field" style="margin-top:12px;">
+                <label style="display:block;margin-bottom:6px;">유튜브 URL</label>
+                <input type="url" name="videoUrl"
+                       placeholder="https://youtu.be/XXXXXXXXXXX 또는 https://www.youtube.com/watch?v=XXXXXXXXXXX"
+                       th:value="${board != null} ? ${board.videoUrl} : ''"
+                       style="width:100%;box-sizing:border-box;">
+                <small style="color:#666;">유효한 주소를 입력하면 아래에 썸네일이 보이고, 클릭 시 재생합니다. 저장 시 서버가 embed 링크로 정규화합니다.</small>
+
+                <div class="video-preview" style="margin-top:10px; display:none;">
+                    <button type="button" class="thumb-btn"
+                            style="padding:0;border:0;background:none;cursor:pointer;position:relative;">
+                        <img class="thumb" alt="video thumbnail"
+                             style="max-width:560px;max-height:315px;display:block;">
+                        <div style="position:absolute;bottom:10px;left:10px;font-size:16px;background:rgba(0,0,0,.6);color:#fff;padding:6px 10px;border-radius:6px;">
+                            ▶ 재생
+                        </div>
+                    </button>
+                    <div class="iframe-host" style="margin-top:8px;"></div>
+                </div>
+            </div>
+
+            <!-- 버튼 -->
+            <div class="post-submit">
+                <button type="submit">등록</button>
+                <button type="button"
+                        th:onclick="'location.href=\'/board/detail?boardId=' + ${board.boardId} + '\';'">
+                    취소
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="footer">
+    <ul>
+        <li>대표전화: 042-222-2402</li>
+        <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+        <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+        <li>© 2025 역사 한 걸음. All rights reserved.</li>
+    </ul>
+</div>
+
+<script>
+    // ====== 공통 유튜브: 한 번만 로드되는 가벼운 바인딩(썸네일 → 클릭 시 iFrame) ======
+    (function(){
+        const ID_RE   = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/;
+        function ytExtractId(url){ const m = String(url||'').trim().match(ID_RE); return m ? m[1] : null; }
+        function ytThumb(id){ return `https://img.youtube.com/vi/${id}/hqdefault.jpg`; }
+        function ytEmbed(id){ return `https://www.youtube.com/embed/${id}`; }
+
+        function bindVideoField(root){
+            if (!root || root.dataset.bound === '1') return;
+            root.dataset.bound = '1';
+
+            const input = root.querySelector('input[name="videoUrl"]');
+            const wrap  = root.querySelector('.video-preview');
+            const btn   = root.querySelector('.thumb-btn');
+            const img   = root.querySelector('.thumb');
+            const host  = root.querySelector('.iframe-host');
+            if (!input || !wrap || !btn || !img || !host) return;
+
+            let t;
+            input.addEventListener('input', function(){
+                clearTimeout(t);
+                t = setTimeout(function(){
+                    const id = ytExtractId(input.value);
+                    if (id){
+                        img.src = ytThumb(id);
+                        wrap.style.display = 'block';
+                        host.innerHTML = '';
+                    } else {
+                        wrap.style.display = 'none';
+                        img.removeAttribute('src');
+                        host.innerHTML = '';
+                    }
+                }, 200);
+            }, { passive: true });
+
+            btn.addEventListener('click', function(){
+                const id = ytExtractId(input.value);
+                if (!id) return;
+                host.innerHTML = `<iframe width="560" height="315" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"
+                    src="${ytEmbed(id)}"></iframe>`;
+            }, { passive: true });
+
+            // 초기값 반영(등록 화면이라 대부분 빈 값이지만, 재표시 상황 고려)
+            const initId = ytExtractId(input.value);
+            if (initId){
+                img.src = ytThumb(initId);
+                wrap.style.display = 'block';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function(){
+            document.querySelectorAll('.video-field').forEach(bindVideoField);
+        });
+    })();
+    // ==========================================================================================
+</script>
+</body>
+</html>
