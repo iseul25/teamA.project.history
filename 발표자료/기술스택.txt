@@ -1,0 +1,20 @@
+백엔드
+프레임워크 : Spring Boot
+언어 : Java
+데이터 접근 : JDBC Template
+웹서버 : Embedde Tomcat
+빌드 도구 : Gradle
+세션 관리 : HttpSession
+
+프론트엔드
+템플릿 엔진 : Thymeleaf
+HTML/CSS/JavaScript
+
+데이터베이스
+DBMS : MySQL
+
+파일 처리
+이미지 업로드 : MultipartFile
+
+외부 API
+비디오 : YouTube Embed API
