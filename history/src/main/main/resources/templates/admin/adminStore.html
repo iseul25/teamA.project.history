@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상점 관리</title>
+    <link rel="stylesheet" href="/css/adminStore.css">
+</head>
+
+<body>
+<header>
+    <a href="/home">
+        <img src="/img/mainLg2.png" alt="메인 로고">
+    </a>
+    <ul>
+        <li><a href="/board/topic">학습하기</a></li>
+        <li><a href="/quiz/topic">퀴즈풀기</a></li>
+        <li><a href="/attend">출석하기</a></li>
+        <li><a href="/pointStore">포인트 상점</a></li>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/notice">공지사항</a></li>
+    </ul>
+    <div id="user" style="display: none;"> <!-- 로그인 했을 시에만 보이게 -->
+        <a href="/user/myPage" id="userName-link" class="active"> 님</a>
+    </div>
+</header>
+<div id="sidebar">
+    <ul>
+        <li><a th:href="@{/admin/users}">회원관리</a></li>
+        <li class="submenuBox">
+            <a href="/admin/board">게시글관리</a>
+            <ul class="submenu">
+                <li><a href="/admin/board">학습하기</a></li>
+                <li><a href="/admin/quiz">퀴즈풀기</a></li>
+                <li><a href="/admin/notice">공지사항</a></li>
+            </ul>
+        </li>
+        <li><a href="/admin/comment">댓글관리</a></li>
+        <li><a href="/admin/pointStore" class="active">상점관리</a></li>
+    </ul>
+</div>
+<div id="container">
+    <!-- 상품 목록 테이블 -->
+    <div id="productBox">
+        <div class="title-box">
+            <div class="product-title">상품목록</div>
+
+            <!-- 상품 추가 -->
+            <div class="add-product">
+                <button class="add-product-btn">상품추가</button>
+            </div>
+        </div>
+        <table class="product-table">
+            <thead>
+            <tr>
+                <th>상품명</th>
+                <th>카테고리</th>
+                <th>브랜드명</th>
+                <th>상품 가격</th>
+                <th>작업</th>
+            </tr>
+            </thead>
+            <tbody id="product-body">
+            </tbody>
+        </table>
+
+        <!-- 상품 수정 모달 -->
+        <div id="editProductModal" class="modal">
+            <div class="modal-content">
+                <span class="closeBtn">&times;</span>
+                <h2>상품 수정</h2>
+                <form id="editProductForm">
+                    <div id="category-box2">
+                        <label for="editProductCategory">카테고리</label>
+                        <select id="editProductCategory" required>
+                            <option value="">-- 카테고리 선택 --</option>
+                            <option value="음료">음료</option>
+                            <option value="편의점">편의점</option>
+                            <option value="영화">영화</option>
+                            <option value="상품권">상품권</option>
+                        </select>
+
+                        <label for="editProductBrand">브랜드명</label>
+                        <select id="editProductBrand" required>
+                            <option value="">-- 브랜드 선택 --</option>
+                        </select>
+                    </div>
+
+                    <label for="editProductName">상품명</label>
+                    <input type="text" id="editProductName" placeholder="상품명을 입력하세요">
+
+                    <label for="editProductImage">상품 이미지</label>
+                    <input type="file" id="editProductImage" accept="image/*">
+                    <label for="editProductPrice">상품 가격</label>
+                    <input type="number" id="editProductPrice" placeholder="가격 입력">
+
+                    <button type="submit" id="editProductBtn">수정 완료</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 상품 추가 모달 -->
+        <div id="addProductModal" class="modal">
+            <div class="modal-content">
+                <span class="closeBtn">&times;</span>
+                <h2>상품 추가</h2>
+                <form id="addProductForm">
+                    <div id="category-box">
+                        <label for="addProductCategory">카테고리</label>
+                        <select id="addProductCategory" required>
+                            <option value="">-- 카테고리 선택 --</option>
+                            <option value="음료">음료</option>
+                            <option value="편의점">편의점</option>
+                            <option value="영화">영화</option>
+                            <option value="상품권">상품권</option>
+                        </select>
+
+                        <label for="addProductBrand">브랜드명</label>
+                        <select id="addProductBrand" required>
+                            <option value="">-- 브랜드 선택 --</option>
+                            <!-- JS에서 카테고리에 맞게 동적으로 채워짐 -->
+                        </select>
+                    </div>
+
+                    <label for="addProductName">상품명</label>
+                    <input type="text" id="addProductName" placeholder="상품명을 입력하세요" required>
+
+                    <label for="addProductImage">상품 이미지</label>
+                    <input type="file" id="addProductImage" accept="image/*">
+
+                    <label for="addProductPrice">상품 가격</label>
+                    <input type="number" id="addProductPrice" placeholder="가격 입력" required>
+
+                    <button type="submit" id="addProductBtn">추가하기</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 페이징 영역 -->
+        <div id="pagination" class="pagination"></div>
+    </div>
+    <!-- 주문 목록 테이블 -->
+    <div id="orderBox">
+        <div class="order-title">주문목록</div>
+        <table class="order-table">
+            <thead>
+            <tr>
+                <th style="width: 95px;">번호</th>
+                <th style="width: 120px;">이름</th>
+                <th style="width: 250px;">이메일</th>
+                <th style="width: 250px;">상품명</th>
+                <th style="width: 140px;">상품 가격</th>
+                <th style="width: 150px;">주문일자</th>
+
+            </tr>
+            </thead>
+            <tbody id="order-body">
+            </tbody>
+        </table>
+        <!-- 페이징 영역 -->
+        <div id="orderList-pagination" class="pagination"></div>
+    </div>
+</div>
+<div id="footer">
+    <ul>
+        <li>대표전화: 042-222-2402</li>
+        <li>주소: (34838) 대전 중구 중앙로121번길 20(방산빌딩 3층)</li>
+        <li>운영시간: 평일 09:00 ~ 18:00 (주말·공휴일 휴무)</li>
+        <li>© 2025 역사 한 걸음. All rights reserved.</li>
+    </ul>
+</div>
+</body>
+<script>
+    // 전역 변수
+    let currentProductPage = 1;
+    let currentOrderPage = 1;
+    const pageSize = 5;
+    let editingProductId = null;
+
+    // 카테고리별 브랜드 목록
+    const categoryInfo = {
+        "음료": {
+            key: "drink",
+            brands: [
+                {key: "all", label: "전체"},
+                {key: "compose", label: "컴포즈"},
+                {key: "mega", label: "메가커피"},
+                {key: "starbucks", label: "스타벅스"},
+                {key: "ediya", label: "이디야"},
+                {key: "twosome", label: "투썸플레이스"}
+            ]
+        },
+        "편의점": {
+            key: "C-store",
+            brands: [
+                {key: "all", label: "전체"},
+                {key: "cu", label: "CU"},
+                {key: "gs25", label: "GS25"},
+                {key: "7-Eleven", label: "세븐일레븐"},
+                {key: "emart24", label: "이마트24"}
+            ]
+        },
+        "영화": {
+            key: "movie",
+            brands: [
+                {key: "all", label: "전체"},
+                {key: "cgv", label: "CGV"},
+                {key: "Megabox", label: "메가박스"},
+                {key: "Lotte", label: "롯데시네마"}
+            ]
+        },
+        "상품권": {
+            key: "gift-card",
+            brands: [
+                {key: "all", label: "전체"},
+                {key: "Kyobo", label: "교보문고"},
+                {key: "culture", label: "컬쳐랜드"},
+                {key: "Booknlife", label: "북앤라이프"}
+            ]
+        }
+    };
+
+    // 관리자 로그인 체크
+    async function checkLogin() {
+        try {
+            const response = await fetch("/api/check-login", {
+                credentials: "include"
+            });
+            const data = await response.json();
+            console.log("check-login 응답:", data);  // 디버깅용 로그
+
+            const userDiv = document.getElementById("user");
+            const usernameLink = document.getElementById("userName-link");
+
+            if (data.isLoggedIn) {
+                const nameWithSuffix = data.username + "님";
+
+                if (data.role === "admin") {
+                    usernameLink.textContent = nameWithSuffix;
+                    usernameLink.href = "/admin/dashboard.html";
+                } else {
+                    usernameLink.textContent = nameWithSuffix;
+                    usernameLink.href = "/myPage";
+                }
+
+                userDiv.style.display = "block";
+            } else {
+                userDiv.style.display = "none";
+            }
+        } catch (err) {
+            console.error("로그인 체크 에러:", err);
+        }
+    }
+
+    // 상품 목록 로드
+    async function loadProducts(page = 1) {
+        try {
+            console.log(`상품 목록 로드 - 페이지: ${page}`);
+            const response = await fetch(`/api/admin/store/products?page=${page}&size=${pageSize}`, {
+                credentials: "include"
+            });
+            const data = await response.json();
+            console.log("상품 목록 응답:", data);
+            if (data.success) {
+                currentProductPage = page;
+                renderProducts(data.products);
+                renderProductPagination(data.totalProducts, data.currentPage, data.totalPages);
+            } else {
+                console.error("상품 로드 실패:", data.message);
+                alert("상품 목록을 불러오는데 실패했습니다: " + data.message);
+            }
+        } catch (error) {
+            console.error('상품 로드 오류:', error);
+            alert("상품 목록을 불러오는 중 오류가 발생했습니다.");
+        }
+    }
+
+    // 상품 목록 렌더링
+    function renderProducts(products) {
+        const productBody = document.getElementById("product-body");
+        productBody.innerHTML = "";
+
+        products.forEach((product) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${product.itemName}</td>
+                <td>${getCategoryNameFromKey(product.category)}</td>
+                <td>${getBrandNameFromKey(product.category, product.brand)}</td>
+                <td>${product.cost} P</td>
+                <td>
+                    <button class="editBtn" data-id="${product.itemId}">수정</button>
+                    <button class="deleteBtn" data-id="${product.itemId}">삭제</button>
+                </td>
+            `;
+            productBody.appendChild(tr);
+        });
+
+        const emptyRows = pageSize - products.length;
+        for (let i = 0; i < emptyRows; i++) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            `;
+            productBody.appendChild(tr);
+        }
+        bindProductEvents();
+    }
+
+    // 상품 이벤트 바인딩
+    function bindProductEvents() {
+        document.querySelectorAll(".editBtn").forEach(btn => {
+            btn.addEventListener("click", () => openEditModal(btn.dataset.id));
+        });
+        document.querySelectorAll(".deleteBtn").forEach(btn => {
+            btn.addEventListener("click", () => deleteProduct(btn.dataset.id));
+        });
+    }
+
+    // 상품 페이징 렌더링 (10개까지만 표시)
+    function renderProductPagination(totalItems, currentPage, totalPages) {
+        const paginationDiv = document.querySelector("#productBox #pagination");
+        paginationDiv.innerHTML = "";
+
+        const maxVisible = 10; // 한 번에 보이는 페이지 버튼 수
+        const startPage = Math.floor((currentPage - 1) / maxVisible) * maxVisible + 1;
+        let endPage = startPage + maxVisible - 1;
+        if (endPage > totalPages) endPage = totalPages;
+
+        // 이전 버튼
+        const prevBtn = document.createElement("button");
+        prevBtn.textContent = "◀";
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.addEventListener("click", () => loadProducts(currentPage - 1));
+        paginationDiv.appendChild(prevBtn);
+
+        // 페이지 번호 버튼 (최대 10개만 표시)
+        for (let i = startPage; i <= endPage; i++) {
+            const btn = document.createElement("button");
+            btn.textContent = i;
+            if (i === currentPage) btn.classList.add("active");
+            btn.addEventListener("click", () => loadProducts(i));
+            paginationDiv.appendChild(btn);
+        }
+
+        // 다음 버튼
+        const nextBtn = document.createElement("button");
+        nextBtn.textContent = "▶";
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.addEventListener("click", () => loadProducts(currentPage + 1));
+        paginationDiv.appendChild(nextBtn);
+    }
+
+
+    // 주문 목록 로드
+    async function loadOrders(page = 1) {
+        try {
+            console.log(`주문 목록 로드 - 페이지: ${page}`);
+            const response = await fetch(`/api/admin/store/orders?page=${page}&size=${pageSize}`, {
+                credentials: "include"
+            });
+
+            // 응답이 JSON인지 먼저 체크
+            const text = await response.text();
+            let data = {};
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                console.warn("JSON 파싱 실패, 응답 원본:", text);
+                data = {}; // JSON이 아니면 그냥 빈 데이터 처리
+            }
+
+            console.log("주문 목록 응답:", data);
+
+            // 데이터가 없더라도 alert 띄우지 않고 빈 배열로 렌더링
+            const orders = data.orders || [];
+            currentOrderPage = page;
+            renderOrders(orders);
+            renderOrderPagination(
+                data.totalOrders || 0,
+                data.currentPage || 1,
+                data.totalPages || 1
+            );
+
+        } catch (error) {
+            console.error('주문 로드 오류:', error);
+            // alert 제거 → 콘솔만 찍고 넘어감
+        }
+    }
+
+    // 주문 목록 렌더링
+    function renderOrders(orders) {
+        const orderBody = document.getElementById("order-body");
+        orderBody.innerHTML = "";
+        orders.forEach((order, index) => {
+            const number = (currentOrderPage - 1) * pageSize + index + 1;
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${number}</td>
+                <td>${order.username}</td>
+                <td>${order.email}</td>
+                <td>${order.productName || '알 수 없음'}</td>
+                <td>${order.price} P</td>
+                <td>${order.orderDate}</td>
+
+            `;
+            orderBody.appendChild(tr);
+        });
+        const emptyRows = pageSize - orders.length;
+        for (let i = 0; i < emptyRows; i++) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            `;
+            orderBody.appendChild(tr);
+        }
+    }
+
+    // 주문 페이징 렌더링 (10개까지만 표시)
+    function renderOrderPagination(totalItems, currentPage, totalPages) {
+        const paginationDiv = document.querySelector("#orderBox #orderList-pagination");
+        paginationDiv.innerHTML = "";
+
+        const maxVisible = 10; // 한 번에 보이는 페이지 버튼 수
+        const startPage = Math.floor((currentPage - 1) / maxVisible) * maxVisible + 1;
+        let endPage = startPage + maxVisible - 1;
+        if (endPage > totalPages) endPage = totalPages;
+
+        // 이전 버튼
+        const prevBtn = document.createElement("button");
+        prevBtn.textContent = "◀";
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.addEventListener("click", () => loadOrders(currentPage - 1));
+        paginationDiv.appendChild(prevBtn);
+
+        // 페이지 번호 버튼 (10개까지만)
+        for (let i = startPage; i <= endPage; i++) {
+            const btn = document.createElement("button");
+            btn.textContent = i;
+            if (i === currentPage) btn.classList.add("active");
+            btn.addEventListener("click", () => loadOrders(i));
+            paginationDiv.appendChild(btn);
+        }
+
+        // 다음 버튼
+        const nextBtn = document.createElement("button");
+        nextBtn.textContent = "▶";
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.addEventListener("click", () => loadOrders(currentPage + 1));
+        paginationDiv.appendChild(nextBtn);
+    }
+
+
+    // 모달 관련 함수들
+    const addModal = document.getElementById("addProductModal");
+    const editModal = document.getElementById("editProductModal");
+    const addProductBtn = document.querySelector(".add-product-btn");
+    const closeBtns = document.querySelectorAll(".closeBtn");
+
+    // 상품 추가 모달 열기
+    addProductBtn.addEventListener("click", () => {
+        addModal.classList.add("show");
+    });
+
+    // 상품 수정 모달 열기
+    async function openEditModal(itemId) {
+        try {
+            const response = await fetch(`/api/admin/store/products/${itemId}`, {credentials: "include"});
+            const data = await response.json();
+            if (data && data.success) {
+                const product = data.product;
+                editingProductId = itemId;
+
+                // 폼 요소 초기화 및 값 설정
+                document.getElementById("editProductForm").reset();
+                document.getElementById("editProductName").value = product.itemName;
+                document.getElementById("editProductPrice").value = product.cost;
+
+                const editCategorySelect = document.getElementById("editProductCategory");
+
+                // 카테고리 값 설정
+                const categoryName = getCategoryNameFromKey(product.category);
+                editCategorySelect.value = categoryName;
+
+                // 브랜드 목록을 카테고리에 맞게 업데이트
+                populateBrandOptions("edit", categoryName, product.brand);
+
+                editModal.classList.add("show");
+            } else {
+                alert("상품 정보를 불러오는데 실패했습니다: " + (data ? data.message : "서버 오류"));
+            }
+        } catch (error) {
+            console.error("수정 모달 열기 오류:", error);
+            alert("상품 정보를 불러오는데 실패했습니다.");
+        }
+    }
+
+    // 모달 닫기 버튼 클릭 시 폼 초기화 로직 추가
+    closeBtns.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            addModal.classList.remove("show");
+            editModal.classList.remove("show");
+
+            // 폼 초기화
+            document.getElementById("addProductForm").reset();
+            document.getElementById("editProductForm").reset();
+            editingProductId = null; // 수정 상품 ID 초기화
+        });
+    });
+
+    // 상품 추가 (중복 제출 방지 로직 추가)
+    document.getElementById("addProductForm").addEventListener("submit", async (e) => {
+        e.preventDefault(); // 폼의 기본 제출 동작 방지
+
+        const formData = new FormData();
+        const selectedCategory = document.getElementById("addProductCategory").value;
+        const categoryKey = getCategoryKeyFromName(selectedCategory);
+        const selectedBrand = document.getElementById("addProductBrand").value;
+        const imgFile = document.getElementById("addProductImage").files[0];
+
+        formData.append("itemName", document.getElementById("addProductName").value);
+        formData.append("cost", parseInt(document.getElementById("addProductPrice").value));
+        formData.append("category", categoryKey);
+        formData.append("brand", selectedBrand);
+        if (imgFile) {
+            formData.append("imgFile", imgFile);
+        }
+
+        try {
+            const response = await fetch("/api/admin/store/products", {
+                method: "POST",
+                credentials: "include",
+                body: formData
+            });
+            const data = await response.json();
+            if (data.success) {
+                alert("상품이 추가되었습니다.");
+                addModal.classList.remove("show");
+                document.getElementById("addProductForm").reset();
+                loadProducts(1);
+            } else {
+                alert("상품 추가 실패: " + data.message);
+            }
+        } catch (error) {
+            console.error("상품 추가 오류:", error);
+            alert("상품 추가 중 오류가 발생했습니다.");
+        }
+    });
+
+    // 상품 수정 (누락된 이벤트 리스너 추가)
+    document.getElementById("editProductForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!editingProductId) return;
+
+        const formData = new FormData();
+        const selectedCategory = document.getElementById("editProductCategory").value;
+        const categoryKey = getCategoryKeyFromName(selectedCategory);
+        const selectedBrand = document.getElementById("editProductBrand") ? document.getElementById("editProductBrand").value : null;
+        const imgFile = document.getElementById("editProductImage").files[0];
+
+        formData.append("itemName", document.getElementById("editProductName").value);
+        formData.append("cost", parseInt(document.getElementById("editProductPrice").value));
+        formData.append("category", categoryKey);
+        formData.append("brand", selectedBrand);
+        if (imgFile) {
+            formData.append("imgFile", imgFile);
+        }
+
+        try {
+            const response = await fetch(`/api/admin/store/products/${editingProductId}`, {
+                method: "PUT",
+                credentials: "include",
+                body: formData
+            });
+            const data = await response.json();
+            if (data.success) {
+                alert("상품이 수정되었습니다.");
+                editModal.classList.remove("show");
+                loadProducts(currentProductPage);
+            } else {
+                alert("상품 수정 실패: " + data.message);
+            }
+        } catch (error) {
+            console.error("상품 수정 오류:", error);
+            alert("상품 수정 중 오류가 발생했습니다.");
+        }
+    });
+
+    // 상품 삭제
+    async function deleteProduct(itemId) {
+        if (!confirm("정말로 이 상품을 삭제하시겠습니까?")) {
+            return;
+        }
+        try {
+            const response = await fetch(`/api/admin/store/products/${itemId}`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+            const data = await response.json();
+            if (data.success) {
+                alert("상품이 삭제되었습니다.");
+                loadProducts(currentProductPage);
+            } else {
+                alert("상품 삭제 실패: " + data.message);
+            }
+        } catch (error) {
+            console.error("상품 삭제 오류:", error);
+            alert("상품 삭제 중 오류가 발생했습니다.");
+        }
+    }
+
+    // 모달 드롭다운 동적 생성 로직
+    const categorySelect = document.getElementById("addProductCategory");
+    const brandSelect = document.getElementById("addProductBrand");
+    const editCategorySelect = document.getElementById("editProductCategory");
+
+    if (categorySelect && brandSelect) {
+        categorySelect.addEventListener("change", function () {
+            populateBrandOptions("add", this.value);
+        });
+    }
+
+    if (editCategorySelect) {
+        editCategorySelect.addEventListener("change", function () {
+            populateBrandOptions("edit", this.value);
+        });
+    }
+
+    function populateBrandOptions(modalType, selectedCategory, selectedBrandKey) {
+        const targetBrandSelect = modalType === "add" ? document.getElementById("addProductBrand") : document.getElementById("editProductBrand");
+        if (!targetBrandSelect) return;
+
+        targetBrandSelect.innerHTML = `<option value="">-- 브랜드 선택 --</option>`;
+
+        const categoryData = categoryInfo[selectedCategory];
+        if (categoryData && categoryData.brands) {
+            categoryData.brands.forEach(brand => {
+                if (brand.key === "all") return;
+                const option = document.createElement("option");
+                option.value = brand.key;
+                option.textContent = brand.label;
+                if (brand.key === selectedBrandKey) {
+                    option.selected = true;
+                }
+                targetBrandSelect.appendChild(option);
+            });
+        }
+    }
+
+    // 유틸리티 함수들 (키와 이름 매핑)
+    function getCategoryNameFromKey(key) {
+        for (const name in categoryInfo) {
+            if (categoryInfo[name].key === key) {
+                return name;
+            }
+        }
+        return key;
+    }
+
+    function getCategoryKeyFromName(name) {
+        const category = categoryInfo[name];
+        return category ? category.key : name;
+    }
+
+    function getBrandNameFromKey(categoryKey, brandKey) {
+        for (const name in categoryInfo) {
+            if (categoryInfo[name].key === categoryKey) {
+                const brand = categoryInfo[name].brands.find(b => b.key === brandKey);
+                return brand ? brand.label : brandKey;
+            }
+        }
+        return brandKey;
+    }
+
+    // 페이지 로드 시 실행
+    window.onload = async () => {
+        await checkLogin();
+        await loadProducts(1);
+        await loadOrders(1);
+    };
+</script>
+</html>
