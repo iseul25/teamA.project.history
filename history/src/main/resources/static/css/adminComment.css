@@ -116,12 +116,14 @@ header>ul li a.active {
     font-weight: bold;
 }
 
-/* 사이드바 서브메뉴 */
+/* 사이드바 서브메뉴 - 기존 코드 수정 */
 #sidebar .submenu {
-    max-height: 500px;
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
+    max-height: 0;  /* 0으로 변경 */
+    opacity: 0;     /* 0으로 변경 */
+    overflow: hidden;  /* 추가 */
+    transform: translateY(-10px);  /* 추가 */
+    transition: all 0.3s ease;  /* 추가 - 부드러운 애니메이션 */
+    pointer-events: none;  /* 추가 */
     list-style: none;
     text-align: center;
 }
@@ -130,7 +132,7 @@ header>ul li a.active {
     font-size: 1.2em;
 }
 
-#sidebar .submenuBox:hover>.submenu {
+#sidebar .submenuBox:hover > .submenu {
     max-height: 500px;
     opacity: 1;
     transform: translateY(0);
